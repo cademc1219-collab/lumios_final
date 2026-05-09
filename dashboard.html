@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --cream: #faf7f2; --cream2: #f4ede0; --cream3: #ede0cc;
+  --brown: #2c1a0e; --brown2: #5c3d1e; --brown3: #8b6340;
+  --brown4: #b8956a; --brown5: #d4b896;
+  --green: #3a6b3f; --green2: #e8f0e9;
+  --border: rgba(92,61,30,0.12); --border2: rgba(92,61,30,0.22);
+  --shadow: rgba(44,26,14,0.07);
+}
+body { font-family: 'Source Sans 3', sans-serif; background: var(--cream); color: var(--brown); min-height: 100vh; display: flex; }
+
+.sidebar { width: 220px; min-height: 100vh; background: var(--brown); display: flex; flex-direction: column; flex-shrink: 0; position: fixed; top: 0; left: 0; bottom: 0; }
+.sidebar-logo { padding: 28px 24px 24px; border-bottom: 1px solid rgba(255,255,255,0.07); font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 700; color: var(--cream); display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.logo-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brown5); display: inline-block; }
+.sidebar-section { padding: 20px 16px 8px; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.25); }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 8px; margin: 2px 8px; cursor: pointer; transition: all 0.2s; font-size: 13px; color: rgba(255,255,255,0.55); font-weight: 400; text-decoration: none; }
+.nav-item:hover { background: rgba(255,255,255,0.07); color: var(--cream); }
+.nav-item.active { background: rgba(255,255,255,0.1); color: var(--cream); font-weight: 500; }
+.nav-item i { font-size: 17px; width: 20px; text-align: center; }
+.sidebar-bottom { margin-top: auto; padding: 16px 8px; border-top: 1px solid rgba(255,255,255,0.07); }
+.user-pill { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+.user-pill:hover { background: rgba(255,255,255,0.07); }
+.user-av { width: 32px; height: 32px; border-radius: 50%; background: var(--brown3); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; color: var(--cream); flex-shrink: 0; }
+.user-info .un { font-size: 13px; font-weight: 500; color: var(--cream); }
+.user-info .ur { font-size: 11px; color: rgba(255,255,255,0.35); }
+
+.main { flex: 1; display: flex; flex-direction: column; min-height: 100vh; margin-left: 220px; }
+.topbar { background: #fff; border-bottom: 1px solid var(--border); padding: 0 28px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: sticky; top: 0; z-index: 10; }
+.topbar-left { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--brown); }
+.topbar-left span { font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 400; color: var(--brown4); margin-left: 10px; }
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.icon-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border2); background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--brown3); font-size: 17px; transition: all 0.2s; }
+.icon-btn:hover { background: var(--cream2); color: var(--brown); }
+.streak-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 100px; background: var(--cream2); border: 1px solid var(--border2); font-size: 13px; font-weight: 600; color: var(--brown2); }
+
+.content { padding: 28px; flex: 1; }
+.welcome-bar { background: var(--brown); border-radius: 14px; padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.wb-left h2 { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--cream); margin-bottom: 4px; }
+.wb-left p { font-size: 13px; color: var(--brown5); font-weight: 300; }
+.wb-btn { padding: 9px 20px; border-radius: 8px; border: none; background: var(--cream); color: var(--brown); font-family: 'Source Sans 3', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.wb-btn:hover { background: var(--cream2); }
+
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+.stat-card { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+.sc-label { font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--brown4); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+.sc-label i { font-size: 14px; }
+.sc-val { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--brown); letter-spacing: -0.5px; line-height: 1; }
+.sc-sub { font-size: 12px; color: var(--brown4); margin-top: 4px; font-weight: 300; }
+
+.grid-3 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 24px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.card { background: #fff; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.card-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.card-head h3 { font-family: 'Playfair Display', serif; font-size: 15px; font-weight: 600; color: var(--brown); }
+.card-head a { font-size: 12px; color: var(--brown3); text-decoration: none; border-bottom: 1px solid var(--border2); }
+.card-body { padding: 16px 20px; }
+
+.leo-card { background: var(--brown); border: none; }
+.leo-card .card-head { border-bottom: 1px solid rgba(255,255,255,0.1); }
+.leo-card .card-head h3 { color: var(--cream); }
+.leo-head-left { display: flex; align-items: center; gap: 10px; }
+.leo-av { width: 30px; height: 30px; border-radius: 50%; background: var(--brown3); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 12px; font-weight: 700; color: var(--cream); }
+.leo-status { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; display: inline-block; margin-left: 2px; }
+.leo-msg { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+.leo-msg p { font-size: 13px; color: var(--cream); line-height: 1.55; font-weight: 300; }
+.leo-msg .leo-tag { font-size: 11px; font-weight: 600; color: var(--brown5); margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+.leo-msg .leo-tag i { font-size: 13px; }
+.leo-actions { display: flex; gap: 8px; margin-top: 4px; }
+.leo-action-btn { padding: 7px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: var(--cream); font-family: 'Source Sans 3', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.leo-action-btn:hover { background: rgba(255,255,255,0.1); }
+.leo-action-btn.primary { background: var(--cream); color: var(--brown); border: none; }
+.leo-action-btn.primary:hover { background: var(--cream2); }
+
+.set-item { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.set-item:last-child { border-bottom: none; padding-bottom: 0; }
+.set-icon { width: 38px; height: 38px; border-radius: 8px; background: var(--cream2); display: flex; align-items: center; justify-content: center; color: var(--brown3); font-size: 18px; flex-shrink: 0; }
+.set-info { flex: 1; }
+.si-name { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 600; color: var(--brown); margin-bottom: 2px; }
+.si-meta { font-size: 12px; color: var(--brown4); font-weight: 300; }
+.set-score { font-family: 'Playfair Display', serif; font-size: 14px; font-weight: 700; color: var(--brown2); }
+.progress-bar { height: 4px; background: var(--cream3); border-radius: 2px; margin-top: 5px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 2px; background: var(--brown3); }
+
+.lb-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.lb-row:last-child { border-bottom: none; padding-bottom: 0; }
+.lb-rank { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; width: 24px; text-align: center; color: var(--brown4); }
+.lb-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.lb-name { font-size: 13px; font-weight: 500; color: var(--brown); flex: 1; }
+.lb-name.me { color: var(--brown2); font-weight: 600; }
+.lb-pts { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 700; color: var(--brown3); }
+.me-row { background: var(--cream2); border-radius: 8px; margin: 0 -4px; padding: 10px 4px; }
+
+.suggested-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.sug-card { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 14px; cursor: pointer; transition: all 0.2s; }
+.sug-card:hover { border-color: var(--brown4); background: var(--cream2); }
+.sug-subject { font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--brown4); margin-bottom: 4px; }
+.sug-name { font-family: 'Playfair Display', serif; font-size: 13px; font-weight: 600; color: var(--brown); margin-bottom: 4px; line-height: 1.3; }
+.sug-meta { font-size: 11px; color: var(--brown4); font-weight: 300; }
+.stars { color: #c4862a; font-size: 11px; }
+
+@media (max-width: 900px) { .stats-row { grid-template-columns: 1fr 1fr; } .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+</style>
+
+<style>
+@media(max-width:768px){
+  .topbar .topbar-title{display:none}
+  .dash-grid{grid-template-columns:1fr!important}
+  .welcome-banner{flex-direction:column;gap:12px}
+  .wb-stats{grid-template-columns:1fr 1fr!important}
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <a href="index.html" class="sidebar-logo">Lumio <span class="logo-dot"></span></a>
+  <div class="sidebar-section">Main</div>
+  <a href="dashboard.html" class="nav-item active"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-books"></i> My sets</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-compass"></i> Explore</a>
+  <a href="create.html" class="nav-item"><i class="ti ti-plus"></i> Create set</a>
+  <div class="sidebar-section">Community</div>
+  <a href="leaderboard.html" class="nav-item"><i class="ti ti-trophy"></i> Leaderboard</a>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-users"></i> Classrooms</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-star"></i> Saved sets</a>
+  <div class="sidebar-section">Leo</div>
+  <a href="study.html" class="nav-item"><i class="ti ti-brain"></i> Study with Leo</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-chart-bar"></i> My progress</a>
+      <div style="padding:8px 8px 0;border-top:1px solid rgba(255,255,255,0.07);margin-top:8px">
+      <a href="#" class="nav-item" style="color:rgba(255,255,255,0.4)" onclick="if(confirm('Sign out of Lumio?')){if(window.lumio)window.lumio.logout();else window.location.href='login.html';}"><i class="ti ti-logout"></i> Sign out</a>
+    </div>
+  <div class="sidebar-bottom">
+    <div class="user-pill" onclick="window.location.href='profile.html'" oncontextmenu="event.preventDefault();window.location.href='settings.html'" style="cursor:pointer">
+      <div class="user-av">AS</div>
+      <div class="user-info">
+        <div class="un">alex_studies</div>
+        <div class="ur">Student</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main"><div class="mobile-greeting" style="background:var(--brown);padding:48px 18px 16px">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);display:flex;align-items:center;gap:6px">Lumio <span style="width:6px;height:6px;border-radius:50%;background:var(--brown5);display:inline-block"></span></div>
+    <div style="display:flex;align-items:center;gap:12px"><i class="ti ti-bell" style="font-size:20px;color:var(--brown5)"></i><div style="width:36px;height:36px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--cream)">AS</div></div>
+  </div>
+  <div style="font-size:13px;color:var(--brown5);font-weight:300">Good morning,</div>
+  <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream);margin-top:2px">alex_studies</div>
+</div>
+  <div class="topbar">
+    <div class="topbar-left">Good morning, Alex <span>Friday, May 8</span></div>
+    <div class="topbar-right">
+      <div class="streak-pill"><i class="ti ti-flame"></i> 12-day streak</div>
+      <button class="icon-btn"><i class="ti ti-search"></i></button>
+      <button class="icon-btn" onclick="openSearch()" title="Search (Cmd+K)"><i class="ti ti-search"></i></button>
+      <button class="icon-btn"><i class="ti ti-bell"></i></button>
+    </div>
+  </div>
+
+  <div class="content">
+      <!-- SET OF THE DAY -->
+      <div style="background:linear-gradient(135deg,var(--brown) 0%,var(--brown3) 100%);border-radius:14px;padding:18px 20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;cursor:pointer" onclick="window.location.href='setdetail.html'">
+        <div style="flex:1">
+          <div style="font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown5);margin-bottom:6px;display:flex;align-items:center;gap:5px"><i class="ti ti-star" style="font-size:12px"></i> Set of the day</div>
+          <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--cream);margin-bottom:3px">World Capitals — All 195 Countries</div>
+          <div style="font-size:12px;color:var(--brown5);font-weight:300">195 cards · Geography · By Leo · ★★★★★</div>
+        </div>
+        <div style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:var(--cream);font-size:20px;flex-shrink:0"><i class="ti ti-player-play"></i></div>
+      </div>
+    <div class="welcome-bar">
+      <div class="wb-left">
+        <h2>Ready to study?</h2>
+        <p>You studied 48 cards yesterday. Leo has a suggestion for you today.</p>
+      </div>
+      <button class="wb-btn" onclick="window.location.href='study.html'"><i class="ti ti-player-play" style="font-size:13px;margin-right:4px"></i> Continue studying</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label"><i class="ti ti-cards"></i> Cards studied</div><div class="sc-val">1,240</div><div class="sc-sub">+48 yesterday</div></div>
+      <div class="stat-card"><div class="sc-label"><i class="ti ti-target"></i> Accuracy</div><div class="sc-val">84%</div><div class="sc-sub">Up 6% this week</div></div>
+      <div class="stat-card"><div class="sc-label"><i class="ti ti-flame"></i> Study streak</div><div class="sc-val">12</div><div class="sc-sub">Days in a row</div></div>
+      <div class="stat-card"><div class="sc-label"><i class="ti ti-trophy"></i> Rank</div><div class="sc-val">#1</div><div class="sc-sub">This week's leaderboard</div></div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card leo-card">
+        <div class="card-head">
+          <div class="leo-head-left">
+            <div class="leo-av">L</div>
+            <div>
+              <div style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--cream)">Leo <span class="leo-status"></span></div>
+              <div style="font-size:11px;color:var(--brown5)">Your AI study coach</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="leo-msg">
+            <div class="leo-tag"><i class="ti ti-alert-triangle"></i> Weak spot detected</div>
+            <p>You've missed 6 questions about cell division in the last 3 sessions. Want to drill that topic now with a focused mini-session?</p>
+          </div>
+          <div class="leo-actions">
+            <button class="leo-action-btn primary">Yes, let's drill it</button>
+            <button class="leo-action-btn">Not right now</button>
+          </div>
+          <div class="leo-msg" style="margin-top:14px">
+            <div class="leo-tag"><i class="ti ti-bulb"></i> Session tip</div>
+            <p>Your accuracy is highest in the morning. You're 22% more likely to remember what you study before noon.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h3>Leaderboard</h3><a href="leaderboard.html">View full &rarr;</a></div>
+        <div class="card-body">
+          <div class="lb-row me-row"><div class="lb-rank" style="color:#c4862a">1</div><div class="lb-av" style="background:var(--cream3);color:var(--brown2)">AS</div><div class="lb-name me">alex_studies (you)</div><div class="lb-pts">4,820</div></div>
+          <div class="lb-row"><div class="lb-rank" style="color:var(--brown4)">2</div><div class="lb-av" style="background:var(--green2);color:var(--green)">JM</div><div class="lb-name">jamie_m</div><div class="lb-pts">4,210</div></div>
+          <div class="lb-row"><div class="lb-rank" style="color:var(--brown3)">3</div><div class="lb-av" style="background:#fdf3e7;color:#a0522d">KR</div><div class="lb-name">khan_reads</div><div class="lb-pts">3,990</div></div>
+          <div class="lb-row"><div class="lb-rank" style="color:var(--brown5)">4</div><div class="lb-av" style="background:var(--cream2);color:var(--brown3)">SL</div><div class="lb-name">studi_luna</div><div class="lb-pts">3,540</div></div>
+          <div class="lb-row"><div class="lb-rank" style="color:var(--brown5)">5</div><div class="lb-av" style="background:var(--cream3);color:var(--brown2)">NP</div><div class="lb-name">nova_prep</div><div class="lb-pts">3,210</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-head"><h3>Recently studied</h3><a href="explore.html">View all &rarr;</a></div>
+        <div class="card-body">
+          <div class="set-item" onclick="window.location.href=\'setdetail.html\'" style="cursor:pointer"><div class="set-icon"><i class="ti ti-dna"></i></div><div class="set-info"><div class="si-name">Cell Division: Mitosis &amp; Meiosis</div><div class="si-meta">Biology &middot; 48 cards &middot; 2h ago</div><div class="progress-bar"><div class="progress-fill" style="width:62%"></div></div></div><div class="set-score">62%</div></div>
+          <div class="set-item" onclick="window.location.href=\'setdetail.html\'" style="cursor:pointer"><div class="set-icon"><i class="ti ti-world"></i></div><div class="set-info"><div class="si-name">WW2 Key Events Timeline</div><div class="si-meta">History &middot; 60 cards &middot; Yesterday</div><div class="progress-bar"><div class="progress-fill" style="width:91%"></div></div></div><div class="set-score">91%</div></div>
+          <div class="set-item" onclick="window.location.href=\'setdetail.html\'" style="cursor:pointer"><div class="set-icon"><i class="ti ti-math"></i></div><div class="set-info"><div class="si-name">Algebra Foundations — Grade 8</div><div class="si-meta">Math &middot; 32 cards &middot; 2 days ago</div><div class="progress-bar"><div class="progress-fill" style="width:78%"></div></div></div><div class="set-score">78%</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Leo suggests</h3><a href="explore.html">See more &rarr;</a></div>
+        <div class="card-body">
+          <div class="suggested-grid">
+            <div class="sug-card"><div class="sug-subject">Biology</div><div class="sug-name">Cell Cycle Deep Dive</div><div class="sug-meta">24 cards</div><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div>
+            <div class="sug-card"><div class="sug-subject">History</div><div class="sug-name">Cold War Essentials</div><div class="sug-meta">36 cards</div><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</div></div>
+            <div class="sug-card"><div class="sug-subject">Science</div><div class="sug-name">Photosynthesis Steps</div><div class="sug-meta">18 cards</div><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div>
+            <div class="sug-card"><div class="sug-subject">Math</div><div class="sug-name">Quadratic Equations</div><div class="sug-meta">28 cards</div><div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bn-item" onclick="window.location.href='dashboard.html'" id="bn-home">
+    <i class="ti ti-layout-dashboard"></i><span>Home</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='explore.html'" id="bn-explore">
+    <i class="ti ti-compass"></i><span>Explore</span>
+  </button>
+  <button class="bn-create" onclick="window.location.href='create.html'">
+    <div class="bn-create-icon"><i class="ti ti-plus" style="font-size:22px;color:var(--cream)"></i></div>
+    <span>Create</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='leaderboard.html'" id="bn-ranks">
+    <i class="ti ti-trophy"></i><span>Ranks</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='profile.html'" id="bn-profile">
+    <i class="ti ti-user"></i><span>Profile</span>
+  </button>
+</nav>
+<script>
+// Highlight active tab
+(function(){
+  const page = window.location.pathname.split('/').pop();
+  const map = {'dashboard.html':'bn-home','explore.html':'bn-explore','leaderboard.html':'bn-ranks','profile.html':'bn-profile','create.html':null};
+  const activeId = map[page];
+  if(activeId) { const el=document.getElementById(activeId); if(el) el.classList.add('active'); }
+})();
+</script>
+
+
+<script>
+// Smooth page transitions on navigation
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href]').forEach(function(link){
+    const href = link.getAttribute('href');
+    if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = link.href;
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateY(-6px)';
+      document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      setTimeout(function(){ window.location.href = target; }, 200);
+    });
+  });
+  // Fade in on load
+  document.body.style.opacity = '0';
+  document.body.style.transform = 'translateY(6px)';
+  document.body.style.transition = 'none';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      document.body.style.opacity = '1';
+      document.body.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
+
+
+<!-- SEARCH OVERLAY -->
+<div id="searchOverlay" style="display:none;position:fixed;inset:0;background:rgba(44,26,14,0.5);z-index:9998;backdrop-filter:blur(4px)" onclick="closeSearch()"></div>
+<div id="searchPanel" style="display:none;position:fixed;top:0;left:0;right:0;background:#fff;z-index:9999;padding:16px 24px;box-shadow:0 8px 32px rgba(44,26,14,0.15)">
+  <div style="max-width:700px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <i class="ti ti-search" style="font-size:20px;color:var(--brown4)"></i>
+      <input id="searchInput" type="text" placeholder="Search sets, topics, creators..." style="flex:1;border:none;outline:none;font-family:'Source Sans 3',sans-serif;font-size:16px;color:var(--brown);background:transparent" oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
+      <button onclick="closeSearch()" style="border:none;background:transparent;cursor:pointer;color:var(--brown4);font-size:14px;font-family:'Source Sans 3',sans-serif;font-weight:500">Cancel</button>
+    </div>
+    <div id="searchResults" style="padding-bottom:8px"></div>
+  </div>
+</div>
+<script>
+const SEARCH_DATA = [
+  {type:'set',name:'Cell Division: Mitosis & Meiosis',meta:'48 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'Human Body Systems Overview',meta:'66 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'World Capitals — 195 Countries',meta:'195 cards · Geography',url:'setdetail.html'},
+  {type:'set',name:'SAT Vocabulary High Frequency',meta:'150 cards · English',url:'setdetail.html'},
+  {type:'set',name:'Spanish 101 — Core Vocabulary',meta:'200 cards · Languages',url:'setdetail.html'},
+  {type:'set',name:'WW2 Key Events Timeline',meta:'60 cards · History',url:'setdetail.html'},
+  {type:'set',name:'Calculus Fundamentals',meta:'55 cards · Math',url:'setdetail.html'},
+  {type:'set',name:'Photosynthesis — Complete Guide',meta:'28 cards · Science',url:'setdetail.html'},
+  {type:'page',name:'Explore sets',meta:'Browse the marketplace',url:'explore.html'},
+  {type:'page',name:'Leaderboard',meta:'Weekly rankings',url:'leaderboard.html'},
+  {type:'page',name:'Create a set',meta:'Build your own flashcard set',url:'create.html'},
+  {type:'page',name:'Study with Leo',meta:'Start a study session',url:'study.html'},
+  {type:'page',name:'My profile',meta:'View your profile',url:'profile.html'},
+  {type:'page',name:'Settings',meta:'Account and preferences',url:'settings.html'},
+  {type:'creator',name:'Leo',meta:'AI study coach · 2,840 sets',url:'leo.html'},
+  {type:'creator',name:'sarah_reads',meta:'Verified creator · 12 sets',url:'profile.html'},
+  {type:'creator',name:'nova_prep',meta:'Top creator · 22 sets',url:'profile.html'},
+];
+function openSearch(){
+  document.getElementById('searchOverlay').style.display='block';
+  document.getElementById('searchPanel').style.display='block';
+  setTimeout(()=>document.getElementById('searchInput').focus(),50);
+  doSearch('');
+}
+function closeSearch(){
+  document.getElementById('searchOverlay').style.display='none';
+  document.getElementById('searchPanel').style.display='none';
+  document.getElementById('searchInput').value='';
+}
+function doSearch(q){
+  const results = document.getElementById('searchResults');
+  const query = q.toLowerCase().trim();
+  const matches = query ? SEARCH_DATA.filter(d=>d.name.toLowerCase().includes(query)||d.meta.toLowerCase().includes(query)) : SEARCH_DATA.slice(0,6);
+  if(!matches.length){results.innerHTML='<div style="padding:12px 0;font-size:13px;color:var(--brown4);text-align:center">No results for "'+q+'"</div>';return;}
+  const icons={set:'ti-cards',page:'ti-file',creator:'ti-user'};
+  results.innerHTML = matches.slice(0,8).map(m=>`
+    <div onclick="window.location.href='${m.url}'" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">
+      <div style="width:36px;height:36px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:16px;flex-shrink:0;border:1.5px solid var(--border2)"><i class="ti ${icons[m.type]}"></i></div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--brown)">${m.name}</div><div style="font-size:11px;color:var(--brown4);font-weight:300">${m.meta}</div></div>
+    </div>`).join('');
+}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}});
+</script>
+
+<script src="api.js"></script>
+<script src="loading.js"></script>
+<script src="darkmode.js"></script>
+<script src="shortcuts.js"></script>
+<script src="polish.js"></script>
+<script src="transitions.js"></script>
+<script src="search.js"></script>
+
+<script>
+// Notification badges
+document.addEventListener('DOMContentLoaded', () => {
+  // Add badge to leaderboard nav if user moved up
+  const badges = {
+    'ti-trophy': 3,
+    'ti-bell': 2,
+  };
+  document.querySelectorAll('.nav-item i').forEach(icon => {
+    for(const [cls, count] of Object.entries(badges)){
+      if(icon.className.includes(cls)){
+        const badge = document.createElement('span');
+        badge.style.cssText = 'background:#c0392b;color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:100px;margin-left:auto;';
+        badge.textContent = count;
+        icon.parentElement.appendChild(badge);
+        delete badges[cls];
+      }
+    }
+  });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if(!window.getRecentSets) return;
+  const recent = getRecentSets();
+  if(recent.length === 0) return;
+  const container = document.querySelector('.dash-grid, .content');
+  if(!container) return;
+  const section = document.createElement('div');
+  section.style.marginBottom = '20px';
+  section.innerHTML = `
+    <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--brown);margin-bottom:12px;display:flex;align-items:center;gap:7px">
+      <i class="ti ti-clock" style="font-size:16px;color:var(--brown3)"></i> Recently viewed
+    </div>
+    <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:4px">
+      ${recent.slice(0,3).map(s => `
+        <div onclick="window.location.href='setdetail.html'" style="background:#fff;border:2px solid rgba(92,61,30,0.22);border-radius:11px;padding:13px;flex-shrink:0;width:160px;cursor:pointer;transition:all 0.2s" onmouseover="this.style.borderColor='var(--brown4)'" onmouseout="this.style.borderColor='rgba(92,61,30,0.22)'">
+          <div style="font-family:'Playfair Display',serif;font-size:13px;font-weight:600;color:var(--brown);margin-bottom:3px;line-height:1.3">${s.title}</div>
+          <div style="font-size:11px;color:var(--brown4);font-weight:300">${s.subject}</div>
+        </div>`).join('')}
+    </div>`;
+  container.insertBefore(section, container.firstChild);
+});
+</script>
+</body>
+</html>

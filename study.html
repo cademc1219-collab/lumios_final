@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Study Mode</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;
+  --brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;
+  --brown4:#b8956a;--brown5:#d4b896;
+  --green:#3a6b3f;--green2:#e8f0e9;
+  --border:rgba(92,61,30,0.12);--border2:rgba(92,61,30,0.22);
+  --shadow:rgba(44,26,14,0.07);
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--brown);min-height:100vh}
+.mode-picker{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px}
+.mp-back{position:absolute;top:24px;left:24px;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--brown3);cursor:pointer;font-weight:500;text-decoration:none}
+.mp-back:hover{color:var(--brown)}
+.mp-set-info{text-align:center;margin-bottom:40px}
+.mp-set-info .subject{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4);margin-bottom:8px}
+.mp-set-info h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--brown);letter-spacing:-0.5px;margin-bottom:8px}
+.mp-set-info p{font-size:14px;color:var(--brown3);font-weight:300}
+.mp-label{font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4);margin-bottom:16px;text-align:center}
+.mode-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:700px;width:100%;margin-bottom:32px}
+.mode-card{background:#fff;border:1.5px solid var(--border2);border-radius:14px;padding:24px 18px;text-align:center;cursor:pointer;transition:all 0.25s}
+.mode-card:hover{border-color:var(--brown4);transform:translateY(-2px);box-shadow:0 6px 20px var(--shadow)}
+.mode-card.selected{border-color:var(--brown);background:var(--cream2)}
+.mode-card i{font-size:28px;color:var(--brown3);margin-bottom:12px;display:block}
+.mode-card.selected i{color:var(--brown)}
+.mode-card h3{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown);margin-bottom:5px}
+.mode-card p{font-size:12px;color:var(--brown4);font-weight:300;line-height:1.5}
+.start-btn{padding:14px 48px;border-radius:10px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:16px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.start-btn:hover{background:var(--brown2);transform:translateY(-1px)}
+.start-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+.study-screen{display:none;min-height:100vh;flex-direction:column}
+.study-screen.show{display:flex}
+.study-topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;gap:16px;flex-shrink:0}
+.back-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brown3);font-size:17px;transition:all 0.2s;flex-shrink:0}
+.back-btn:hover{background:var(--cream2)}
+.study-set-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown)}
+.study-mode-badge{padding:4px 10px;border-radius:100px;background:var(--cream2);border:1px solid var(--border2);font-size:12px;font-weight:500;color:var(--brown3)}
+.progress-wrap{flex:1;display:flex;align-items:center;gap:10px}
+.progress-bar-outer{flex:1;height:6px;background:var(--cream3);border-radius:3px;overflow:hidden}
+.progress-bar-inner{height:100%;background:var(--brown);border-radius:3px;transition:width 0.4s ease}
+.progress-text{font-size:12px;color:var(--brown4);white-space:nowrap;font-weight:500}
+.icon-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border2);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brown3);font-size:16px;transition:all 0.2s}
+.icon-btn:hover{background:var(--cream2)}
+.study-content{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 24px;flex-direction:column;gap:24px}
+.flashcard-wrap{perspective:1000px;width:100%;max-width:580px}
+.flashcard{width:100%;height:280px;position:relative;transform-style:preserve-3d;transition:transform 0.55s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.flashcard.flipped{transform:rotateY(180deg)}
+.card-face{position:absolute;inset:0;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.card-front{background:#fff;border:1.5px solid var(--border2);box-shadow:0 8px 32px var(--shadow)}
+.card-back{background:var(--brown);transform:rotateY(180deg)}
+.card-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4);margin-bottom:16px;position:absolute;top:20px}
+.card-back .card-label{color:var(--brown5)}
+.card-text{font-family:'Playfair Display',serif;font-size:22px;font-weight:600;color:var(--brown);text-align:center;line-height:1.4}
+.card-back .card-text{color:var(--cream)}
+.card-hint{font-size:12px;color:var(--brown5);position:absolute;bottom:20px;display:flex;align-items:center;gap:5px}
+.card-back .card-hint{color:rgba(255,255,255,0.35)}
+.flashcard-actions{display:flex;gap:12px}
+.fc-btn{padding:11px 28px;border-radius:10px;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;border:none}
+.fc-btn.wrong{background:#fbeaea;color:#c0392b}
+.fc-btn.correct{background:var(--green2);color:var(--green)}
+.fc-btn.skip{background:var(--cream2);color:var(--brown3);border:1px solid var(--border2)}
+.mc-question{background:#fff;border:1.5px solid var(--border2);border-radius:18px;padding:36px;width:100%;max-width:580px;box-shadow:0 8px 32px var(--shadow)}
+.q-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4);margin-bottom:14px}
+.q-text{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;color:var(--brown);margin-bottom:24px;line-height:1.4}
+.mc-question{width:100%;max-width:800px;text-align:center;padding:0 24px;margin-bottom:24px}
+.mc-question .q-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4);margin-bottom:10px}
+.mc-question .q-text{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--brown);line-height:1.4}
+.mc-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:800px}
+.mc-opt{padding:0;border-radius:14px;border:none;font-size:18px;font-weight:600;color:#fff;cursor:pointer;transition:all 0.15s;text-align:center;font-family:'Source Sans 3',sans-serif;display:flex;align-items:center;justify-content:center;min-height:140px;position:relative;overflow:hidden}
+.mc-opt:nth-child(1){background:#8b2a2a}
+.mc-opt:nth-child(2){background:#7a5c1e}
+.mc-opt:nth-child(3){background:#1e5c3a}
+.mc-opt:nth-child(4){background:#1e3a5c}
+.mc-opt:hover{transform:scale(1.02);filter:brightness(1.1)}
+.mc-opt:active{transform:scale(0.98)}
+.mc-opt.correct{background:#1a7a3a!important;pointer-events:none;transform:scale(1.02);box-shadow:0 0 0 5px #4ade80,0 8px 32px rgba(0,0,0,0.25);opacity:1!important;filter:none!important}
+.mc-opt.correct::after{content:'✓  Correct!';position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:15px;font-weight:700;color:#fff;white-space:nowrap;background:rgba(0,0,0,0.25);padding:4px 14px;border-radius:100px}
+.mc-opt.wrong{background:#991b1b!important;pointer-events:none;opacity:1!important;filter:none!important}
+.mc-opt.wrong::after{content:'✗  Wrong';position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-size:15px;font-weight:700;color:#fff;white-space:nowrap;background:rgba(0,0,0,0.25);padding:4px 14px;border-radius:100px}
+.mc-opt.disabled{pointer-events:none;opacity:0.3;filter:grayscale(0.5)}
+.mc-opt .opt-letter{display:none}
+
+.mc-opt.disabled{pointer-events:none;opacity:0.5}
+.opt-letter{width:26px;height:26px;border-radius:6px;background:var(--cream3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0;font-family:'Playfair Display',serif}
+.type-wrap{background:#fff;border:1.5px solid var(--border2);border-radius:18px;padding:36px;width:100%;max-width:580px;box-shadow:0 8px 32px var(--shadow)}
+.type-input{width:100%;padding:13px 16px;border:1.5px solid var(--border2);border-radius:10px;font-family:'Source Sans 3',sans-serif;font-size:15px;color:var(--brown);outline:none;transition:border-color 0.2s;background:var(--cream)}
+.type-input:focus{border-color:var(--brown3)}
+.type-submit{margin-top:12px;padding:11px 28px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.type-feedback{margin-top:12px;font-size:13px;font-weight:500;display:none}
+.type-feedback.show{display:block}
+.type-feedback.correct{color:var(--green)}
+.type-feedback.wrong{color:#c0392b}
+.seq-wrap{background:#fff;border:1.5px solid var(--border2);border-radius:18px;padding:32px;width:100%;max-width:580px;box-shadow:0 8px 32px var(--shadow)}
+.seq-instruction{font-size:13px;color:var(--brown3);margin-bottom:20px;font-weight:300;display:flex;align-items:center;gap:6px}
+.seq-items{display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.seq-item{display:flex;align-items:center;gap:12px;padding:13px 16px;border-radius:10px;border:1.5px solid var(--border2);background:var(--cream);cursor:grab;transition:all 0.2s;user-select:none}
+.seq-item:active{cursor:grabbing;box-shadow:0 4px 16px var(--shadow);transform:scale(1.02)}
+.seq-item.dragging{opacity:0.5}
+.seq-item.correct{border-color:var(--green);background:var(--green2)}
+.seq-item.wrong{border-color:#c0392b;background:#fbeaea}
+.seq-item.drag-over{border-color:var(--brown);border-style:dashed}
+.seq-num{width:28px;height:28px;border-radius:6px;background:var(--cream3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--brown2);flex-shrink:0}
+.seq-item.correct .seq-num{background:var(--green);color:#fff}
+.seq-item.wrong .seq-num{background:#c0392b;color:#fff}
+.seq-text{font-size:14px;color:var(--brown);font-weight:400;flex:1}
+.seq-drag-icon{color:var(--brown5);font-size:16px;flex-shrink:0}
+.seq-check-btn{padding:11px 28px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.audio-wrap{background:#fff;border:1.5px solid var(--border2);border-radius:18px;padding:36px;width:100%;max-width:580px;box-shadow:0 8px 32px var(--shadow);text-align:center}
+.audio-play-btn{width:80px;height:80px;border-radius:50%;background:var(--brown);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;margin:0 auto 20px;transition:all 0.2s;color:var(--cream);font-size:32px}
+.audio-play-btn:hover{background:var(--brown2);transform:scale(1.05)}
+.audio-play-btn.playing{background:var(--brown3);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.audio-hint{font-size:13px;color:var(--brown4);margin-bottom:24px;font-weight:300}
+.audio-input{width:100%;padding:14px 18px;border:1.5px solid var(--border2);border-radius:10px;font-family:'Source Sans 3',sans-serif;font-size:18px;color:var(--brown);outline:none;transition:border-color 0.2s;background:var(--cream);text-align:center;letter-spacing:2px}
+.audio-input:focus{border-color:var(--brown3)}
+.audio-submit{margin-top:14px;padding:12px 36px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer}
+.audio-feedback{margin-top:12px;font-size:14px;font-weight:600;display:none;padding:10px 14px;border-radius:8px}
+.audio-feedback.show{display:block}
+.audio-feedback.correct{background:var(--green2);color:var(--green)}
+.audio-feedback.wrong{background:#fbeaea;color:#c0392b}
+.audio-replay{background:transparent;border:1px solid var(--border2);border-radius:6px;padding:6px 14px;font-family:'Source Sans 3',sans-serif;font-size:12px;color:var(--brown3);cursor:pointer;margin-top:8px;display:inline-flex;align-items:center;gap:6px}
+.next-btn{padding:12px 36px;border-radius:10px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;display:none}
+.next-btn.show{display:block}
+.next-btn:hover{background:var(--brown2)}
+.leo-btn{position:fixed;bottom:28px;left:28px;width:48px;height:48px;border-radius:50%;background:var(--brown);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(44,26,14,0.25);transition:all 0.2s;z-index:50;border:none;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--cream)}
+.leo-btn:hover{transform:scale(1.08);background:var(--brown2)}
+.leo-dot{position:absolute;top:2px;right:2px;width:12px;height:12px;border-radius:50%;background:#4ade80;border:2px solid var(--cream)}
+.leo-notif{position:fixed;bottom:90px;left:24px;width:300px;background:var(--brown);border-radius:14px;padding:16px 18px;box-shadow:0 8px 28px rgba(44,26,14,0.25);z-index:50;transform:translateY(20px);opacity:0;transition:all 0.3s;pointer-events:none}
+.leo-notif.show{transform:translateY(0);opacity:1;pointer-events:all}
+.leo-notif-head{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.leo-notif-av{width:28px;height:28px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--cream);flex-shrink:0}
+.leo-notif-name{font-size:13px;font-weight:600;color:var(--cream);flex:1}
+.leo-notif-close{background:transparent;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:16px}
+.leo-notif p{font-size:12px;color:var(--brown5);line-height:1.55;font-weight:300;margin-bottom:10px}
+.leo-notif-actions{display:flex;gap:8px}
+.lna-btn{padding:6px 14px;border-radius:6px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:none}
+.lna-btn.primary{background:var(--cream);color:var(--brown)}
+.lna-btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--cream)}
+.leo-chat-panel{position:fixed;bottom:90px;left:24px;width:300px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 28px var(--shadow);z-index:50;display:none;flex-direction:column;max-height:400px}
+.leo-chat-panel.show{display:flex}
+.lcp-head{background:var(--brown);padding:14px 16px;border-radius:14px 14px 0 0;display:flex;align-items:center;gap:8px}
+.lcp-av{width:28px;height:28px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--cream);flex-shrink:0}
+.lcp-name{font-size:13px;font-weight:600;color:var(--cream);flex:1}
+.lcp-close{background:transparent;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:16px}
+.lcp-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.lcp-msg{font-size:12px;line-height:1.55;padding:10px 12px;border-radius:10px;max-width:90%}
+.lcp-msg.leo{background:var(--cream2);color:var(--brown);align-self:flex-start}
+.lcp-msg.user{background:var(--brown);color:var(--cream);align-self:flex-end}
+.lcp-input-row{padding:10px 12px;border-top:1px solid var(--border);display:flex;gap:8px}
+.lcp-input{flex:1;padding:8px 12px;border:1.5px solid var(--border2);border-radius:7px;font-family:'Source Sans 3',sans-serif;font-size:12px;color:var(--brown);outline:none}
+.lcp-send{width:30px;height:30px;border-radius:6px;background:var(--brown);border:none;display:flex;align-items:center;justify-content:center;color:var(--cream);cursor:pointer;font-size:14px;flex-shrink:0}
+.session-end{display:none;text-align:center;padding:40px 24px;flex-direction:column;align-items:center;gap:16px}
+.session-end.show{display:flex}
+.se-circle{width:72px;height:72px;border-radius:50%;background:var(--green2);display:flex;align-items:center;justify-content:center;font-size:32px;color:var(--green)}
+.se-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:480px}
+.se-stat{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.se-stat-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--brown)}
+.se-stat-label{font-size:11px;color:var(--brown4);margin-top:3px}
+.se-leo-msg{background:var(--brown);border-radius:12px;padding:16px 20px;width:100%;max-width:480px;font-size:13px;color:var(--brown5);line-height:1.6;font-weight:300;text-align:left}
+</style>
+<style>@media(max-width:768px){
+  .study-topbar{padding:0 12px;gap:8px}
+  .study-set-name{font-size:13px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .study-content{padding:20px 14px}
+  .flashcard{height:200px}
+  .flashcard-actions{gap:8px}
+  .fc-btn{padding:10px 18px;font-size:13px}
+  .mc-question .q-text{font-size:18px}
+  .mc-opt{min-height:100px;font-size:14px;border-radius:11px}
+  .type-wrap,.seq-wrap,.audio-wrap{padding:20px 16px}
+  .leo-btn{bottom:84px}
+  .leo-notif{bottom:156px;width:calc(100vw - 32px);left:16px}
+  .leo-chat-panel{bottom:156px;width:calc(100vw - 32px);left:16px}
+  .session-end{padding:24px 16px}
+  .se-stats{grid-template-columns:1fr 1fr 1fr}
+}</style>
+</head>
+<body>
+
+<div id="modePicker" class="mode-picker">
+  <a href="explore.html" class="mp-back"><i class="ti ti-arrow-left" style="font-size:15px"></i> Back to set</a>
+  <div class="mp-set-info">
+    <div class="subject">Biology</div>
+    <h1>Cell Division: Mitosis &amp; Meiosis</h1>
+    <p>48 cards &middot; Intermediate &middot; by sarah_reads</p>
+  </div>
+  <div class="mp-label">Choose a study mode</div>
+  <div class="mode-grid">
+    <div class="mode-card" onclick="selectMode('flip',this)"><i class="ti ti-cards"></i><h3>Flashcard flip</h3><p>Tap to reveal. Mark as known or still learning.</p></div>
+    <div class="mode-card" onclick="selectMode('mc',this)"><i class="ti ti-list-check"></i><h3>Multiple choice</h3><p>Four options — AI makes the wrong answers tricky.</p></div>
+    <div class="mode-card" onclick="selectMode('type',this)"><i class="ti ti-keyboard"></i><h3>Type the answer</h3><p>Retrieve from memory. Harder but sticks better.</p></div>
+    <div class="mode-card" onclick="selectMode('seq',this)"><i class="ti ti-arrows-sort"></i><h3>Sequence</h3><p>Drag and drop steps into the correct order.</p></div>
+    <div class="mode-card" onclick="selectMode('audio',this)"><i class="ti ti-volume"></i><h3>Spelling &amp; audio</h3><p>Listen to the word and type what you hear.</p></div>
+    <div class="mode-card" onclick="selectMode('mixed',this)"><i class="ti ti-shuffle"></i><h3>Mixed mode</h3><p>Leo picks the best question type for each card.</p></div>
+  </div>
+  <button class="start-btn" id="startBtn" disabled onclick="startStudy()">Choose a mode to start</button>
+</div>
+
+<div id="studyScreen" class="study-screen">
+  <div class="study-topbar">
+    <button class="back-btn" onclick="exitStudy()"><i class="ti ti-arrow-left"></i></button>
+    <div class="study-set-name">Cell Division: Mitosis &amp; Meiosis</div>
+    <div class="study-mode-badge" id="modeBadge">Flashcard flip</div>
+    <div class="progress-wrap">
+      <div class="progress-bar-outer"><div class="progress-bar-inner" id="progressBar" style="width:0%"></div></div>
+      <div class="progress-text" id="progressText">0 / 10</div>
+    </div>
+    <div style="display:flex;gap:8px"><button class="icon-btn"><i class="ti ti-player-pause"></i></button></div>
+  </div>
+
+  <div class="study-content" id="contentFlip" style="display:none">
+    <div class="flashcard-wrap">
+      <div class="flashcard" id="flashcard" onclick="flipCard()">
+        <div class="card-face card-front"><div class="card-label">Term</div><div class="card-text" id="cardFront">Mitosis</div><div class="card-hint"><i class="ti ti-hand-click" style="font-size:14px"></i> Tap to reveal</div></div>
+        <div class="card-face card-back"><div class="card-label">Definition</div><div class="card-text" id="cardBack">Cell division producing 2 identical daughter cells</div><div class="card-hint"><i class="ti ti-check" style="font-size:14px"></i> How did you do?</div></div>
+      </div>
+    </div>
+    <div class="flashcard-actions" id="flipActions" style="display:none">
+      <button class="fc-btn wrong" onclick="markCard(false)"><i class="ti ti-x"></i> Still learning</button>
+      <button class="fc-btn skip" onclick="nextCard()"><i class="ti ti-arrow-right"></i> Skip</button>
+      <button class="fc-btn correct" onclick="markCard(true)"><i class="ti ti-check"></i> Got it</button>
+    </div>
+  </div>
+
+  <div class="study-content" id="contentMC" style="display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:28px 20px;flex:1">
+    <div class="mc-question" style="width:100%;max-width:800px;text-align:center;padding:20px 0"><div class="q-label">Multiple choice</div><div class="q-text" id="mcQuestion"></div></div>
+    <div class="mc-options" id="mcOptions" style="width:100%;max-width:800px;flex:1;align-items:stretch"></div>
+    <button class="next-btn" id="mcNext" onclick="nextCard()" style="margin-top:16px">Next question &rarr;</button>
+  </div>
+
+  <div class="study-content" id="contentType" style="display:none">
+    <div class="type-wrap"><div class="q-label">Type the answer</div><div class="q-text" id="typeQuestion"></div><input class="type-input" id="typeInput" type="text" placeholder="Type your answer here..." onkeydown="if(event.key==='Enter')checkType()"><div><button class="type-submit" onclick="checkType()">Submit answer</button></div><div class="type-feedback" id="typeFeedback"></div></div>
+    <button class="next-btn" id="typeNext" onclick="nextCard()">Next question &rarr;</button>
+  </div>
+
+  <div class="study-content" id="contentSeq" style="display:none">
+    <div class="seq-wrap"><div class="q-label">Sequence</div><div class="q-text" id="seqQuestion"></div><div class="seq-instruction"><i class="ti ti-drag-drop" style="font-size:15px"></i> Drag and drop the steps into the correct order</div><div class="seq-items" id="seqItems"></div><button class="seq-check-btn" id="seqCheckBtn" onclick="checkSeq()">Check my order</button></div>
+    <button class="next-btn" id="seqNext" onclick="nextCard()">Next question &rarr;</button>
+  </div>
+
+  <div class="study-content" id="contentAudio" style="display:none">
+    <div class="audio-wrap"><div class="q-label">Spelling &amp; audio</div><div class="q-text" style="margin-bottom:20px">Listen to the word and spell it correctly</div><button class="audio-play-btn" id="audioPlayBtn" onclick="playWord()"><i class="ti ti-volume" id="audioIcon"></i></button><div class="audio-hint">Press play to hear the word, then type what you hear</div><button class="audio-replay" onclick="playWord()"><i class="ti ti-refresh" style="font-size:12px"></i> Play again</button><div style="margin-top:20px"><input class="audio-input" id="audioInput" type="text" placeholder="Type the word here..." onkeydown="if(event.key==='Enter')checkAudio()"><div><button class="audio-submit" onclick="checkAudio()">Check spelling</button></div><div class="audio-feedback" id="audioFeedback"></div></div></div>
+    <button class="next-btn" id="audioNext" onclick="nextCard()">Next word &rarr;</button>
+  </div>
+
+  <div class="session-end" id="sessionEnd">
+    <div class="se-circle"><i class="ti ti-trophy"></i></div>
+    <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--brown)">Session complete!</div>
+    <div class="se-stats">
+      <div class="se-stat"><div class="se-stat-val" id="seCorrect">0</div><div class="se-stat-label">Correct</div></div>
+      <div class="se-stat"><div class="se-stat-val" id="seWrong">0</div><div class="se-stat-label">Still learning</div></div>
+      <div class="se-stat"><div class="se-stat-val" id="seScore">0%</div><div class="se-stat-label">Score</div></div>
+    </div>
+    <div class="se-leo-msg"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div style="width:26px;height:26px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:11px;font-weight:700;color:var(--cream)">L</div><div style="font-size:13px;font-weight:600;color:var(--cream)">Leo's debrief</div></div>You crushed the mitosis questions but struggled with meiosis. I'd recommend a focused drill on meiosis phases before your next session. Your accuracy improved 6% from last time!</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
+      <button style="padding:12px 28px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer" onclick="restartStudy()">Study again</button>
+      <button style="padding:12px 22px;border-radius:8px;border:1.5px solid var(--border2);background:transparent;color:var(--brown2);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:500;cursor:pointer" onclick="exitStudy()">Back to set</button>
+    </div>
+  </div>
+</div>
+
+<button class="leo-btn" id="leoBtn" style="display:none" onclick="toggleLeoChat()">L<span class="leo-dot"></span></button>
+<div class="leo-notif" id="leoNotif"><div class="leo-notif-head"><div class="leo-notif-av">L</div><div class="leo-notif-name">Leo noticed something</div><button class="leo-notif-close" onclick="closeNotif()"><i class="ti ti-x"></i></button></div><p>You've missed the last 3 meiosis questions. Want to slow down and focus on that topic?</p><div class="leo-notif-actions"><button class="lna-btn primary" onclick="closeNotif()">Yes, let's focus</button><button class="lna-btn ghost" onclick="closeNotif()">Keep going</button></div></div>
+<div class="leo-chat-panel" id="leoChatPanel"><div class="lcp-head"><div class="lcp-av">L</div><div class="lcp-name">Leo — Study coach</div><button class="lcp-close" onclick="toggleLeoChat()"><i class="ti ti-x"></i></button></div><div class="lcp-msgs" id="lcpMsgs"><div class="lcp-msg leo">Hey! I'm watching your session. Ask me anything or I'll jump in if I spot a pattern.</div></div><div class="lcp-input-row"><input class="lcp-input" id="lcpInput" placeholder="Ask Leo anything..." onkeydown="if(event.key==='Enter')sendLeoMsg()"><button class="lcp-send" onclick="sendLeoMsg()"><i class="ti ti-send"></i></button></div></div>
+
+<script>
+const CARDS=[{front:'Mitosis',back:'Cell division producing 2 genetically identical daughter cells',options:['Mitosis','Meiosis','Binary fission','Cytokinesis'],correct:0},{front:'Meiosis',back:'Cell division producing 4 genetically unique sex cells',options:['Mitosis','Apoptosis','Meiosis','Osmosis'],correct:2},{front:'Prophase',back:'First stage — chromosomes condense and become visible',options:['Telophase','Anaphase','Metaphase','Prophase'],correct:3},{front:'Metaphase',back:'Chromosomes align at the cell equator',options:['Metaphase','Prophase','Interphase','Telophase'],correct:0},{front:'Anaphase',back:'Sister chromatids pulled to opposite poles',options:['Metaphase','Cytokinesis','Anaphase','Prophase'],correct:2},{front:'Telophase',back:'Nuclear envelopes reform around each set of chromosomes',options:['Anaphase','Telophase','Metaphase','Interphase'],correct:1},{front:'Cytokinesis',back:'Division of cytoplasm to form two daughter cells',options:['Mitosis','Meiosis II','Cytokinesis','Anaphase II'],correct:2},{front:'Haploid',back:'Cell containing only one set of chromosomes (n)',options:['Diploid','Triploid','Haploid','Polyploid'],correct:2},{front:'Crossing over',back:'Exchange of genetic material between homologous chromosomes',options:['Replication','Mutation','Crossing over','Segregation'],correct:2},{front:'Chromosome',back:'Thread-like structure of DNA and protein in the nucleus',options:['Ribosome','Chromosome','Mitochondria','Vacuole'],correct:1}];
+const SEQUENCE_SETS=[{question:'Put the stages of mitosis in the correct order',items:['Prophase','Metaphase','Anaphase','Telophase','Cytokinesis'],correct:['Prophase','Metaphase','Anaphase','Telophase','Cytokinesis']},{question:'Order the steps of DNA replication',items:['Unwinding the helix','Primer attachment','New strand synthesis','Proofreading','Ligase sealing'],correct:['Unwinding the helix','Primer attachment','New strand synthesis','Proofreading','Ligase sealing']}];
+const SPELLING_WORDS=[{word:'Mitosis'},{word:'Meiosis'},{word:'Chromosome'},{word:'Prophase'},{word:'Cytokinesis'},{word:'Metaphase'},{word:'Telophase'},{word:'Anaphase'},{word:'Haploid'},{word:'Diploid'}];
+let selectedMode=null,currentCard=0,correct=0,wrong=0,isFlipped=false,notifTimer=null,seqOrder=[],dragSrc=null;
+// ── LEO AUTO-TRIGGER ─────────────────────────────────────────────────────────
+let missedCards = {};        // tracks how many times each card index was missed
+let autoLeoShown = false;    // prevent spamming
+let lastWrongCard = null;    // track consecutive misses on same card
+let consecutiveMisses = 0;   // misses in a row
+let sessionMisses = [];      // all missed card indices this session
+function selectMode(mode,el){document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');selectedMode=mode;const btn=document.getElementById('startBtn');btn.disabled=false;const labels={flip:'Start flashcards',mc:'Start quiz',type:'Start typing',seq:'Start sequence',audio:'Start spelling & audio',mixed:'Start mixed mode'};btn.textContent=labels[mode]+' →';}
+function startStudy(){document.getElementById('modePicker').style.display='none';document.getElementById('studyScreen').classList.add('show');document.getElementById('leoBtn').style.display='flex';currentCard=0;correct=0;wrong=0;const badges={flip:'Flashcard flip',mc:'Multiple choice',type:'Type the answer',seq:'Sequence',audio:'Spelling & audio',mixed:'Mixed mode'};document.getElementById('modeBadge').textContent=badges[selectedMode];loadCard();notifTimer=setTimeout(showLeoNotif,10000);}
+function getMode(){if(selectedMode!=='mixed')return selectedMode;return['flip','mc','type'][currentCard%3];}
+function getTotal(){return selectedMode==='seq'?SEQUENCE_SETS.length:selectedMode==='audio'?SPELLING_WORDS.length:CARDS.length;}
+function loadCard(){updateProgress();['contentFlip','contentMC','contentType','contentSeq','contentAudio'].forEach(id=>document.getElementById(id).style.display='none');document.getElementById('sessionEnd').classList.remove('show');if(currentCard>=getTotal()){endSession();return;}const mode=getMode();if(mode==='flip')loadFlip();else if(mode==='mc')loadMC();else if(mode==='type')loadType();else if(mode==='seq')loadSeq();else if(mode==='audio')loadAudio();}
+function loadFlip(){const c=CARDS[currentCard];document.getElementById('contentFlip').style.display='flex';document.getElementById('cardFront').textContent=c.front;document.getElementById('cardBack').textContent=c.back;document.getElementById('flashcard').classList.remove('flipped');document.getElementById('flipActions').style.display='none';isFlipped=false;}
+function loadMC(){const c=CARDS[currentCard];document.getElementById('contentMC').style.display='flex';document.getElementById('mcQuestion').textContent='What is the correct definition of: '+c.front+'?';const opts=document.getElementById('mcOptions');opts.innerHTML='';document.getElementById('mcNext').classList.remove('show');c.options.forEach((o,i)=>{const btn=document.createElement('button');btn.className='mc-opt';btn.innerHTML=`<span class="opt-letter">${['A','B','C','D'][i]}</span>${o}`;btn.onclick=()=>checkMC(i,c.correct,btn);opts.appendChild(btn);});}
+function loadType(){const c=CARDS[currentCard];document.getElementById('contentType').style.display='flex';document.getElementById('typeQuestion').textContent='What is the definition of: '+c.front+'?';document.getElementById('typeInput').value='';document.getElementById('typeInput').className='type-input';document.getElementById('typeFeedback').className='type-feedback';document.getElementById('typeFeedback').textContent='';document.getElementById('typeNext').classList.remove('show');}
+function loadSeq(){const set=SEQUENCE_SETS[currentCard%SEQUENCE_SETS.length];document.getElementById('contentSeq').style.display='flex';document.getElementById('seqQuestion').textContent=set.question;document.getElementById('seqNext').classList.remove('show');document.getElementById('seqCheckBtn').style.display='block';seqOrder=[...set.items].sort(()=>Math.random()-0.5);renderSeqItems();}
+function renderSeqItems(){const container=document.getElementById('seqItems');container.innerHTML='';seqOrder.forEach((item,i)=>{const div=document.createElement('div');div.className='seq-item';div.draggable=true;div.dataset.index=i;div.innerHTML=`<div class="seq-num">${i+1}</div><div class="seq-text">${item}</div><i class="ti ti-grip-vertical seq-drag-icon"></i>`;div.addEventListener('dragstart',e=>{dragSrc=i;div.classList.add('dragging');e.dataTransfer.effectAllowed='move';});div.addEventListener('dragend',()=>div.classList.remove('dragging'));div.addEventListener('dragover',e=>{e.preventDefault();div.classList.add('drag-over');});div.addEventListener('dragleave',()=>div.classList.remove('drag-over'));div.addEventListener('drop',e=>{e.preventDefault();div.classList.remove('drag-over');const target=parseInt(div.dataset.index);const moved=seqOrder.splice(dragSrc,1)[0];seqOrder.splice(target,0,moved);renderSeqItems();});container.appendChild(div);});}
+function checkSeq(){const set=SEQUENCE_SETS[currentCard%SEQUENCE_SETS.length];const items=document.querySelectorAll('.seq-item');let allCorrect=true;items.forEach((item,i)=>{const text=item.querySelector('.seq-text').textContent;if(text===set.correct[i])item.classList.add('correct');else{item.classList.add('wrong');allCorrect=false;}});if(allCorrect)correct++;else wrong++;
+    if(window.soundsEnabled && soundsEnabled()) playWrongSound();document.getElementById('seqCheckBtn').style.display='none';document.getElementById('seqNext').classList.add('show');}
+function loadAudio(){document.getElementById('contentAudio').style.display='flex';document.getElementById('audioInput').value='';document.getElementById('audioInput').className='audio-input';document.getElementById('audioFeedback').className='audio-feedback';document.getElementById('audioFeedback').textContent='';document.getElementById('audioNext').classList.remove('show');document.getElementById('audioPlayBtn').classList.remove('playing');document.getElementById('audioIcon').className='ti ti-volume';setTimeout(()=>playWord(),600);}
+function playWord(){const w=SPELLING_WORDS[currentCard%SPELLING_WORDS.length];const btn=document.getElementById('audioPlayBtn');const icon=document.getElementById('audioIcon');btn.classList.add('playing');icon.className='ti ti-volume-3';if('speechSynthesis'in window){window.speechSynthesis.cancel();const utt=new SpeechSynthesisUtterance(w.word);utt.rate=0.85;utt.onend=()=>{btn.classList.remove('playing');icon.className='ti ti-volume';};window.speechSynthesis.speak(utt);}else{setTimeout(()=>{btn.classList.remove('playing');icon.className='ti ti-volume';},1200);}}
+function checkAudio(){const w=SPELLING_WORDS[currentCard%SPELLING_WORDS.length];const input=document.getElementById('audioInput');const isRight=input.value.trim().toLowerCase()===w.word.toLowerCase();input.className='audio-input '+(isRight?'correct':'wrong');const fb=document.getElementById('audioFeedback');fb.className='audio-feedback show '+(isRight?'correct':'wrong');fb.textContent=isRight?'✓ Correct! '+w.word:'✗ The correct spelling is: '+w.word;if(isRight){correct++;trackCorrect();}else{wrong++;trackWrong(currentCard);}document.getElementById('audioNext').classList.add('show');}
+function flipCard(){ if(window.soundsEnabled && soundsEnabled()) playFlipSound();isFlipped=!isFlipped;document.getElementById('flashcard').classList.toggle('flipped',isFlipped);document.getElementById('flipActions').style.display=isFlipped?'flex':'none';}
+function markCard(wasCorrect){
+  if(window.soundsEnabled && soundsEnabled()){
+    if(wasCorrect) playCorrectSound(); else playWrongSound();
+  }if(wasCorrect){correct++;trackCorrect();}else{wrong++;trackWrong(currentCard);}nextCard();}
+function checkMC(chosen,correctIdx,btn){
+  document.querySelectorAll('.mc-opt').forEach((b,i)=>{
+    if(i===correctIdx){
+      b.classList.add('correct');
+    } else if(b===btn && chosen!==correctIdx){
+      b.classList.add('wrong');
+      b.classList.add('disabled');
+    } else {
+      b.classList.add('disabled');
+    }
+  });
+  if(chosen===correctIdx){
+    if(window.soundsEnabled && soundsEnabled()) playCorrectSound();correct++;trackCorrect();}else{wrong++;trackWrong(currentCard);}
+  document.getElementById('mcNext').classList.add('show');
+}
+function checkType(){const input=document.getElementById('typeInput');const answer=CARDS[currentCard].back.toLowerCase();const given=input.value.toLowerCase().trim();const isRight=given.length>4&&(answer.includes(given)||given.includes(CARDS[currentCard].front.toLowerCase()));input.className='type-input '+(isRight?'correct':'wrong');const fb=document.getElementById('typeFeedback');fb.className='type-feedback show '+(isRight?'correct':'wrong');fb.textContent=isRight?'✓ Correct! '+CARDS[currentCard].back:'✗ The answer was: '+CARDS[currentCard].back;if(isRight){correct++;trackCorrect();}else{wrong++;trackWrong(currentCard);}document.getElementById('typeNext').classList.add('show');}
+function nextCard(){currentCard++;leoAutoTriggered=false;loadCard();}
+function updateProgress(){const total=getTotal();const pct=(currentCard/total)*100;document.getElementById('progressBar').style.width=pct+'%';document.getElementById('progressText').textContent=currentCard+' / '+total;}
+function endSession(){
+  const pct = (correct+wrong) > 0 ? Math.round(correct/(correct+wrong)*100) : 0;
+  if(pct >= 80 && window.launchConfetti) setTimeout(launchConfetti, 400);
+  if(pct >= 100 && window.celebrateStreak) setTimeout(()=>celebrateStreak('Perfect'), 800);
+  if(window.updateLeoMood) updateLeoMood(pct);clearTimeout(notifTimer);['contentFlip','contentMC','contentType','contentSeq','contentAudio'].forEach(id=>document.getElementById(id).style.display='none');document.getElementById('progressBar').style.width='100%';if(window.animateScore) animateScore(document.getElementById('seCorrect'),correct,''); else document.getElementById('seCorrect').textContent=correct;if(window.animateScore) animateScore(document.getElementById('seWrong'),wrong,''); else document.getElementById('seWrong').textContent=wrong;const total=correct+wrong;const scoreEl = document.getElementById('seScore');
+  const scorePct = total>0?Math.round((correct/total)*100):0;
+  if(window.animateScore) animateScore(scoreEl, scorePct, '%');
+  else scoreEl.textContent = scorePct+'%';document.getElementById('sessionEnd').classList.add('show');closeNotif();}
+function showLeoNotif(){document.getElementById('leoNotif').classList.add('show');}
+function closeNotif(){document.getElementById('leoNotif').classList.remove('show');}
+function toggleLeoChat(){document.getElementById('leoChatPanel').classList.toggle('show');closeNotif();}
+
+// SETUP: Replace YOUR_API_KEY_HERE with your Anthropic API key
+// Get one at console.anthropic.com
+const ANTHROPIC_KEY = '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';
+
+async function groqCall(messages, maxTokens=1000){
+  if(ANTHROPIC_KEY === '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'){
+    throw new Error('Add your Anthropic API key to this file to enable Leo.');
+  }
+  const systemMsg = messages.find(m => m.role === 'system');
+  const userMsgs = messages.filter(m => m.role !== 'system');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: maxTokens,
+      system: systemMsg?.content || 'You are Leo, a helpful AI study coach on Lumio.',
+      messages: userMsgs
+    })
+  });
+  const data = await res.json();
+  if(data.error) throw new Error(data.error.message);
+  return data.content?.[0]?.text || '';
+}
+
+async function callLeoChat(system, history, maxTokens=400){
+  const messages = [];
+  if(system) messages.push({role:'system', content:system});
+  history.forEach(m => messages.push({role:m.role==='assistant'?'assistant':'user', content:m.content}));
+  return await groqCall(messages, maxTokens);
+});
+  history.forEach(m => messages.push({role:m.role==='assistant'?'assistant':'user', content:m.content}));
+  return await groqCall(messages, maxTokens);
+}
+
+
+// ── LEO CHAT LIMIT ───────────────────────────────────────────────────────────
+let leoChatCount = 0;
+const LEO_CHAT_LIMIT = 10;
+let leoChatHistory=[];
+
+// ── LEO AUTO-TRIGGER ─────────────────────────────────────────────────────────
+let wrongStreak = 0;
+let wrongCards = {};
+let leoAutoTriggered = false;
+
+function trackWrong(cardIndex) {
+  wrongCards[cardIndex] = (wrongCards[cardIndex] || 0) + 1;
+  wrongStreak++;
+  // Trigger Leo after missing same card twice OR 3 wrong in a row
+  const cardMissedTwice = wrongCards[cardIndex] >= 2;
+  const threeWrongStreak = wrongStreak >= 3;
+  if ((cardMissedTwice || threeWrongStreak) && !leoAutoTriggered) {
+    leoAutoTriggered = true;
+    wrongStreak = 0;
+    setTimeout(() => triggerLeoAutoHelp(cardIndex, cardMissedTwice), 800);
+  }
+}
+
+function trackCorrect() {
+  wrongStreak = 0;
+  leoAutoTriggered = false;
+}
+
+function triggerLeoAutoHelp(cardIndex, missedTwice) {
+  const card = CARDS[cardIndex] || CARDS[currentCard - 1];
+  if (!card) return;
+  // Open Leo chat panel
+  document.getElementById('leoChatPanel').classList.add('show');
+  closeNotif();
+  const msgs = document.getElementById('lcpMsgs');
+  const reason = missedTwice
+    ? `You've missed "${card.front}" twice now.`
+    : `You've gotten 3 wrong in a row.`;
+  // Add Leo message
+  const thinkId = 'auto-' + Date.now();
+  msgs.innerHTML += `<div class="lcp-msg leo" id="${thinkId}"><span style="display:inline-flex;gap:3px;align-items:center"><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0s;display:inline-block"></span><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0.2s;display:inline-block"></span><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0.4s;display:inline-block"></span></span></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  // Get real Leo help if API key is set
+  const sessionInfo = `Mode: ${selectedMode}. Progress: ${currentCard}/${CARDS.length}. ${reason} The card is: "${card.front}" = "${card.back}"`;
+  const system = `You are Leo, a warm AI study coach. A student is struggling. ${sessionInfo} Give a short, helpful tip to remember this specific card. Max 2 sentences. Be encouraging.`;
+  callLeoChat(system, [{role:'user', content:`I keep getting "${card.front}" wrong. Can you help me remember it?`}], 200)
+    .then(reply => {
+      document.getElementById(thinkId).textContent = reply;
+      leoChatHistory.push({role:'assistant', content: reply});
+      msgs.scrollTop = msgs.scrollHeight;
+    })
+    .catch(() => {
+      document.getElementById(thinkId).textContent = `${reason} Try this: connect "${card.front}" to something you already know — a story, a rhyme, or a visual image. What does it remind you of?`;
+      msgs.scrollTop = msgs.scrollHeight;
+    });
+}
+
+async function sendLeoMsg(){
+  if(leoChatCount >= LEO_CHAT_LIMIT){
+    const msgs = document.getElementById('lcpMsgs');
+    msgs.innerHTML += `<div class="lcp-msg leo" style="opacity:0.7;font-style:italic">You've used all ${LEO_CHAT_LIMIT} Leo messages for this session. Start a new session to chat again!</div>`;
+    document.getElementById('lcpInput').disabled = true;
+    document.getElementById('lcpInput').placeholder = 'Chat limit reached';
+    return;
+  }
+  leoChatCount++;
+  const input=document.getElementById('lcpInput');
+  const msg=input.value.trim();
+  if(!msg||input.disabled)return;
+  const msgs=document.getElementById('lcpMsgs');
+  msgs.innerHTML+=`<div class="lcp-msg user">${escLeo(msg)}</div>`;
+  input.value='';input.disabled=true;
+  leoChatHistory.push({role:'user',content:msg});
+  const thinkId='think-'+Date.now();
+  msgs.innerHTML+=`<div class="lcp-msg leo" id="${thinkId}"><span style="display:inline-flex;gap:3px;align-items:center"><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0s;display:inline-block"></span><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0.2s;display:inline-block"></span><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0.4s;display:inline-block"></span></span></div>`;
+  msgs.scrollTop=msgs.scrollHeight;
+  try{
+    const sessionInfo=`Mode: ${selectedMode||'studying'}. Progress: ${currentCard} of ${CARDS.length} cards. Correct: ${correct}, Wrong: ${wrong}.`;
+    const system=`You are Leo, a warm knowledgeable AI study coach on Lumio. ${sessionInfo} Keep responses concise — 2-4 sentences. Be encouraging, use examples and analogies.`;
+    const reply=await callLeoChat(system, leoChatHistory, 400);
+    leoChatHistory.push({role:'assistant',content:reply});
+    document.getElementById(thinkId).textContent=reply;
+  }catch(e){document.getElementById(thinkId).textContent='Connection issue — try again!';}
+  input.disabled=false;input.focus();msgs.scrollTop=msgs.scrollHeight;
+}
+function escLeo(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function exitStudy(){document.getElementById('studyScreen').classList.remove('show');document.getElementById('modePicker').style.display='flex';document.getElementById('leoBtn').style.display='none';closeNotif();document.getElementById('leoChatPanel').classList.remove('show');clearTimeout(notifTimer);if('speechSynthesis'in window)window.speechSynthesis.cancel();}
+function restartStudy(){currentCard=0;correct=0;wrong=0;document.getElementById('sessionEnd').classList.remove('show');loadCard();}
+</script>
+
+
+
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bn-item" onclick="window.location.href='dashboard.html'" id="bn-home">
+    <i class="ti ti-layout-dashboard"></i><span>Home</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='explore.html'" id="bn-explore">
+    <i class="ti ti-compass"></i><span>Explore</span>
+  </button>
+  <button class="bn-create" onclick="window.location.href='create.html'">
+    <div class="bn-create-icon"><i class="ti ti-plus" style="font-size:22px;color:var(--cream)"></i></div>
+    <span>Create</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='leaderboard.html'" id="bn-ranks">
+    <i class="ti ti-trophy"></i><span>Ranks</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='profile.html'" id="bn-profile">
+    <i class="ti ti-user"></i><span>Profile</span>
+  </button>
+</nav>
+<script>
+// Highlight active tab
+(function(){
+  const page = window.location.pathname.split('/').pop();
+  const map = {'dashboard.html':'bn-home','explore.html':'bn-explore','leaderboard.html':'bn-ranks','profile.html':'bn-profile','create.html':null};
+  const activeId = map[page];
+  if(activeId) { const el=document.getElementById(activeId); if(el) el.classList.add('active'); }
+})();
+</script>
+
+
+<script>
+// Smooth page transitions on navigation
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href]').forEach(function(link){
+    const href = link.getAttribute('href');
+    if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = link.href;
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateY(-6px)';
+      document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      setTimeout(function(){ window.location.href = target; }, 200);
+    });
+  });
+  // Fade in on load
+  document.body.style.opacity = '0';
+  document.body.style.transform = 'translateY(6px)';
+  document.body.style.transition = 'none';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      document.body.style.opacity = '1';
+      document.body.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
+
+
+<!-- SEARCH OVERLAY -->
+<div id="searchOverlay" style="display:none;position:fixed;inset:0;background:rgba(44,26,14,0.5);z-index:9998;backdrop-filter:blur(4px)" onclick="closeSearch()"></div>
+<div id="searchPanel" style="display:none;position:fixed;top:0;left:0;right:0;background:#fff;z-index:9999;padding:16px 24px;box-shadow:0 8px 32px rgba(44,26,14,0.15)">
+  <div style="max-width:700px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <i class="ti ti-search" style="font-size:20px;color:var(--brown4)"></i>
+      <input id="searchInput" type="text" placeholder="Search sets, topics, creators..." style="flex:1;border:none;outline:none;font-family:'Source Sans 3',sans-serif;font-size:16px;color:var(--brown);background:transparent" oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
+      <button onclick="closeSearch()" style="border:none;background:transparent;cursor:pointer;color:var(--brown4);font-size:14px;font-family:'Source Sans 3',sans-serif;font-weight:500">Cancel</button>
+    </div>
+    <div id="searchResults" style="padding-bottom:8px"></div>
+  </div>
+</div>
+<script>
+const SEARCH_DATA = [
+  {type:'set',name:'Cell Division: Mitosis & Meiosis',meta:'48 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'Human Body Systems Overview',meta:'66 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'World Capitals — 195 Countries',meta:'195 cards · Geography',url:'setdetail.html'},
+  {type:'set',name:'SAT Vocabulary High Frequency',meta:'150 cards · English',url:'setdetail.html'},
+  {type:'set',name:'Spanish 101 — Core Vocabulary',meta:'200 cards · Languages',url:'setdetail.html'},
+  {type:'set',name:'WW2 Key Events Timeline',meta:'60 cards · History',url:'setdetail.html'},
+  {type:'set',name:'Calculus Fundamentals',meta:'55 cards · Math',url:'setdetail.html'},
+  {type:'set',name:'Photosynthesis — Complete Guide',meta:'28 cards · Science',url:'setdetail.html'},
+  {type:'page',name:'Explore sets',meta:'Browse the marketplace',url:'explore.html'},
+  {type:'page',name:'Leaderboard',meta:'Weekly rankings',url:'leaderboard.html'},
+  {type:'page',name:'Create a set',meta:'Build your own flashcard set',url:'create.html'},
+  {type:'page',name:'Study with Leo',meta:'Start a study session',url:'study.html'},
+  {type:'page',name:'My profile',meta:'View your profile',url:'profile.html'},
+  {type:'page',name:'Settings',meta:'Account and preferences',url:'settings.html'},
+  {type:'creator',name:'Leo',meta:'AI study coach · 2,840 sets',url:'leo.html'},
+  {type:'creator',name:'sarah_reads',meta:'Verified creator · 12 sets',url:'profile.html'},
+  {type:'creator',name:'nova_prep',meta:'Top creator · 22 sets',url:'profile.html'},
+];
+function openSearch(){
+  document.getElementById('searchOverlay').style.display='block';
+  document.getElementById('searchPanel').style.display='block';
+  setTimeout(()=>document.getElementById('searchInput').focus(),50);
+  doSearch('');
+}
+function closeSearch(){
+  document.getElementById('searchOverlay').style.display='none';
+  document.getElementById('searchPanel').style.display='none';
+  document.getElementById('searchInput').value='';
+}
+function doSearch(q){
+  const results = document.getElementById('searchResults');
+  const query = q.toLowerCase().trim();
+  const matches = query ? SEARCH_DATA.filter(d=>d.name.toLowerCase().includes(query)||d.meta.toLowerCase().includes(query)) : SEARCH_DATA.slice(0,6);
+  if(!matches.length){results.innerHTML='<div style="padding:12px 0;font-size:13px;color:var(--brown4);text-align:center">No results for "'+q+'"</div>';return;}
+  const icons={set:'ti-cards',page:'ti-file',creator:'ti-user'};
+  results.innerHTML = matches.slice(0,8).map(m=>`
+    <div onclick="window.location.href='${m.url}'" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">
+      <div style="width:36px;height:36px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:16px;flex-shrink:0;border:1.5px solid var(--border2)"><i class="ti ${icons[m.type]}"></i></div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--brown)">${m.name}</div><div style="font-size:11px;color:var(--brown4);font-weight:300">${m.meta}</div></div>
+    </div>`).join('');
+}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}});
+</script>
+
+<script src="api.js"></script>
+<script src="transitions.js">
+// ── LEO AUTO-TRIGGER FUNCTIONS ────────────────────────────────────────────────
+async function triggerLeoAutoHelp(cardIdx){
+  autoLeoShown = true;
+  const card = CARDS[cardIdx];
+  if(!card) return;
+
+  // Open Leo chat panel
+  document.getElementById('leoChatPanel').classList.add('show');
+  document.getElementById('leoNotif').classList.remove('show');
+
+  const msgs = document.getElementById('lcpMsgs');
+
+  // Show thinking dots
+  const thinkId = 'auto-think-'+Date.now();
+  msgs.innerHTML += `<div class="lcp-msg leo" id="${thinkId}"><span style="display:inline-flex;gap:3px;align-items:center"><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0s;display:inline-block"></span><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0.2s;display:inline-block"></span><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0.4s;display:inline-block"></span></span></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const system = `You are Leo, a warm AI study coach on Lumio. A student has missed the same flashcard twice in a row. 
+Card front: "${card.front}"
+Card back: "${card.back}"
+Give a SHORT helpful explanation (2-3 sentences max) using a memory trick, analogy, or simpler explanation. Be encouraging. Don't repeat the definition word for word.`;
+
+    const reply = await callLeoChat(system, [{role:'user', content:`I keep getting "${card.front}" wrong. Help me remember it!`}], 200);
+    leoChatHistory.push({role:'assistant', content: reply});
+    document.getElementById(thinkId).textContent = reply;
+  } catch(e) {
+    document.getElementById(thinkId).textContent = `You've missed "${card.front}" twice! Try this: read the definition out loud, then close your eyes and repeat it. Want me to quiz you on it?`;
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+  if(window.haptic) haptic('double');
+}
+
+async function triggerLeoStruggleHelp(){
+  autoLeoShown = true;
+  document.getElementById('leoChatPanel').classList.add('show');
+  const msgs = document.getElementById('lcpMsgs');
+  const thinkId = 'struggle-think-'+Date.now();
+  msgs.innerHTML += `<div class="lcp-msg leo" id="${thinkId}"><span style="display:inline-flex;gap:3px;align-items:center"><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0s;display:inline-block"></span><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0.2s;display:inline-block"></span><span style="width:5px;height:5px;border-radius:50%;background:var(--brown4);animation:blink 1.2s infinite 0.4s;display:inline-block"></span></span></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    const recentMissed = [...new Set(sessionMisses.slice(-3))].map(i => CARDS[i]?.front).filter(Boolean).join(', ');
+    const system = `You are Leo, a warm AI study coach. A student has missed 3 cards in a row and seems to be struggling. 
+Recently missed: ${recentMissed}
+Give a short encouraging message (2-3 sentences) with a practical tip to refocus. Suggest slowing down or trying a different approach.`;
+
+    const reply = await callLeoChat(system, [{role:'user', content:'I keep getting things wrong'}], 150);
+    document.getElementById(thinkId).textContent = reply;
+  } catch(e) {
+    document.getElementById(thinkId).textContent = "Hey, you've missed a few in a row — that's totally normal! Try slowing down and reading each card twice before answering. You've got this!";
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+  if(window.haptic) haptic('double');
+}
+
+// Reset auto-Leo flag each new session
+const _origStartStudy = startStudy;
+function startStudy(){
+  autoLeoShown = false;
+  missedCards = {};
+  lastWrongCard = null;
+  consecutiveMisses = 0;
+  sessionMisses = [];
+  leoChatHistory = [];
+  _origStartStudy();
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream: #faf7f2;
+  --cream2: #f4ede0;
+  --cream3: #ede0cc;
+  --brown: #2c1a0e;
+  --brown2: #5c3d1e;
+  --brown3: #8b6340;
+  --brown4: #b8956a;
+  --brown5: #d4b896;
+  --green: #3a6b3f;
+  --green2: #e8f0e9;
+  --border: rgba(92,61,30,0.12);
+  --border2: rgba(92,61,30,0.22);
+  --shadow: rgba(44,26,14,0.08);
+}
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--cream);
+  color: var(--brown);
+}
+
+.serif { font-family: 'Playfair Display', serif; }
+
+/* ── MOBILE RESPONSIVE ──────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+
+  /* Hide sidebar */
+  .sidebar { display: none !important; }
+
+  /* Remove sidebar margin */
+  .main { margin-left: 0 !important; }
+
+  /* Top bar */
+  .topbar {
+    padding: 0 16px;
+    height: 56px;
+  }
+
+  /* Add bottom padding for nav */
+  body { padding-bottom: 72px; }
+
+  /* Bottom nav */
+  .bottom-nav {
+    display: flex !important;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 68px;
+    background: rgba(250,247,242,0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 999;
+    align-items: center;
+    padding: 0 8px 8px;
+  }
+  .bn-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 6px 4px;
+    border-radius: 10px;
+  }
+  .bn-item i { font-size: 22px; color: var(--brown5); display: block; }
+  .bn-item span { font-size: 10px; color: var(--brown5); font-weight: 400; }
+  .bn-item.active i { color: var(--brown); }
+  .bn-item.active span { color: var(--brown); font-weight: 600; }
+  .bn-create {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  .bn-create-icon {
+    width: 46px; height: 46px;
+    border-radius: 13px;
+    background: var(--brown);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--cream);
+    font-size: 22px;
+    margin-top: -18px;
+    box-shadow: 0 4px 14px rgba(44,26,14,0.3);
+  }
+  .bn-create span { font-size: 10px; color: var(--brown5); margin-top: 2px; }
+
+  /* Content padding */
+  .content, .admin-content { padding: 14px 16px; }
+
+  /* Stats grids — 2 col on mobile */
+  .stats-row { grid-template-columns: 1fr 1fr !important; gap: 10px; }
+
+  /* Profile grid — single col */
+  .profile-grid,
+  .sd-layout,
+  .leo-content,
+  .two-col,
+  .grid-2,
+  .grid-3 { grid-template-columns: 1fr !important; }
+
+  /* Set detail layout */
+  .layout { grid-template-columns: 1fr !important; }
+
+  /* Hero actions — wrap */
+  .actions, .profile-actions { flex-wrap: wrap; }
+
+  /* Tables — horizontal scroll */
+  .cbox { overflow-x: auto; }
+  table { min-width: 520px; }
+
+  /* Flashcard */
+  .flashcard { height: 220px; }
+  .flashcard-wrap { max-width: 100%; }
+  .card-text { font-size: 18px; }
+
+  /* MC options — full width on mobile */
+  .mc-options { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .mc-opt { min-height: 110px; font-size: 15px; }
+
+  /* Create wizard */
+  .wizard-steps { overflow-x: auto; padding-bottom: 4px; }
+  .step-label { display: none; }
+
+  /* Set hero */
+  .set-hero-top { flex-direction: column; }
+  .set-actions { width: 100%; flex-direction: row; flex-wrap: wrap; }
+
+  /* Classroom grid */
+  .classroom-grid { grid-template-columns: 1fr; }
+
+  /* Child switcher — scroll */
+  .child-switcher { overflow-x: auto; flex-wrap: nowrap; }
+
+  /* Leo banner */
+  .leo-banner-inner { flex-direction: column; gap: 16px; }
+  .leo-av-big { width: 72px; height: 72px; font-size: 28px; }
+  .leo-name { font-size: 22px; }
+  .stats-strip-inner { overflow-x: auto; }
+  .stat-s { min-width: 100px; }
+
+  /* Kids sets grid */
+  .ksets { grid-template-columns: 1fr 1fr; }
+
+  /* Profile stats */
+  .profile-stats { grid-template-columns: 1fr 1fr; }
+
+  /* Badges grid */
+  .badges-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* Page title size */
+  .page-title { font-size: 18px; }
+
+  /* Teacher stats */
+  .stats-row[style*="repeat(4"] { grid-template-columns: 1fr 1fr !important; }
+
+  /* Admin tabs — scroll */
+  .admin-nav { overflow-x: auto; }
+  .admin-tab { white-space: nowrap; }
+
+  /* Leaderboard podium */
+  .podium { flex-direction: row; }
+
+  /* Mobile hero greeting */
+  .mobile-greeting { display: block; }
+}
+
+/* Bottom nav hidden by default on desktop */
+.bottom-nav { display: none; }
+.mobile-greeting { display: none; }
+
+/* ── PAGE TRANSITIONS ────────────────────────────────────────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Page entrance */
+.main, #pinScreen, #kidsDash, .admin, .login-screen {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Content areas */
+.content, .admin-content, .view.active {
+  animation: fadeInUp 0.35s ease forwards;
+}
+
+/* Cards stagger in */
+.stat-card, .classroom-card, .set-card, .set-item, .cbox, .kids-set-card {
+  animation: scaleIn 0.3s ease forwards;
+  animation-fill-mode: both;
+}
+.stat-card:nth-child(1){ animation-delay: 0.05s }
+.stat-card:nth-child(2){ animation-delay: 0.1s }
+.stat-card:nth-child(3){ animation-delay: 0.15s }
+.stat-card:nth-child(4){ animation-delay: 0.2s }
+
+.cbox:nth-child(1){ animation-delay: 0.08s }
+.cbox:nth-child(2){ animation-delay: 0.14s }
+.cbox:nth-child(3){ animation-delay: 0.2s }
+
+/* Nav items */
+.nav-item {
+  transition: background 0.18s ease, color 0.18s ease, transform 0.15s ease;
+}
+.nav-item:hover { transform: translateX(3px); }
+
+/* Buttons */
+.btn-primary, .btn-ghost, .btn-study, .btn-out, .btn-sm {
+  transition: background 0.18s ease, transform 0.15s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+.btn-primary:active, .btn-study:active { transform: scale(0.97); }
+.btn-ghost:active, .btn-out:active, .btn-sm:active { transform: scale(0.98); }
+
+/* Cards hover lift */
+.stat-card, .set-card, .classroom-card, .kids-set-card, .preview-card, .set-item, .similar-set {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px var(--shadow); }
+.kids-set-card:hover { transform: translateY(-3px); }
+
+/* Flashcard flip */
+.flashcard {
+  transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Page exit transition */
+.page-exit {
+  animation: fadeOut 0.2s ease forwards;
+}
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+/* Bottom nav icons bounce on tap */
+.bn-item:active i { transform: scale(0.88); }
+.bn-item i { transition: transform 0.15s ease, color 0.2s ease; }
+
+/* Toggle animation */
+.toggle { transition: background 0.25s ease; }
+.toggle::after { transition: left 0.25s ease; }
+
+/* Input focus ring animation */
+.field input:focus, .field textarea:focus, .field select:focus,
+.type-input:focus, .audio-input:focus, .ask-input:focus, .chat-input:focus {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 0 0 3px rgba(92,61,30,0.08);
+}
+
+/* Badge pop */
+.badge-item.earned:hover {
+  transform: translateY(-2px) scale(1.03);
+  transition: transform 0.2s ease;
+}
+
+/* Leaderboard row hover */
+.lb-row { transition: background 0.15s ease; }
+
+/* Modal entrance */
+.modal-overlay.show .modal {
+  animation: scaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Leo notification slide in */
+.leo-notif { transition: opacity 0.3s ease, transform 0.3s ease; }
+.leo-chat-panel { transition: opacity 0.25s ease; }
+
+/* Study mode next button */
+.next-btn { transition: opacity 0.3s ease, transform 0.2s ease; }
+.next-btn.show { animation: fadeInUp 0.25s ease forwards; }
+
+/* Score badges pop on appear */
+.score-badge, .status-badge, .due-badge {
+  transition: transform 0.15s ease;
+}
+
+/* Smooth page links */
+a.nav-item, a.back-btn {
+  transition: background 0.18s ease, color 0.18s ease, transform 0.15s ease, border-color 0.18s ease;
+}
+
+/* Page transition on link click */
+body.transitioning * {
+  pointer-events: none;
+}

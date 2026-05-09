@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Settings</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;--brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;--brown4:#b8956a;--brown5:#d4b896;--green:#3a6b3f;--green2:#e8f0e9;--red:#c0392b;--red2:#fbeaea;--border:rgba(92,61,30,0.15);--border2:rgba(92,61,30,0.28);--shadow:rgba(92,61,30,0.09)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--brown);display:flex;min-height:100vh}
+.sidebar{width:220px;min-height:100vh;background:var(--brown);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0}
+.sidebar-logo{padding:28px 24px 24px;border-bottom:1px solid rgba(255,255,255,0.07);font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--brown5);display:inline-block}
+.sidebar-section{padding:20px 16px 8px;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;margin:2px 8px;cursor:pointer;transition:all 0.2s;font-size:13px;color:rgba(255,255,255,0.55);font-weight:400;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:var(--cream)}
+.nav-item.active{background:rgba(255,255,255,0.1);color:var(--cream);font-weight:500}
+.nav-item i{font-size:17px;width:20px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:16px 8px;border-top:1px solid rgba(255,255,255,0.07)}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer}
+.user-av{width:32px;height:32px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);flex-shrink:0}
+.user-info .un{font-size:13px;font-weight:500;color:var(--cream)}
+.user-info .ur{font-size:11px;color:rgba(255,255,255,0.35)}
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;margin-left:220px}
+.topbar{background:#fff;border-bottom:1.5px solid var(--border2);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10}
+.topbar-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)}
+.content{padding:28px;max-width:780px}
+.settings-layout{display:grid;grid-template-columns:200px 1fr;gap:24px}
+.settings-nav{display:flex;flex-direction:column;gap:2px}
+.sn-item{display:flex;align-items:center;gap:9px;padding:10px 14px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--brown3);font-weight:400;transition:all 0.2s;border:none;background:transparent;text-align:left;width:100%}
+.sn-item:hover{background:var(--cream2);color:var(--brown)}
+.sn-item.active{background:var(--cream2);color:var(--brown);font-weight:600}
+.sn-item i{font-size:16px;width:18px}
+.sn-divider{height:1.5px;background:var(--border);margin:8px 4px}
+.settings-panel{display:none}
+.settings-panel.active{display:block}
+.panel-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--brown);margin-bottom:4px}
+.panel-sub{font-size:13px;color:var(--brown4);font-weight:300;margin-bottom:24px}
+.sgroup{background:#fff;border:2px solid var(--border2);border-radius:13px;overflow:hidden;margin-bottom:18px;box-shadow:0 2px 8px var(--shadow)}
+.sgroup-head{padding:13px 18px;border-bottom:1.5px solid var(--border2);background:var(--cream2)}
+.sgroup-head h3{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--brown)}
+.srow{padding:14px 18px;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:14px}
+.srow:last-child{border-bottom:none}
+.srow-info{flex:1}
+.srow-label{font-size:13px;font-weight:500;color:var(--brown);margin-bottom:2px}
+.srow-sub{font-size:12px;color:var(--brown4);font-weight:300}
+.toggle{width:44px;height:24px;border-radius:100px;cursor:pointer;transition:all 0.2s;position:relative;border:none;flex-shrink:0}
+.toggle.on{background:var(--green)}
+.toggle.off{background:var(--cream3);border:1.5px solid var(--border2)}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.toggle.on::after{left:23px}
+.toggle.off::after{left:3px}
+.srow select,.srow input[type=text],.srow input[type=email],.srow input[type=password]{padding:8px 12px;border:1.5px solid var(--border2);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);background:var(--cream2);outline:none;min-width:160px}
+.srow select:focus,.srow input:focus{border-color:var(--brown3)}
+.srow input[type=range]{width:120px;accent-color:var(--brown)}
+.srow-val{font-size:13px;font-weight:600;color:var(--brown);min-width:28px;text-align:right}
+.avatar-grid{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px}
+.av-opt{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;border:2.5px solid var(--border2);transition:all 0.2s;background:var(--cream2)}
+.av-opt:hover{transform:scale(1.08);border-color:var(--brown4)}
+.av-opt.sel{border-color:var(--brown);box-shadow:0 0 0 3px var(--cream3)}
+.color-grid{display:flex;gap:10px;flex-wrap:wrap;padding:14px 18px}
+.color-opt{width:32px;height:32px;border-radius:50%;cursor:pointer;border:2.5px solid transparent;transition:all 0.2s}
+.color-opt:hover{transform:scale(1.1)}
+.color-opt.sel{border-color:var(--brown);box-shadow:0 0 0 3px var(--cream3)}
+.btn-primary{padding:9px 18px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary:hover{background:var(--brown2)}
+.btn-ghost{padding:9px 16px;border-radius:8px;border:2px solid var(--border2);background:var(--cream2);color:var(--brown2);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-ghost:hover{background:var(--cream3);border-color:var(--brown4)}
+.btn-danger{padding:9px 16px;border-radius:8px;border:2px solid rgba(192,57,43,0.3);background:var(--red2);color:var(--red);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-danger:hover{background:var(--red);color:#fff}
+.profile-av-big{width:80px;height:80px;border-radius:50%;background:var(--brown2);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:30px;font-weight:700;color:var(--cream);border:3px solid var(--border2);position:relative;cursor:pointer}
+.av-edit-btn{position:absolute;bottom:0;right:0;width:24px;height:24px;border-radius:50%;background:var(--brown);border:2px solid #fff;display:flex;align-items:center;justify-content:center;color:var(--cream);font-size:11px}
+.save-banner{background:var(--brown);border-radius:10px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;display:none}
+.save-banner.show{display:flex}
+.save-banner span{font-size:13px;color:var(--cream);font-weight:300}
+@media(max-width:768px){
+  .settings-layout{grid-template-columns:1fr}
+  .settings-nav{flex-direction:row;overflow-x:auto;flex-wrap:nowrap;gap:4px;margin-bottom:16px}
+  .sn-item{white-space:nowrap;flex-shrink:0}
+  .sn-divider{display:none}
+  .content{padding:14px 16px}
+}
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <a href="index.html" class="sidebar-logo">Lumio <span class="logo-dot"></span></a>
+  <div class="sidebar-section">Main</div>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-books"></i> My sets</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-compass"></i> Explore</a>
+  <a href="create.html" class="nav-item"><i class="ti ti-plus"></i> Create set</a>
+  <div class="sidebar-section">Community</div>
+  <a href="leaderboard.html" class="nav-item"><i class="ti ti-trophy"></i> Leaderboard</a>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-users"></i> Classrooms</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-star"></i> Saved sets</a>
+  <div class="sidebar-section">Leo</div>
+  <a href="study.html" class="nav-item"><i class="ti ti-brain"></i> Study with Leo</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-chart-bar"></i> My progress</a>
+      <div style="padding:8px 8px 0;border-top:1px solid rgba(255,255,255,0.07);margin-top:8px">
+      <a href="#" class="nav-item" style="color:rgba(255,255,255,0.4)" onclick="if(confirm('Sign out of Lumio?')){if(window.lumio)window.lumio.logout();else window.location.href='login.html';}"><i class="ti ti-logout"></i> Sign out</a>
+    </div>
+  <div class="sidebar-bottom">
+    <div class="user-pill" onclick="window.location.href='profile.html'" oncontextmenu="event.preventDefault();window.location.href='settings.html'">
+      <div class="user-av">AS</div>
+      <div class="user-info"><div class="un">alex_studies</div><div class="ur">Student</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Settings</div>
+  </div>
+  <div class="content">
+
+    <div class="save-banner" id="saveBanner">
+      <span>You have unsaved changes</span>
+      <div style="display:flex;gap:8px">
+        <button class="btn-ghost" style="color:var(--cream);border-color:rgba(255,255,255,0.2);background:transparent;font-size:12px;padding:6px 12px" onclick="discardChanges()">Discard</button>
+        <button class="btn-primary" style="background:var(--cream);color:var(--brown);font-size:12px;padding:6px 14px" onclick="saveAll()">Save changes</button>
+      </div>
+    </div>
+
+    <div class="settings-layout">
+      <div class="settings-nav">
+        <button class="sn-item active" onclick="showPanel('profile',this)"><i class="ti ti-user"></i> Profile</button>
+        <button class="sn-item" onclick="showPanel('account',this)"><i class="ti ti-lock"></i> Account</button>
+        <button class="sn-item" onclick="showPanel('study',this)"><i class="ti ti-cards"></i> Study</button>
+        <button class="sn-item" onclick="showPanel('leo',this)"><i class="ti ti-brain"></i> Leo</button>
+        <button class="sn-item" onclick="showPanel('notifications',this)"><i class="ti ti-bell"></i> Notifications</button>
+        <button class="sn-item" onclick="showPanel('appearance',this)"><i class="ti ti-palette"></i> Appearance</button>
+        <div class="sn-divider"></div>
+        <button class="sn-item" onclick="showPanel('privacy',this)"><i class="ti ti-shield"></i> Privacy</button>
+        <button class="sn-item" onclick="showPanel('danger',this)" style="color:var(--red)"><i class="ti ti-alert-triangle"></i> Danger zone</button>
+      </div>
+
+      <div>
+        <!-- PROFILE -->
+        <div class="settings-panel active" id="panel-profile">
+          <div class="panel-title">Profile</div>
+          <div class="panel-sub">How you appear to other students on Lumio</div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Your avatar</h3></div>
+            <div style="padding:16px 18px;display:flex;align-items:center;gap:18px">
+              <div class="profile-av-big">AS<div class="av-edit-btn"><i class="ti ti-camera"></i></div></div>
+              <div>
+                <div style="font-size:13px;font-weight:500;color:var(--brown);margin-bottom:4px">alex_studies</div>
+                <div style="font-size:12px;color:var(--brown4);font-weight:300;margin-bottom:10px">Student · Joined Jan 2024</div>
+                <button class="btn-ghost" style="font-size:12px;padding:6px 12px"><i class="ti ti-upload" style="font-size:13px"></i> Upload photo</button>
+              </div>
+            </div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Basic info</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Display name</div><div class="srow-sub">Shown on your profile and sets</div></div><input type="text" value="alex_studies" oninput="showSaveBanner()"></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Bio</div><div class="srow-sub">Tell others about yourself</div></div><input type="text" value="Biology nerd. Helping students ace exams." oninput="showSaveBanner()" style="min-width:220px"></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Location</div><div class="srow-sub">Optional — shown on profile</div></div><input type="text" value="Houston, TX" oninput="showSaveBanner()"></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Profile visibility</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Public profile</div><div class="srow-sub">Anyone can view your profile and sets</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Show on leaderboard</div><div class="srow-sub">Appear in weekly and all-time rankings</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Show study activity</div><div class="srow-sub">Display your activity grid on your profile</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+          </div>
+        </div>
+
+        <!-- ACCOUNT -->
+        <div class="settings-panel" id="panel-account">
+          <div class="panel-title">Account</div>
+          <div class="panel-sub">Manage your login details and account security</div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Login details</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Email address</div><div class="srow-sub">Used to log in and receive notifications</div></div><input type="email" value="alex@email.com" oninput="showSaveBanner()"></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Username</div><div class="srow-sub">Your unique Lumio handle</div></div><input type="text" value="alex_studies" oninput="showSaveBanner()"></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Password</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Current password</div></div><input type="password" placeholder="Enter current password" oninput="showSaveBanner()"></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">New password</div></div><input type="password" placeholder="Enter new password" oninput="showSaveBanner()"></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Confirm new password</div></div><input type="password" placeholder="Repeat new password" oninput="showSaveBanner()"></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Account type</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Current type</div><div class="srow-sub">Contact support to change account type</div></div><div style="font-size:13px;font-weight:600;color:var(--brown);padding:6px 12px;background:var(--cream2);border-radius:8px;border:1.5px solid var(--border2)">Student</div></div>
+          </div>
+        </div>
+
+        <!-- STUDY -->
+        <div class="settings-panel" id="panel-study">
+          <div class="panel-title">Study preferences</div>
+          <div class="panel-sub">Customise how your study sessions work</div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Default study mode</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Default mode</div><div class="srow-sub">Opens automatically when you start a set</div></div><select onchange="showSaveBanner()"><option>Flashcard flip</option><option>Multiple choice</option><option>Type the answer</option><option>Mixed mode</option><option>Ask me every time</option></select></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Session settings</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Cards per session</div><div class="srow-sub">How many cards to study at once</div></div><input type="range" min="5" max="50" value="20" oninput="this.nextElementSibling.textContent=this.value;showSaveBanner()"><span class="srow-val">20</span></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Shuffle cards</div><div class="srow-sub">Randomise card order each session</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Show progress bar</div><div class="srow-sub">Display how far through the set you are</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Auto-advance cards</div><div class="srow-sub">Move to next card after 3 seconds</div></div><button class="toggle off" onclick="toggleSwitch(this)"></button></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Spelling & audio</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Auto-play audio</div><div class="srow-sub">Play word automatically in spelling mode</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Speech speed</div><div class="srow-sub">How fast Leo reads words aloud</div></div><select onchange="showSaveBanner()"><option>Slow</option><option selected>Normal</option><option>Fast</option></select></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Fuzzy answer matching</div><div class="srow-sub">Accept close spellings as correct</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+          </div>
+        </div>
+
+        <!-- LEO -->
+        <div class="settings-panel" id="panel-leo">
+          <div class="panel-title">Leo settings</div>
+          <div class="panel-sub">Control how Leo interacts with you during study</div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Leo in study sessions</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Leo auto-triggers</div><div class="srow-sub">Leo jumps in when you miss the same card twice</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Leo chat in sessions</div><div class="srow-sub">Show the Leo chat button during study</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Messages per session</div><div class="srow-sub">Leo chat limit per study session</div></div><input type="range" min="3" max="20" value="10" oninput="this.nextElementSibling.textContent=this.value;showSaveBanner()"><span class="srow-val">10</span></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Leo on your sets</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Auto-review new sets</div><div class="srow-sub">Leo rates your set before publishing</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Leo improvement suggestions</div><div class="srow-sub">Leo suggests edits to your published sets</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Leo personality</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Tone</div><div class="srow-sub">How Leo talks to you</div></div><select onchange="showSaveBanner()"><option>Warm & encouraging</option><option>Direct & concise</option><option>Formal & academic</option></select></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Response length</div><div class="srow-sub">How detailed Leo's responses are</div></div><select onchange="showSaveBanner()"><option>Brief</option><option selected>Balanced</option><option>Detailed</option></select></div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div class="settings-panel" id="panel-notifications">
+          <div class="panel-title">Notifications</div>
+          <div class="panel-sub">Choose what Lumio can notify you about</div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Study reminders</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Daily study reminder</div><div class="srow-sub">Remind me to study each day</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Reminder time</div><div class="srow-sub">What time to send the reminder</div></div><input type="text" value="7:00 PM" style="min-width:100px" oninput="showSaveBanner()"></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Streak at risk warning</div><div class="srow-sub">Alert me before my streak breaks</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Community</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">New followers</div><div class="srow-sub">When someone follows you</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Set reviews</div><div class="srow-sub">When someone reviews one of your sets</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Leaderboard updates</div><div class="srow-sub">When your rank changes significantly</div></div><button class="toggle off" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">New sets from creators I follow</div><div class="srow-sub">When a creator you follow publishes a set</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Assignments</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">New assignment</div><div class="srow-sub">When a teacher assigns you a set</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Due date reminders</div><div class="srow-sub">Remind me 24 hours before an assignment is due</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+          </div>
+        </div>
+
+        <!-- APPEARANCE -->
+        <div class="settings-panel" id="panel-appearance">
+          <div class="panel-title">Appearance</div>
+          <div class="panel-sub">Personalise how Lumio looks</div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Theme</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Colour mode</div><div class="srow-sub">Light, dark, or follow your device</div></div><select onchange="showSaveBanner()"><option selected>Light (default)</option><option>Dark</option><option>System default</option></select></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Text size</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Interface text size</div><div class="srow-sub">Adjust the size of text across Lumio</div></div><input type="range" min="12" max="18" value="14" oninput="this.nextElementSibling.textContent=this.value+'px';showSaveBanner()"><span class="srow-val">14px</span></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Card text size</div><div class="srow-sub">Text size on flashcards during study</div></div><input type="range" min="14" max="28" value="22" oninput="this.nextElementSibling.textContent=this.value+'px';showSaveBanner()"><span class="srow-val">22px</span></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Animations</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Page transitions</div><div class="srow-sub">Fade effect when navigating between pages</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Sound effects</div><div class="srow-sub">Card flip, correct and wrong answer sounds</div></div><button class="toggle on" onclick="toggleSwitch(this);if(window.toggleSounds)toggleSounds()"></button></div>
+        <div class="srow"><div class="srow-info"><div class="srow-label">Card flip animation</div><div class="srow-sub">3D flip effect on flashcards</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Haptic feedback</div><div class="srow-sub">Vibration on button taps (mobile only)</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Reduce motion</div><div class="srow-sub">For users who prefer less animation</div></div><button class="toggle off" onclick="toggleSwitch(this)"></button></div>
+          </div>
+        </div>
+
+        <!-- PRIVACY -->
+        <div class="settings-panel" id="panel-privacy">
+          <div class="panel-title">Privacy</div>
+          <div class="panel-sub">Control your data and what others can see</div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Data & analytics</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Share usage data with Lumio</div><div class="srow-sub">Help us improve by sharing anonymous usage stats</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Personalised recommendations</div><div class="srow-sub">Leo uses your study history to suggest sets</div></div><button class="toggle on" onclick="toggleSwitch(this)"></button></div>
+          </div>
+          <div class="sgroup">
+            <div class="sgroup-head"><h3>Your data</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Download your data</div><div class="srow-sub">Export all your sets, progress, and history</div></div><button class="btn-ghost" style="font-size:12px;padding:7px 12px" onclick="showToast('Preparing your data export...')"><i class="ti ti-download" style="font-size:13px"></i> Export</button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Clear study history</div><div class="srow-sub">Remove all study session data</div></div><button class="btn-ghost" style="font-size:12px;padding:7px 12px;color:var(--red);border-color:rgba(192,57,43,0.3)" onclick="if(confirm('Clear all study history?'))showToast('Study history cleared','info')"><i class="ti ti-trash" style="font-size:13px"></i> Clear</button></div>
+          </div>
+        </div>
+
+        <!-- DANGER ZONE -->
+        <div class="settings-panel" id="panel-danger">
+          <div class="panel-title" style="color:var(--red)">Danger zone</div>
+          <div class="panel-sub">These actions are permanent and cannot be undone</div>
+          <div class="sgroup" style="border-color:rgba(192,57,43,0.3)">
+            <div class="sgroup-head" style="background:var(--red2)"><h3 style="color:var(--red)">Account actions</h3></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Deactivate account</div><div class="srow-sub">Hide your profile and sets temporarily</div></div><button class="btn-danger" style="font-size:12px;padding:7px 14px" onclick="if(confirm('Deactivate your account?'))showToast('Account deactivated','error')">Deactivate</button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Delete all my sets</div><div class="srow-sub">Permanently delete every set you've published</div></div><button class="btn-danger" style="font-size:12px;padding:7px 14px" onclick="if(confirm('Delete ALL your sets permanently?'))showToast('All sets deleted','error')">Delete sets</button></div>
+            <div class="srow"><div class="srow-info"><div class="srow-label">Delete account</div><div class="srow-sub">Permanently delete your account and all data</div></div><button class="btn-danger" style="font-size:12px;padding:7px 14px" onclick="if(confirm('Permanently delete your account? This cannot be undone.'))showToast('Account deleted','error')"><i class="ti ti-trash" style="font-size:13px"></i> Delete account</button></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bn-item" onclick="window.location.href='dashboard.html'"><i class="ti ti-layout-dashboard"></i><span>Home</span></button>
+  <button class="bn-item" onclick="window.location.href='explore.html'"><i class="ti ti-compass"></i><span>Explore</span></button>
+  <button class="bn-create" onclick="window.location.href='create.html'"><div class="bn-create-icon"><i class="ti ti-plus" style="font-size:22px;color:var(--cream)"></i></div><span>Create</span></button>
+  <button class="bn-item" onclick="window.location.href='leaderboard.html'"><i class="ti ti-trophy"></i><span>Ranks</span></button>
+  <button class="bn-item active" onclick="window.location.href='profile.html'"><i class="ti ti-user"></i><span>Profile</span></button>
+</nav>
+
+<script src="darkmode.js"></script>
+<script src="shortcuts.js"></script>
+<script src="transitions.js"></script>
+<script src="search.js"></script>
+<script>
+function showPanel(name, btn){
+  document.querySelectorAll('.settings-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sn-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+function toggleSwitch(btn){
+  btn.classList.toggle('on');
+  btn.classList.toggle('off');
+  showSaveBanner();
+}
+function showSaveBanner(){
+  document.getElementById('saveBanner').classList.add('show');
+}
+function saveAll(){
+  document.getElementById('saveBanner').classList.remove('show');
+  if(window.showToast) showToast('Settings saved!');
+}
+function discardChanges(){
+  document.getElementById('saveBanner').classList.remove('show');
+}
+</script>
+</body>
+</html>

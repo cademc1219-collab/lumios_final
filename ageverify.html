@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Age Verification</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;--brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;--brown4:#b8956a;--brown5:#d4b896;--green:#3a6b3f;--green2:#e8f0e9;--red:#c0392b;--red2:#fbeaea;--border:rgba(92,61,30,0.15);--border2:rgba(92,61,30,0.28);--shadow:rgba(44,26,14,0.12)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--brown);color:var(--cream);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+
+.verify-card{background:var(--cream);border-radius:20px;width:100%;max-width:460px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.3)}
+
+/* STEP 1 — AGE GATE */
+.step{display:none}
+.step.active{display:block}
+
+.card-banner{background:var(--brown);padding:32px 32px 24px;text-align:center;position:relative}
+.card-banner::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:20px;background:var(--cream);border-radius:20px 20px 0 0}
+.banner-icon{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;border:2px solid rgba(255,255,255,0.15)}
+.banner-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream);margin-bottom:6px}
+.banner-sub{font-size:13px;color:var(--brown5);font-weight:300;line-height:1.6}
+
+.card-body{padding:28px 32px}
+
+.step-label{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.step-dots{display:flex;gap:6px}
+.step-dot{width:6px;height:6px;border-radius:50%;background:var(--cream3)}
+.step-dot.active{background:var(--brown);width:18px;border-radius:3px}
+.step-dot.done{background:var(--green)}
+
+/* DOB INPUT */
+.dob-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px}
+.dob-field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown3);margin-bottom:6px}
+.dob-field select{width:100%;padding:11px 12px;border:2px solid var(--border2);border-radius:9px;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--brown);background:var(--cream2);outline:none;appearance:none;cursor:pointer;transition:border-color 0.2s}
+.dob-field select:focus{border-color:var(--brown3)}
+
+.verify-btn{width:100%;padding:13px;border-radius:10px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;margin-bottom:14px}
+.verify-btn:hover{background:var(--brown2)}
+.verify-btn:disabled{opacity:0.5;cursor:not-allowed}
+
+.legal-text{font-size:11px;color:var(--brown4);text-align:center;line-height:1.6;font-weight:300}
+.legal-text a{color:var(--brown3);text-decoration:underline;cursor:pointer}
+
+/* ERROR STATE */
+.error-box{background:var(--red2);border:1.5px solid rgba(192,57,43,0.25);border-radius:10px;padding:14px 16px;margin-bottom:16px;display:none;align-items:center;gap:10px}
+.error-box.show{display:flex}
+.error-box i{color:var(--red);font-size:18px;flex-shrink:0}
+.error-box span{font-size:13px;color:var(--red);font-weight:400;line-height:1.5}
+
+/* STEP 2 — RESTRICTED */
+.restricted-body{padding:28px 32px;text-align:center}
+.restricted-icon{width:72px;height:72px;border-radius:50%;background:var(--red2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;color:var(--red)}
+.restricted-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--brown);margin-bottom:10px}
+.restricted-sub{font-size:13px;color:var(--brown3);font-weight:300;line-height:1.7;margin-bottom:24px}
+.back-btn{width:100%;padding:12px;border-radius:10px;border:2px solid var(--border2);background:var(--cream2);color:var(--brown2);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.back-btn:hover{background:var(--cream3)}
+
+/* STEP 3 — VERIFIED */
+.verified-body{padding:28px 32px;text-align:center}
+.verified-icon{width:72px;height:72px;border-radius:50%;background:var(--green2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;color:var(--green);animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.verified-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--brown);margin-bottom:8px}
+.verified-sub{font-size:13px;color:var(--brown3);font-weight:300;line-height:1.7;margin-bottom:20px}
+.verified-badge-row{display:flex;align-items:center;justify-content:center;gap:8px;background:var(--green2);border:1.5px solid rgba(58,107,63,0.2);border-radius:10px;padding:12px 16px;margin-bottom:20px}
+.verified-badge-row i{font-size:18px;color:var(--green)}
+.verified-badge-row span{font-size:13px;font-weight:600;color:var(--green)}
+.continue-btn{width:100%;padding:13px;border-radius:10px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;margin-bottom:10px}
+.continue-btn:hover{background:var(--brown2)}
+
+/* REMEMBER ME */
+.remember-row{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--cream2);border-radius:9px;border:1.5px solid var(--border2);margin-bottom:16px;cursor:pointer}
+.remember-check{width:20px;height:20px;border-radius:5px;border:2px solid var(--border2);background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
+.remember-check.checked{background:var(--brown);border-color:var(--brown)}
+.remember-check.checked::after{content:'✓';font-size:12px;font-weight:700;color:var(--cream)}
+.remember-label{font-size:13px;color:var(--brown);font-weight:400}
+.remember-sub{font-size:11px;color:var(--brown4);font-weight:300}
+
+@media(max-width:480px){
+  .card-body,.verified-body,.restricted-body{padding:20px}
+  .card-banner{padding:24px 20px 20px}
+  .dob-row{grid-template-columns:1fr 1fr 1fr;gap:7px}
+}
+</style>
+</head>
+<body>
+
+<div class="verify-card">
+
+  <!-- STEP 1: AGE INPUT -->
+  <div class="step active" id="step1">
+    <div class="card-banner">
+      <div class="banner-icon"><i class="ti ti-shield-check"></i></div>
+      <div class="banner-title">Age verification</div>
+      <div class="banner-sub">This content is rated 18+. Please confirm your date of birth to continue.</div>
+    </div>
+    <div class="card-body">
+      <div class="step-label">
+        Step 1 of 1
+        <div class="step-dots">
+          <div class="step-dot active"></div>
+          <div class="step-dot"></div>
+        </div>
+      </div>
+
+      <div class="error-box" id="errorBox">
+        <i class="ti ti-alert-circle"></i>
+        <span id="errorMsg">You must be 18 or older to view this content.</span>
+      </div>
+
+      <div style="font-size:13px;font-weight:500;color:var(--brown);margin-bottom:12px">Enter your date of birth</div>
+      <div class="dob-row">
+        <div class="dob-field">
+          <label>Month</label>
+          <select id="dobMonth" onchange="clearError()">
+            <option value="">MM</option>
+            <option>01</option><option>02</option><option>03</option><option>04</option>
+            <option>05</option><option>06</option><option>07</option><option>08</option>
+            <option>09</option><option>10</option><option>11</option><option>12</option>
+          </select>
+        </div>
+        <div class="dob-field">
+          <label>Day</label>
+          <select id="dobDay" onchange="clearError()">
+            <option value="">DD</option>
+            ${Array.from({length:31},(_,i)=>`<option>${String(i+1).padStart(2,'0')}</option>`).join('')}
+          </select>
+        </div>
+        <div class="dob-field">
+          <label>Year</label>
+          <select id="dobYear" onchange="clearError()">
+            <option value="">YYYY</option>
+            ${Array.from({length:100},(_,i)=>`<option>${2025-i}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+
+      <div class="remember-row" onclick="toggleRemember()" id="rememberRow">
+        <div class="remember-check checked" id="rememberCheck"></div>
+        <div>
+          <div class="remember-label">Remember this device</div>
+          <div class="remember-sub">Don't ask again on this device for 30 days</div>
+        </div>
+      </div>
+
+      <button class="verify-btn" onclick="verifyAge()">Confirm age &amp; continue</button>
+      <div class="legal-text">By continuing you confirm you are 18 or older. False confirmation of age is a violation of our <a>Terms of Service</a>. This device may be flagged for review.</div>
+    </div>
+  </div>
+
+  <!-- STEP 2: RESTRICTED (under 18) -->
+  <div class="step" id="step2">
+    <div class="restricted-body">
+      <div class="restricted-icon"><i class="ti ti-lock"></i></div>
+      <div class="restricted-title">Access restricted</div>
+      <div class="restricted-sub">This content is rated 18+ and is not available to users under 18. This is to keep Lumio safe for all ages.<br><br>You can still access thousands of sets in the All Ages and 13+ categories.</div>
+      <button class="continue-btn" onclick="window.location.href='explore.html'"><i class="ti ti-compass" style="font-size:15px;margin-right:6px"></i>Browse other sets</button>
+      <button class="back-btn" onclick="goBack()"><i class="ti ti-arrow-left" style="font-size:14px;margin-right:6px"></i>Go back</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: VERIFIED -->
+  <div class="step" id="step3">
+    <div class="verified-body">
+      <div class="verified-icon"><i class="ti ti-circle-check"></i></div>
+      <div class="verified-title">Age verified</div>
+      <div class="verified-sub">You're verified as 18 or older. You now have access to all adult-rated content on Lumio.</div>
+      <div class="verified-badge-row">
+        <i class="ti ti-shield-check"></i>
+        <span>18+ verified on this device</span>
+      </div>
+      <button class="continue-btn" onclick="continueToContent()"><i class="ti ti-arrow-right" style="font-size:15px;margin-right:6px"></i>Continue to content</button>
+      <div class="legal-text" style="margin-top:8px">Verification saved for 30 days on this device</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let rememberDevice = true;
+const REDIRECT_URL = sessionStorage.getItem('ageVerifyRedirect') || 'explore.html';
+
+function toggleRemember(){
+  rememberDevice = !rememberDevice;
+  document.getElementById('rememberCheck').classList.toggle('checked', rememberDevice);
+}
+
+function clearError(){
+  document.getElementById('errorBox').classList.remove('show');
+}
+
+function verifyAge(){
+  const month = document.getElementById('dobMonth').value;
+  const day = document.getElementById('dobDay').value;
+  const year = document.getElementById('dobYear').value;
+
+  if(!month || !day || !year){
+    document.getElementById('errorMsg').textContent = 'Please enter your full date of birth.';
+    document.getElementById('errorBox').classList.add('show');
+    return;
+  }
+
+  const dob = new Date(`${year}-${month}-${day}`);
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if(m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+
+  if(isNaN(age) || age < 0 || age > 120){
+    document.getElementById('errorMsg').textContent = 'Please enter a valid date of birth.';
+    document.getElementById('errorBox').classList.add('show');
+    return;
+  }
+
+  if(age < 18){
+    showStep('step2');
+    return;
+  }
+
+  // Save verification
+  if(rememberDevice){
+    const expiry = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    localStorage.setItem('lumio_age_verified', expiry);
+  } else {
+    sessionStorage.setItem('lumio_age_verified', 'true');
+  }
+
+  showStep('step3');
+}
+
+function showStep(id){
+  document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goBack(){
+  history.back();
+}
+
+function continueToContent(){
+  window.location.href = REDIRECT_URL;
+}
+
+// Check if already verified
+function checkVerification(){
+  const stored = localStorage.getItem('lumio_age_verified');
+  const session = sessionStorage.getItem('lumio_age_verified');
+  if(session === 'true') return true;
+  if(stored && Date.now() < parseInt(stored)) return true;
+  return false;
+}
+
+if(checkVerification()){
+  continueToContent();
+}
+</script>
+
+</body>
+</html>

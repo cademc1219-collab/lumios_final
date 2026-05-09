@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio Admin</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;--brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;--brown4:#b8956a;--brown5:#d4b896;--green:#3a6b3f;--green2:#e8f0e9;--red:#c0392b;--red2:#fbeaea;--border:rgba(92,61,30,0.15);--border2:rgba(92,61,30,0.28);--shadow:rgba(44,26,14,0.09)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--brown);min-height:100vh}
+
+/* LOGIN */
+.login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.login-box{background:#fff;border:2px solid var(--border2);border-radius:16px;padding:40px;width:100%;max-width:380px;box-shadow:0 8px 32px var(--shadow)}
+.login-logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--brown);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--brown4);display:inline-block}
+.login-sub{font-size:13px;color:var(--brown4);margin-bottom:28px;font-weight:300}
+.login-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown3);margin-bottom:6px;display:block}
+.login-input{width:100%;padding:11px 14px;border:2px solid var(--border2);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--brown);outline:none;background:var(--cream2);margin-bottom:14px;transition:border-color 0.2s}
+.login-input:focus{border-color:var(--brown3)}
+.login-btn{width:100%;padding:12px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.login-btn:hover{background:var(--brown2)}
+.login-error{background:var(--red2);border:1.5px solid rgba(192,57,43,0.2);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--red);margin-bottom:14px;display:none}
+.login-error.show{display:block}
+
+/* ADMIN LAYOUT */
+.admin{display:none;min-height:100vh;flex-direction:column}
+.admin.show{display:flex}
+.admin-topbar{background:var(--brown);padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.admin-logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--cream);display:flex;align-items:center;gap:8px}
+.admin-badge{font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;background:rgba(255,255,255,0.1);color:var(--brown5);border:1px solid rgba(255,255,255,0.15)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-time{font-size:12px;color:var(--brown5)}
+.logout-btn{padding:6px 14px;border-radius:6px;border:1px solid rgba(255,255,255,0.2);background:transparent;color:var(--brown5);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.logout-btn:hover{background:rgba(255,255,255,0.08);color:var(--cream)}
+
+.admin-nav{background:#fff;border-bottom:2px solid var(--border2);padding:0 28px;display:flex;gap:0}
+.admin-tab{padding:12px 18px;border:none;background:transparent;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;color:var(--brown4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s;display:flex;align-items:center;gap:6px}
+.admin-tab.active{color:var(--brown);border-bottom-color:var(--brown);font-weight:600}
+.admin-tab i{font-size:15px}
+
+.admin-content{padding:28px;flex:1}
+.admin-page{display:none}
+.admin-page.active{display:block}
+
+/* CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:#fff;border:2px solid var(--border2);border-radius:12px;padding:18px 20px;box-shadow:0 2px 8px var(--shadow)}
+.stat-card.green{border-color:rgba(58,107,63,0.3);background:var(--green2)}
+.stat-card.red{border-color:rgba(192,57,43,0.2);background:var(--red2)}
+.stat-card.gold{border-color:rgba(196,134,42,0.3);background:#fdf9f0}
+.sc-label{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown4);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.sc-label i{font-size:14px}
+.sc-val{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--brown);letter-spacing:-0.5px}
+.sc-sub{font-size:12px;color:var(--brown4);margin-top:4px;font-weight:300}
+.sc-trend{font-size:11px;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px}
+.sc-trend.up{color:var(--green)}
+.sc-trend.down{color:var(--red)}
+
+.cbox{background:#fff;border:2px solid var(--border2);border-radius:13px;overflow:hidden;margin-bottom:18px;box-shadow:0 2px 8px var(--shadow)}
+.chead{padding:14px 18px;border-bottom:2px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--cream2)}
+.chead h3{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown)}
+.cbody{padding:0}
+
+/* CREDITS BAR */
+.credits-wrap{padding:20px}
+.credits-label{display:flex;justify-content:space-between;margin-bottom:8px}
+.credits-label span:first-child{font-size:13px;font-weight:500;color:var(--brown)}
+.credits-label span:last-child{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--brown)}
+.credits-bar{height:12px;background:var(--cream3);border-radius:6px;overflow:hidden;margin-bottom:10px}
+.credits-fill{height:100%;border-radius:6px;transition:width 1s ease;background:linear-gradient(90deg,var(--green),#4ade80)}
+.credits-fill.warning{background:linear-gradient(90deg,#c4862a,#f59e0b)}
+.credits-fill.danger{background:linear-gradient(90deg,var(--red),#f87171)}
+.credits-info{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.ci{background:var(--cream2);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.ci-val{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--brown)}
+.ci-lbl{font-size:11px;color:var(--brown4);margin-top:2px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;text-align:left;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown4);background:var(--cream2);border-bottom:2px solid var(--border2)}
+td{padding:12px 16px;font-size:13px;color:var(--brown);border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--cream)}
+.user-row-av{width:28px;height:28px;border-radius:50%;background:var(--brown3);display:inline-flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:11px;font-weight:700;color:var(--cream);margin-right:8px}
+.status-badge{padding:3px 9px;border-radius:100px;font-size:11px;font-weight:600}
+.status-badge.active{background:var(--green2);color:var(--green)}
+.status-badge.banned{background:var(--red2);color:var(--red)}
+.status-badge.pending{background:#fdf3e7;color:#a0522d}
+.action-btn{padding:5px 10px;border-radius:6px;border:1.5px solid var(--border2);background:var(--cream2);color:var(--brown3);font-family:'Source Sans 3',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:all 0.2s;margin-right:4px}
+.action-btn:hover{background:var(--cream3);border-color:var(--brown4);color:var(--brown)}
+.action-btn.danger{border-color:rgba(192,57,43,0.3);color:var(--red)}
+.action-btn.danger:hover{background:var(--red2);border-color:var(--red)}
+
+/* FLAG CARDS */
+.flag-item{padding:16px 18px;border-bottom:2px solid var(--border2);display:flex;gap:14px;align-items:flex-start}
+.flag-item:last-child{border-bottom:none}
+.flag-icon{width:38px;height:38px;border-radius:10px;background:var(--red2);display:flex;align-items:center;justify-content:center;color:var(--red);font-size:18px;flex-shrink:0}
+.flag-info{flex:1}
+.flag-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--brown);margin-bottom:3px}
+.flag-meta{font-size:12px;color:var(--brown4);margin-bottom:8px;font-weight:300}
+.flag-reason{font-size:12px;color:var(--red);background:var(--red2);padding:5px 10px;border-radius:6px;display:inline-block;margin-bottom:10px;border:1px solid rgba(192,57,43,0.15)}
+.flag-actions{display:flex;gap:8px}
+.approve-btn{padding:7px 14px;border-radius:7px;border:none;background:var(--green2);color:var(--green);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid rgba(58,107,63,0.3);transition:all 0.2s}
+.approve-btn:hover{background:var(--green);color:#fff}
+.reject-btn{padding:7px 14px;border-radius:7px;border:1.5px solid rgba(192,57,43,0.3);background:var(--red2);color:var(--red);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.reject-btn:hover{background:var(--red);color:#fff}
+
+/* CHART */
+.chart-wrap{padding:20px;height:160px;display:flex;align-items:flex-end;gap:8px}
+.bar-group{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;background:var(--brown);transition:height 0.6s ease;min-height:4px}
+.bar-lbl{font-size:10px;color:var(--brown4);font-weight:400}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.section-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Lumio <span class="logo-dot"></span></div>
+    <div class="login-sub">Admin access only</div>
+    <div class="login-error" id="loginError">Incorrect password. Try again.</div>
+    <label class="login-label">Password</label>
+    <input class="login-input" type="password" id="pwInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')tryLogin()">
+    <button class="login-btn" onclick="tryLogin()">Sign in to admin</button>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div class="admin" id="adminPanel">
+  <div class="admin-topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="admin-logo">Lumio <span class="logo-dot"></span></div>
+      <div class="admin-badge">Admin panel</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-time" id="clock"></div>
+      <button class="logout-btn" onclick="logout()"><i class="ti ti-logout" style="font-size:13px;margin-right:4px"></i> Sign out</button>
+    </div>
+  </div>
+
+  <div class="admin-nav">
+    <button class="admin-tab active" onclick="showTab('overview',this)"><i class="ti ti-layout-dashboard"></i> Overview</button>
+    <button class="admin-tab" onclick="showTab('credits',this)"><i class="ti ti-coins"></i> Credits</button>
+    <button class="admin-tab" onclick="showTab('users',this)"><i class="ti ti-users"></i> Users</button>
+    <button class="admin-tab" onclick="showTab('moderation',this)"><i class="ti ti-flag"></i> Moderation <span style="background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:100px;margin-left:4px">3</span></button>
+    <button class="admin-tab" onclick="showTab('leo',this)"><i class="ti ti-brain"></i> Leo usage</button>
+  </div>
+
+  <div class="admin-content">
+
+    <!-- OVERVIEW -->
+    <div class="admin-page active" id="tab-overview">
+      <div class="section-title"><i class="ti ti-layout-dashboard" style="font-size:18px;color:var(--brown3)"></i> Overview</div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="sc-label"><i class="ti ti-users"></i> Total users</div><div class="sc-val">1,284</div><div class="sc-sub">Registered accounts</div><div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:12px"></i> +48 this week</div></div>
+        <div class="stat-card green"><div class="sc-label"><i class="ti ti-activity"></i> Active today</div><div class="sc-val">142</div><div class="sc-sub">Students studying now</div><div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:12px"></i> +12% vs yesterday</div></div>
+        <div class="stat-card gold"><div class="sc-label"><i class="ti ti-cards"></i> Sets published</div><div class="sc-val">3,840</div><div class="sc-sub">Total in marketplace</div><div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:12px"></i> +24 today</div></div>
+        <div class="stat-card red"><div class="sc-label"><i class="ti ti-flag"></i> Flagged sets</div><div class="sc-val">3</div><div class="sc-sub">Awaiting review</div><div class="sc-trend down"><i class="ti ti-alert-circle" style="font-size:12px"></i> Needs attention</div></div>
+      </div>
+
+      <div class="two-col">
+        <div class="cbox">
+          <div class="chead"><h3>Daily active users</h3><span style="font-size:12px;color:var(--brown4)">Last 7 days</span></div>
+          <div class="chart-wrap" id="dauChart"></div>
+        </div>
+        <div class="cbox">
+          <div class="chead"><h3>API calls today</h3><span style="font-size:12px;color:var(--brown4)">By feature</span></div>
+          <div class="chart-wrap" id="apiChart"></div>
+        </div>
+      </div>
+
+      <div class="cbox">
+        <div class="chead"><h3>Recent signups</h3><span style="font-size:12px;color:var(--brown4)">Last 24 hours</span></div>
+        <table>
+          <tr><th>User</th><th>Account type</th><th>Joined</th><th>Status</th></tr>
+          <tr><td><span class="user-row-av">JM</span>jamie_m</td><td>Student</td><td>2 hours ago</td><td><span class="status-badge active">Active</span></td></tr>
+          <tr><td><span class="user-row-av">KR</span>khan_reads</td><td>Student</td><td>5 hours ago</td><td><span class="status-badge active">Active</span></td></tr>
+          <tr><td><span class="user-row-av">MT</span>ms_thomas</td><td>Teacher</td><td>7 hours ago</td><td><span class="status-badge active">Active</span></td></tr>
+          <tr><td><span class="user-row-av">PJ</span>parent_jones</td><td>Parent</td><td>9 hours ago</td><td><span class="status-badge pending">Pending</span></td></tr>
+          <tr><td><span class="user-row-av">SL</span>studi_luna</td><td>Student</td><td>12 hours ago</td><td><span class="status-badge active">Active</span></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- CREDITS -->
+    <div class="admin-page" id="tab-credits">
+      <div class="section-title"><i class="ti ti-coins" style="font-size:18px;color:var(--brown3)"></i> API Credits</div>
+      <div class="cbox" style="margin-bottom:18px">
+        <div class="chead"><h3>Anthropic API balance</h3><span style="font-size:12px;color:var(--brown4);cursor:pointer" onclick="refreshCredits()"><i class="ti ti-refresh" style="font-size:12px;margin-right:3px"></i>Refresh</span></div>
+        <div class="credits-wrap">
+          <div class="credits-label"><span>Remaining balance</span><span id="creditsVal">$3.84 remaining</span></div>
+          <div class="credits-bar"><div class="credits-fill" id="creditsFill" style="width:76.8%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--brown4);margin-bottom:16px"><span>$0</span><span>Started with $5.00</span></div>
+          <div class="credits-info">
+            <div class="ci"><div class="ci-val">$1.16</div><div class="ci-lbl">Used so far</div></div>
+            <div class="ci"><div class="ci-val">$3.84</div><div class="ci-lbl">Remaining</div></div>
+            <div class="ci"><div class="ci-val">~95 days</div><div class="ci-lbl">Est. remaining</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-row" style="grid-template-columns:repeat(3,1fr)">
+        <div class="stat-card"><div class="sc-label"><i class="ti ti-sparkles"></i> Set generations</div><div class="sc-val">284</div><div class="sc-sub">Total all time</div><div class="sc-trend" style="color:var(--brown4)">~$0.57 spent</div></div>
+        <div class="stat-card"><div class="sc-label"><i class="ti ti-star"></i> Ratings &amp; fixes</div><div class="sc-val">412</div><div class="sc-sub">Total all time</div><div class="sc-trend" style="color:var(--brown4)">~$0.41 spent</div></div>
+        <div class="stat-card"><div class="sc-label"><i class="ti ti-message"></i> Chat messages</div><div class="sc-val">1,840</div><div class="sc-sub">Total all time</div><div class="sc-trend" style="color:var(--brown4)">~$0.18 spent</div></div>
+      </div>
+
+      <div class="cbox">
+        <div class="chead"><h3>Daily spend</h3><span style="font-size:12px;color:var(--brown4)">Last 14 days</span></div>
+        <div class="chart-wrap" id="spendChart"></div>
+      </div>
+
+      <div class="cbox">
+        <div class="chead"><h3>Credit settings</h3></div>
+        <div style="padding:18px;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--cream2);border-radius:8px;border:1.5px solid var(--border2)">
+            <div><div style="font-size:13px;font-weight:500;color:var(--brown)">Leo chat limit per session</div><div style="font-size:12px;color:var(--brown4);font-weight:300">How many messages per study session</div></div>
+            <input type="number" value="10" min="1" max="50" style="width:64px;padding:7px 10px;border:2px solid var(--border2);border-radius:7px;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--brown);text-align:center;background:var(--cream);outline:none">
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--cream2);border-radius:8px;border:1.5px solid var(--border2)">
+            <div><div style="font-size:13px;font-weight:500;color:var(--brown)">Low balance alert</div><div style="font-size:12px;color:var(--brown4);font-weight:300">Warn me when balance drops below this</div></div>
+            <input type="text" value="$1.00" style="width:72px;padding:7px 10px;border:2px solid var(--border2);border-radius:7px;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--brown);text-align:center;background:var(--cream);outline:none">
+          </div>
+          <button style="padding:10px 20px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:600;cursor:pointer;width:fit-content" onclick="alert('Settings saved!')">Save settings</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div class="admin-page" id="tab-users">
+      <div class="section-title"><i class="ti ti-users" style="font-size:18px;color:var(--brown3)"></i> User management</div>
+      <div style="display:flex;gap:10px;margin-bottom:16px">
+        <input type="text" placeholder="Search users..." style="flex:1;padding:10px 14px;border:2px solid var(--border2);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);outline:none;background:#fff" oninput="filterUsers(this.value)">
+        <select style="padding:10px 14px;border:2px solid var(--border2);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);background:#fff;outline:none">
+          <option>All types</option><option>Student</option><option>Teacher</option><option>Parent</option>
+        </select>
+      </div>
+      <div class="cbox">
+        <table id="usersTable">
+          <tr><th>User</th><th>Type</th><th>Joined</th><th>Sets</th><th>Last active</th><th>Status</th><th>Actions</th></tr>
+          <tr><td><span class="user-row-av">AS</span>alex_studies</td><td>Student</td><td>Jan 2024</td><td>12</td><td>Today</td><td><span class="status-badge active">Active</span></td><td><button class="action-btn">View</button><button class="action-btn danger" onclick="banUser(this,'alex_studies')">Ban</button></td></tr>
+          <tr><td><span class="user-row-av">SR</span>sarah_reads</td><td>Student</td><td>Dec 2023</td><td>8</td><td>Today</td><td><span class="status-badge active">Active</span></td><td><button class="action-btn">View</button><button class="action-btn danger" onclick="banUser(this,'sarah_reads')">Ban</button></td></tr>
+          <tr><td><span class="user-row-av">NP</span>nova_prep</td><td>Student</td><td>Feb 2024</td><td>22</td><td>Yesterday</td><td><span class="status-badge active">Active</span></td><td><button class="action-btn">View</button><button class="action-btn danger" onclick="banUser(this,'nova_prep')">Ban</button></td></tr>
+          <tr><td><span class="user-row-av">MT</span>ms_thomas</td><td>Teacher</td><td>Jan 2024</td><td>34</td><td>Today</td><td><span class="status-badge active">Active</span></td><td><button class="action-btn">View</button><button class="action-btn danger" onclick="banUser(this,'ms_thomas')">Ban</button></td></tr>
+          <tr><td><span class="user-row-av">JP</span>jade_prep</td><td>Student</td><td>Mar 2024</td><td>6</td><td>2 days ago</td><td><span class="status-badge active">Active</span></td><td><button class="action-btn">View</button><button class="action-btn danger" onclick="banUser(this,'jade_prep')">Ban</button></td></tr>
+          <tr><td><span class="user-row-av">BX</span>bad_user99</td><td>Student</td><td>Apr 2024</td><td>1</td><td>1 week ago</td><td><span class="status-badge banned">Banned</span></td><td><button class="action-btn">View</button><button class="action-btn" onclick="unbanUser(this,'bad_user99')">Unban</button></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- MODERATION -->
+    <div class="admin-page" id="tab-moderation">
+      <div class="section-title"><i class="ti ti-flag" style="font-size:18px;color:var(--brown3)"></i> Content moderation</div>
+      <div class="cbox" id="flaggedSets">
+        <div class="chead"><h3>Flagged sets</h3><span style="font-size:12px;color:var(--brown4)">3 pending review</span></div>
+        <div class="flag-item" id="flag1">
+          <div class="flag-icon"><i class="ti ti-flag"></i></div>
+          <div class="flag-info">
+            <div class="flag-title">Inappropriate Content — Test Set #42</div>
+            <div class="flag-meta">By unknown_user · 12 cards · Flagged 2 hours ago by Leo</div>
+            <div class="flag-reason">Contains potentially inappropriate language for All Ages rating</div>
+            <div class="flag-actions">
+              <button class="approve-btn" onclick="resolveFlag('flag1','approved')"><i class="ti ti-check" style="font-size:12px;margin-right:3px"></i> Approve</button>
+              <button class="reject-btn" onclick="resolveFlag('flag1','rejected')"><i class="ti ti-x" style="font-size:12px;margin-right:3px"></i> Remove set</button>
+              <button class="action-btn" style="margin-left:4px">View set</button>
+            </div>
+          </div>
+        </div>
+        <div class="flag-item" id="flag2">
+          <div class="flag-icon"><i class="ti ti-flag"></i></div>
+          <div class="flag-info">
+            <div class="flag-title">Misleading Information — History Quiz</div>
+            <div class="flag-meta">By anon_user · 20 cards · Flagged 5 hours ago by community</div>
+            <div class="flag-reason">Multiple factually incorrect answers reported by 4 users</div>
+            <div class="flag-actions">
+              <button class="approve-btn" onclick="resolveFlag('flag2','approved')"><i class="ti ti-check" style="font-size:12px;margin-right:3px"></i> Approve</button>
+              <button class="reject-btn" onclick="resolveFlag('flag2','rejected')"><i class="ti ti-x" style="font-size:12px;margin-right:3px"></i> Remove set</button>
+              <button class="action-btn" style="margin-left:4px">View set</button>
+            </div>
+          </div>
+        </div>
+        <div class="flag-item" id="flag3">
+          <div class="flag-icon"><i class="ti ti-flag"></i></div>
+          <div class="flag-info">
+            <div class="flag-title">Wrong Age Rating — Adult Content</div>
+            <div class="flag-meta">By mystery123 · 8 cards · Flagged 1 day ago by Leo</div>
+            <div class="flag-reason">Set marked as All Ages but contains adult themes</div>
+            <div class="flag-actions">
+              <button class="approve-btn" onclick="resolveFlag('flag3','approved')"><i class="ti ti-check" style="font-size:12px;margin-right:3px"></i> Approve</button>
+              <button class="reject-btn" onclick="resolveFlag('flag3','rejected')"><i class="ti ti-x" style="font-size:12px;margin-right:3px"></i> Remove set</button>
+              <button class="action-btn" style="margin-left:4px">View set</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEO USAGE -->
+    <div class="admin-page" id="tab-leo">
+      <div class="section-title"><i class="ti ti-brain" style="font-size:18px;color:var(--brown3)"></i> Leo AI usage</div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="sc-label"><i class="ti ti-sparkles"></i> Generations today</div><div class="sc-val">48</div><div class="sc-sub">Set creation calls</div><div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:12px"></i> +8 vs yesterday</div></div>
+        <div class="stat-card green"><div class="sc-label"><i class="ti ti-message"></i> Chat messages today</div><div class="sc-val">312</div><div class="sc-sub">Across all sessions</div><div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:12px"></i> +44 vs yesterday</div></div>
+        <div class="stat-card gold"><div class="sc-label"><i class="ti ti-star"></i> Ratings today</div><div class="sc-val">84</div><div class="sc-sub">Quality reviews</div><div class="sc-trend" style="color:var(--brown4)">Avg cost $0.002 each</div></div>
+        <div class="stat-card"><div class="sc-label"><i class="ti ti-coins"></i> Cost today</div><div class="sc-val">$0.12</div><div class="sc-sub">Total API spend</div><div class="sc-trend down"><i class="ti ti-trending-down" style="font-size:12px"></i> -$0.03 vs yesterday</div></div>
+      </div>
+
+      <div class="cbox">
+        <div class="chead"><h3>Leo call breakdown</h3><span style="font-size:12px;color:var(--brown4)">Today</span></div>
+        <table>
+          <tr><th>Feature</th><th>Calls</th><th>Avg tokens</th><th>Total cost</th><th>% of spend</th></tr>
+          <tr><td><i class="ti ti-sparkles" style="font-size:13px;margin-right:6px;color:var(--brown3)"></i>Set generation</td><td>48</td><td>~1,200</td><td>$0.058</td><td><div style="background:var(--brown);height:6px;border-radius:3px;width:48%"></div></td></tr>
+          <tr><td><i class="ti ti-message" style="font-size:13px;margin-right:6px;color:var(--brown3)"></i>Study chat</td><td>312</td><td>~400</td><td>$0.031</td><td><div style="background:var(--brown3);height:6px;border-radius:3px;width:26%"></div></td></tr>
+          <tr><td><i class="ti ti-star" style="font-size:13px;margin-right:6px;color:var(--brown3)"></i>Quality rating</td><td>84</td><td>~600</td><td>$0.025</td><td><div style="background:var(--brown4);height:6px;border-radius:3px;width:21%"></div></td></tr>
+          <tr><td><i class="ti ti-tools" style="font-size:13px;margin-right:6px;color:var(--brown3)"></i>Fix my set</td><td>12</td><td>~1,800</td><td>$0.007</td><td><div style="background:var(--brown5);height:6px;border-radius:3px;width:6%"></div></td></tr>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const ADMIN_PASSWORD = 'lumio2024';
+
+function tryLogin(){
+  const pw = document.getElementById('pwInput').value;
+  if(pw === ADMIN_PASSWORD){
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').classList.add('show');
+    initCharts();
+    startClock();
+  } else {
+    document.getElementById('loginError').classList.add('show');
+    document.getElementById('pwInput').value = '';
+    document.getElementById('pwInput').focus();
+  }
+}
+
+function logout(){
+  document.getElementById('adminPanel').classList.remove('show');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('pwInput').value = '';
+  document.getElementById('loginError').classList.remove('show');
+}
+
+function showTab(tab, el){
+  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.admin-page').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+function startClock(){
+  function tick(){
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  }
+  tick();
+  setInterval(tick, 1000);
+}
+
+function initCharts(){
+  // DAU chart
+  const dauData = [98,112,134,128,156,142,142];
+  const dauLabels = ['Mon','Tue','Wed','Thu','Fri','Sat','Today'];
+  const dauMax = Math.max(...dauData);
+  const dauChart = document.getElementById('dauChart');
+  dauChart.innerHTML = '';
+  dauData.forEach((v,i)=>{
+    const g = document.createElement('div');
+    g.className = 'bar-group';
+    const pct = (v/dauMax)*120;
+    g.innerHTML = `<div class="bar" style="height:${pct}px;background:${i===6?'var(--brown)':'var(--cream3)'}"></div><div class="bar-lbl">${dauLabels[i]}</div>`;
+    dauChart.appendChild(g);
+  });
+
+  // API chart
+  const apiData = [48,312,84,12];
+  const apiLabels = ['Generate','Chat','Rate','Fix'];
+  const apiColors = ['var(--brown)','var(--brown3)','var(--brown4)','var(--brown5)'];
+  const apiMax = Math.max(...apiData);
+  const apiChart = document.getElementById('apiChart');
+  apiChart.innerHTML = '';
+  apiData.forEach((v,i)=>{
+    const g = document.createElement('div');
+    g.className = 'bar-group';
+    const pct = (v/apiMax)*120;
+    g.innerHTML = `<div class="bar" style="height:${pct}px;background:${apiColors[i]}"></div><div class="bar-lbl">${apiLabels[i]}</div>`;
+    apiChart.appendChild(g);
+  });
+
+  // Spend chart
+  const spendData = [0.08,0.11,0.09,0.14,0.10,0.13,0.11,0.15,0.09,0.12,0.10,0.13,0.11,0.12];
+  const spendMax = Math.max(...spendData);
+  const spendChart = document.getElementById('spendChart');
+  spendChart.innerHTML = '';
+  spendData.forEach((v,i)=>{
+    const g = document.createElement('div');
+    g.className = 'bar-group';
+    const pct = (v/spendMax)*120;
+    const isToday = i === spendData.length-1;
+    g.innerHTML = `<div class="bar" style="height:${pct}px;background:${isToday?'var(--green)':'var(--cream3)'}"></div><div class="bar-lbl">${isToday?'Today':''}`;
+    spendChart.appendChild(g);
+  });
+}
+
+function banUser(btn, name){
+  if(!confirm(`Ban ${name}? They will lose access to Lumio.`)) return;
+  const row = btn.closest('tr');
+  row.querySelector('.status-badge').className = 'status-badge banned';
+  row.querySelector('.status-badge').textContent = 'Banned';
+  btn.textContent = 'Unban';
+  btn.classList.remove('danger');
+  btn.onclick = ()=>unbanUser(btn, name);
+}
+
+function unbanUser(btn, name){
+  const row = btn.closest('tr');
+  row.querySelector('.status-badge').className = 'status-badge active';
+  row.querySelector('.status-badge').textContent = 'Active';
+  btn.textContent = 'Ban';
+  btn.classList.add('danger');
+  btn.onclick = ()=>banUser(btn, name);
+}
+
+function resolveFlag(id, action){
+  const el = document.getElementById(id);
+  el.style.transition = 'all 0.3s';
+  el.style.opacity = '0';
+  el.style.transform = 'translateX(20px)';
+  setTimeout(()=>el.remove(), 300);
+  const remaining = document.querySelectorAll('.flag-item').length - 1;
+  document.querySelector('#tab-moderation .chead span').textContent = remaining + ' pending review';
+}
+
+function filterUsers(query){
+  document.querySelectorAll('#usersTable tr:not(:first-child)').forEach(row=>{
+    row.style.display = row.textContent.toLowerCase().includes(query.toLowerCase()) ? '' : 'none';
+  });
+}
+
+function refreshCredits(){
+  const fill = document.getElementById('creditsFill');
+  fill.style.width = '76.8%';
+  document.getElementById('creditsVal').textContent = '$3.84 remaining';
+}
+
+// Allow Enter key on login
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && document.getElementById('loginScreen').style.display !== 'none'){
+    tryLogin();
+  }
+});
+</script>
+
+<script>
+// Smooth page transitions on navigation
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href]').forEach(function(link){
+    const href = link.getAttribute('href');
+    if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = link.href;
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateY(-6px)';
+      document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      setTimeout(function(){ window.location.href = target; }, 200);
+    });
+  });
+  // Fade in on load
+  document.body.style.opacity = '0';
+  document.body.style.transform = 'translateY(6px)';
+  document.body.style.transition = 'none';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      document.body.style.opacity = '1';
+      document.body.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

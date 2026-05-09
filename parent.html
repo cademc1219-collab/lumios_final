@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Parent Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;--brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;--brown4:#b8956a;--brown5:#d4b896;--green:#3a6b3f;--green2:#e8f0e9;--red:#c0392b;--red2:#fbeaea;--border:rgba(92,61,30,0.15);--border2:rgba(92,61,30,0.28);--shadow:rgba(44,26,14,0.09)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--brown);display:flex;min-height:100vh}
+.sidebar{width:220px;min-height:100vh;background:var(--brown);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0}
+.sidebar-logo{padding:28px 24px 24px;border-bottom:1px solid rgba(255,255,255,0.07);font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--brown5);display:inline-block}
+.sidebar-section{padding:20px 16px 8px;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;margin:2px 8px;cursor:pointer;transition:all 0.2s;font-size:13px;color:rgba(255,255,255,0.55);font-weight:400;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:var(--cream)}
+.nav-item.active{background:rgba(255,255,255,0.1);color:var(--cream);font-weight:500}
+.nav-item i{font-size:17px;width:20px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:16px 8px;border-top:1px solid rgba(255,255,255,0.07)}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer}
+.user-av{width:32px;height:32px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);flex-shrink:0}
+.user-info .un{font-size:13px;font-weight:500;color:var(--cream)}
+.user-info .ur{font-size:11px;color:rgba(255,255,255,0.35)}
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;margin-left:220px}
+.topbar{background:#fff;border-bottom:1.5px solid var(--border2);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10}
+.topbar-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.btn-primary{padding:9px 18px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px}
+.btn-primary:hover{background:var(--brown2)}
+.btn-ghost{padding:9px 16px;border-radius:8px;border:2px solid var(--border2);background:var(--cream2);color:var(--brown2);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px}
+.btn-ghost:hover{background:var(--cream3);border-color:var(--brown4)}
+.icon-btn{width:36px;height:36px;border-radius:8px;border:2px solid var(--border2);background:var(--cream2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brown3);font-size:17px;transition:all 0.2s}
+.icon-btn:hover{background:var(--cream3);color:var(--brown)}
+
+.view{display:none;padding:24px;flex:1}
+.view.active{display:block}
+
+/* CHILD SWITCHER */
+.child-switcher{display:flex;gap:12px;margin-bottom:24px;flex-wrap:wrap}
+.child-btn{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:12px;border:2px solid var(--border2);background:#fff;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 8px var(--shadow)}
+.child-btn:hover{border-color:var(--brown4);transform:translateY(-1px)}
+.child-btn.active{border-color:var(--brown);background:var(--cream2)}
+.child-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.child-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--brown)}
+.child-age{font-size:11px;color:var(--brown4);font-weight:300}
+.child-online{width:8px;height:8px;border-radius:50%;background:var(--cream3);margin-left:auto}
+.child-online.on{background:#4ade80}
+.add-child-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;border:2px dashed var(--border2);background:transparent;cursor:pointer;transition:all 0.2s;color:var(--brown4);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500}
+.add-child-btn:hover{border-color:var(--brown);color:var(--brown);background:var(--cream2)}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-card{background:#fff;border:2px solid var(--border2);border-radius:12px;padding:18px 20px;box-shadow:0 2px 8px var(--shadow)}
+.sc-icon{width:38px;height:38px;border-radius:10px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:18px;margin-bottom:12px;border:1.5px solid var(--border2)}
+.sc-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--brown)}
+.sc-label{font-size:12px;color:var(--brown4);margin-top:3px}
+.sc-trend{font-size:11px;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px}
+.sc-trend.up{color:var(--green)}
+.sc-trend.warn{color:#a0522d}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.cbox{background:#fff;border:2px solid var(--border2);border-radius:13px;overflow:hidden;margin-bottom:18px;box-shadow:0 2px 8px var(--shadow)}
+.chead{padding:14px 18px;border-bottom:2px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--cream2)}
+.chead h3{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown)}
+.cbody{padding:16px 18px}
+
+/* ACTIVITY TIMELINE */
+.activity-item{display:flex;gap:12px;padding:11px 0;border-bottom:1.5px solid var(--border);align-items:flex-start}
+.activity-item:last-child{border-bottom:none}
+.act-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.act-dot.study{background:var(--brown)}
+.act-dot.badge{background:#c4862a}
+.act-dot.assign{background:var(--green)}
+.act-dot.leo{background:var(--brown3)}
+.act-text{flex:1;font-size:13px;color:var(--brown);line-height:1.5}
+.act-text strong{color:var(--brown2)}
+.act-time{font-size:11px;color:var(--brown5);flex-shrink:0;font-weight:300}
+
+/* SET CONTROLS */
+.set-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1.5px solid var(--border)}
+.set-item:last-child{border-bottom:none}
+.set-icon{width:36px;height:36px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:16px;flex-shrink:0;border:1.5px solid var(--border2)}
+.set-info{flex:1}
+.set-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;color:var(--brown);margin-bottom:2px}
+.set-meta{font-size:11px;color:var(--brown4);font-weight:300}
+.toggle{width:44px;height:24px;border-radius:100px;cursor:pointer;transition:all 0.2s;position:relative;flex-shrink:0;border:none}
+.toggle.on{background:var(--green)}
+.toggle.off{background:var(--cream3)}
+.toggle::after{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;transition:all 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.toggle.on::after{left:23px}
+.toggle.off::after{left:3px}
+
+/* PIN SECTION */
+.pin-display{display:flex;gap:8px;margin-bottom:14px}
+.pin-dot-show{width:14px;height:14px;border-radius:50%;background:var(--brown);border:2px solid var(--border2)}
+.pin-dot-show.hidden{background:transparent}
+.pin-actions{display:flex;gap:8px}
+
+/* APPROVAL QUEUE */
+.approval-item{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1.5px solid var(--border)}
+.approval-item:last-child{border-bottom:none}
+.appr-icon{width:40px;height:40px;border-radius:10px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:18px;flex-shrink:0;border:1.5px solid var(--border2)}
+.appr-info{flex:1}
+.appr-title{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;color:var(--brown);margin-bottom:2px}
+.appr-meta{font-size:11px;color:var(--brown4);font-weight:300}
+.appr-age{font-size:10px;font-weight:600;padding:2px 7px;border-radius:100px}
+.appr-age.teen{background:#fdf3e7;color:#a0522d;border:1px solid rgba(160,82,45,0.2)}
+.appr-age.all{background:var(--green2);color:var(--green);border:1px solid rgba(58,107,63,0.2)}
+.approve-btn{padding:6px 12px;border-radius:7px;border:1.5px solid rgba(58,107,63,0.3);background:var(--green2);color:var(--green);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s;margin-right:6px}
+.approve-btn:hover{background:var(--green);color:#fff}
+.reject-btn{padding:6px 12px;border-radius:7px;border:1.5px solid rgba(192,57,43,0.3);background:var(--red2);color:var(--red);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.reject-btn:hover{background:var(--red);color:#fff}
+
+/* PROGRESS BAR */
+.prog-row{margin-bottom:12px}
+.prog-label{display:flex;justify-content:space-between;margin-bottom:5px}
+.prog-label span:first-child{font-size:13px;font-weight:500;color:var(--brown)}
+.prog-label span:last-child{font-size:12px;color:var(--brown4)}
+.prog-bar{height:8px;background:var(--cream3);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;background:var(--brown)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(44,26,14,0.4);display:none;align-items:center;justify-content:center;z-index:100;padding:24px}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border:2px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:440px;box-shadow:0 16px 48px var(--shadow)}
+.modal h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:20px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown3);margin-bottom:5px}
+.field input,.field select{width:100%;padding:10px 13px;border:2px solid var(--border2);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);outline:none;background:var(--cream2)}
+.field input:focus,.field select:focus{border-color:var(--brown3)}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+.pin-pad-modal{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:200px;margin:0 auto 16px}
+.pkey{padding:14px;border-radius:10px;border:2px solid var(--border2);background:var(--cream2);font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--brown);cursor:pointer;text-align:center;transition:all 0.15s;box-shadow:0 2px 0 var(--cream3)}
+.pkey:hover{background:var(--cream3);border-color:var(--brown4)}
+.pkey:active{transform:translateY(1px);box-shadow:none}
+.pkey.emp{background:transparent;border-color:transparent;box-shadow:none;cursor:default}
+.pkey.del{font-size:15px;color:var(--brown3)}
+.new-pin-dots{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
+.npd{width:14px;height:14px;border-radius:50%;border:2.5px solid var(--brown4);background:transparent;transition:all 0.2s}
+.npd.f{background:var(--brown);border-color:var(--brown)}
+</style>
+<style>@media(max-width:768px){
+  .view{padding:14px 16px}
+  .child-switcher{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+  .child-btn{flex-shrink:0}
+  .stats-row{grid-template-columns:1fr 1fr!important;gap:10px}
+  .grid-2{grid-template-columns:1fr!important}
+  .pin-pad-modal{max-width:180px}
+  .activity-item{gap:8px}
+  .approval-item{flex-wrap:wrap;gap:8px}
+  .flag-actions{flex-wrap:wrap}
+}</style>
+</head>
+<body>
+<div class="sidebar">
+  <a href="index.html" class="sidebar-logo">Lumio <span class="logo-dot"></span></a>
+  <div class="sidebar-section">My children</div>
+  <a href="#" class="nav-item active" onclick="showChild('mia')"><i class="ti ti-mood-smile"></i> Mia</a>
+  <a href="#" class="nav-item" onclick="showChild('jake')"><i class="ti ti-mood-smile"></i> Jake</a>
+  <div class="sidebar-section">Manage</div>
+  <a href="#" class="nav-item"><i class="ti ti-shield-check"></i> Content controls</a>
+  <a href="#" class="nav-item"><i class="ti ti-bell"></i> Notifications</a>
+  <a href="#" class="nav-item"><i class="ti ti-settings"></i> Account settings</a>
+      <div style="padding:8px 8px 0;border-top:1px solid rgba(255,255,255,0.07);margin-top:8px">
+      <a href="#" class="nav-item" style="color:rgba(255,255,255,0.4)" onclick="if(confirm('Sign out of Lumio?')){if(window.lumio)window.lumio.logout();else window.location.href='login.html';}"><i class="ti ti-logout"></i> Sign out</a>
+    </div>
+  <div class="sidebar-bottom">
+    <div class="user-pill">
+      <div class="user-av">PJ</div>
+      <div class="user-info"><div class="un">parent_jones</div><div class="ur">Parent</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Parent dashboard</div>
+    <div class="topbar-right">
+      <button class="btn-ghost" onclick="openModal('addChild')"><i class="ti ti-plus"></i> Add child</button>
+      <button class="icon-btn" onclick="openSearch()" title="Search (Cmd+K)"><i class="ti ti-search"></i></button>
+      <button class="icon-btn"><i class="ti ti-bell"></i></button>
+    </div>
+  </div>
+
+  <div class="view active" id="view-main">
+    <!-- CHILD SWITCHER -->
+    <div class="child-switcher">
+      <div class="child-btn active" id="cbtn-mia" onclick="showChild('mia')">
+        <div class="child-av">🦁</div>
+        <div><div class="child-name">Mia</div><div class="child-age">Age 9 · Kids mode</div></div>
+        <div class="child-online on"></div>
+      </div>
+      <div class="child-btn" id="cbtn-jake" onclick="showChild('jake')">
+        <div class="child-av">🐢</div>
+        <div><div class="child-name">Jake</div><div class="child-age">Age 12 · Student mode</div></div>
+        <div class="child-online"></div>
+      </div>
+      <button class="add-child-btn" onclick="openModal('addChild')"><i class="ti ti-plus" style="font-size:16px"></i> Add child</button>
+    </div>
+
+    <!-- MIA'S DASHBOARD -->
+    <div id="child-mia">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="sc-icon"><i class="ti ti-flame"></i></div>
+          <div class="sc-val">5</div>
+          <div class="sc-label">Day streak</div>
+          <div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> Best ever: 8 days</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon"><i class="ti ti-cards"></i></div>
+          <div class="sc-val">284</div>
+          <div class="sc-label">Cards studied</div>
+          <div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +48 this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon"><i class="ti ti-chart-bar"></i></div>
+          <div class="sc-val">87%</div>
+          <div class="sc-label">Avg accuracy</div>
+          <div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +5% vs last week</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon"><i class="ti ti-clock"></i></div>
+          <div class="sc-val">22m</div>
+          <div class="sc-label">Studied today</div>
+          <div class="sc-trend up"><i class="ti ti-check" style="font-size:11px"></i> Above daily goal</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- ACTIVITY -->
+        <div class="cbox">
+          <div class="chead"><h3>Recent activity</h3><span style="font-size:12px;color:var(--brown4)">Today</span></div>
+          <div class="cbody">
+            <div class="activity-item"><div class="act-dot study"></div><div class="act-text">Studied <strong>Spelling Words Week 4</strong> — got 18/20 correct</div><div class="act-time">2h ago</div></div>
+            <div class="activity-item"><div class="act-dot badge"></div><div class="act-text">Earned badge <strong>5 Day Streak!</strong> 🔥</div><div class="act-time">2h ago</div></div>
+            <div class="activity-item"><div class="act-dot study"></div><div class="act-text">Studied <strong>Animal Facts</strong> — got 12/15 correct</div><div class="act-time">Yesterday</div></div>
+            <div class="activity-item"><div class="act-dot leo"></div><div class="act-text">Chatted with <strong>Leo</strong> about spelling rules</div><div class="act-time">Yesterday</div></div>
+            <div class="activity-item"><div class="act-dot study"></div><div class="act-text">Studied <strong>Times Tables 1–10</strong> — got 40/50 correct</div><div class="act-time">2 days ago</div></div>
+          </div>
+        </div>
+
+        <!-- SETS PROGRESS -->
+        <div class="cbox">
+          <div class="chead"><h3>Set progress</h3></div>
+          <div class="cbody">
+            <div class="prog-row"><div class="prog-label"><span>Spelling Words Week 4</span><span>90%</span></div><div class="prog-bar"><div class="prog-fill" style="width:90%"></div></div></div>
+            <div class="prog-row"><div class="prog-label"><span>Animal Facts</span><span>80%</span></div><div class="prog-bar"><div class="prog-fill" style="width:80%"></div></div></div>
+            <div class="prog-row"><div class="prog-label"><span>Times Tables 1–10</span><span>65%</span></div><div class="prog-bar"><div class="prog-fill" style="width:65%"></div></div></div>
+            <div class="prog-row"><div class="prog-label"><span>World Capitals</span><span>40%</span></div><div class="prog-bar"><div class="prog-fill" style="width:40%"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- CONTENT CONTROLS -->
+        <div class="cbox">
+          <div class="chead"><h3>Content controls</h3><span style="font-size:12px;color:var(--brown4)">Mia's account</span></div>
+          <div class="cbody">
+            <div style="margin-bottom:14px">
+              <div style="font-size:12px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Age rating</div>
+              <div style="display:flex;gap:8px">
+                <button style="flex:1;padding:9px;border-radius:8px;border:2px solid var(--brown);background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;cursor:pointer">All ages only</button>
+                <button style="flex:1;padding:9px;border-radius:8px;border:2px solid var(--border2);background:var(--cream2);color:var(--brown3);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:500;cursor:pointer">Allow 13+</button>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--cream2);border-radius:8px;border:1.5px solid var(--border2)">
+                <div><div style="font-size:13px;font-weight:500;color:var(--brown)">Require approval for new sets</div><div style="font-size:11px;color:var(--brown4);font-weight:300">You approve before she can study</div></div>
+                <button class="toggle on" onclick="toggleSwitch(this)" id="tog-approve"></button>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--cream2);border-radius:8px;border:1.5px solid var(--border2)">
+                <div><div style="font-size:13px;font-weight:500;color:var(--brown)">Leo chat</div><div style="font-size:11px;color:var(--brown4);font-weight:300">Allow Mia to chat with Leo</div></div>
+                <button class="toggle on" onclick="toggleSwitch(this)"></button>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--cream2);border-radius:8px;border:1.5px solid var(--border2)">
+                <div><div style="font-size:13px;font-weight:500;color:var(--brown)">Daily study goal</div><div style="font-size:11px;color:var(--brown4);font-weight:300">Remind Mia to study each day</div></div>
+                <button class="toggle on" onclick="toggleSwitch(this)"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PIN MANAGEMENT -->
+        <div class="cbox">
+          <div class="chead"><h3>PIN management</h3><span style="font-size:12px;color:var(--brown4)">Kids mode login</span></div>
+          <div class="cbody">
+            <div style="margin-bottom:16px">
+              <div style="font-size:12px;color:var(--brown4);font-weight:300;margin-bottom:10px">Mia's current PIN</div>
+              <div class="pin-display">
+                <div class="pin-dot-show"></div>
+                <div class="pin-dot-show"></div>
+                <div class="pin-dot-show"></div>
+                <div class="pin-dot-show"></div>
+              </div>
+              <div style="font-size:12px;color:var(--brown4);font-weight:300;margin-bottom:14px">PIN is hidden for security</div>
+              <div class="pin-actions">
+                <button class="btn-primary" style="font-size:12px;padding:8px 14px" onclick="openModal('changePin')"><i class="ti ti-lock" style="font-size:13px"></i> Change PIN</button>
+                <button class="btn-ghost" style="font-size:12px;padding:8px 14px" onclick="openModal('viewPin')"><i class="ti ti-eye" style="font-size:13px"></i> View PIN</button>
+              </div>
+            </div>
+            <div style="background:var(--cream2);border-radius:8px;padding:12px;border:1.5px solid var(--border2)">
+              <div style="font-size:12px;font-weight:600;color:var(--brown);margin-bottom:4px">Account info</div>
+              <div style="font-size:12px;color:var(--brown4);font-weight:300;line-height:1.6">Username: mia_lumio<br>Mode: Kids mode<br>Avatar: 🦁<br>Joined: March 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- APPROVAL QUEUE -->
+      <div class="cbox" id="approvalQueue">
+        <div class="chead"><h3>Waiting for your approval</h3><span style="background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px" id="approvalCount">2</span></div>
+        <div class="cbody">
+          <div class="approval-item" id="appr1">
+            <div class="appr-icon"><i class="ti ti-world"></i></div>
+            <div class="appr-info"><div class="appr-title">World Capitals — All 195 Countries <span class="appr-age all">All ages</span></div><div class="appr-meta">By Leo · 195 cards · Geography · Mia wants to study this</div></div>
+            <div><button class="approve-btn" onclick="resolveApproval('appr1')">✓ Approve</button><button class="reject-btn" onclick="resolveApproval('appr1',true)">✗ Decline</button></div>
+          </div>
+          <div class="approval-item" id="appr2">
+            <div class="appr-icon"><i class="ti ti-math"></i></div>
+            <div class="appr-info"><div class="appr-title">Multiplication Tables — Advanced <span class="appr-age all">All ages</span></div><div class="appr-meta">By nova_prep · 60 cards · Math · Recommended by Leo</div></div>
+            <div><button class="approve-btn" onclick="resolveApproval('appr2')">✓ Approve</button><button class="reject-btn" onclick="resolveApproval('appr2',true)">✗ Decline</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JAKE'S DASHBOARD -->
+    <div id="child-jake" style="display:none">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="sc-icon"><i class="ti ti-flame"></i></div>
+          <div class="sc-val">2</div>
+          <div class="sc-label">Day streak</div>
+          <div class="sc-trend warn"><i class="ti ti-trending-down" style="font-size:11px"></i> Down from 9 days</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon"><i class="ti ti-cards"></i></div>
+          <div class="sc-val">612</div>
+          <div class="sc-label">Cards studied</div>
+          <div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +32 this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon"><i class="ti ti-chart-bar"></i></div>
+          <div class="sc-val">74%</div>
+          <div class="sc-label">Avg accuracy</div>
+          <div class="sc-trend warn"><i class="ti ti-trending-down" style="font-size:11px"></i> -3% vs last week</div>
+        </div>
+        <div class="stat-card">
+          <div class="sc-icon"><i class="ti ti-clock"></i></div>
+          <div class="sc-val">8m</div>
+          <div class="sc-label">Studied today</div>
+          <div class="sc-trend warn"><i class="ti ti-alert-circle" style="font-size:11px"></i> Below daily goal</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="cbox">
+          <div class="chead"><h3>Recent activity</h3></div>
+          <div class="cbody">
+            <div class="activity-item"><div class="act-dot study"></div><div class="act-text">Studied <strong>US History — Civil War</strong> — got 14/20 correct</div><div class="act-time">3h ago</div></div>
+            <div class="activity-item"><div class="act-dot assign"></div><div class="act-text">Completed assignment <strong>Algebra Basics</strong> — scored 78%</div><div class="act-time">Yesterday</div></div>
+            <div class="activity-item"><div class="act-dot leo"></div><div class="act-text">Asked <strong>Leo</strong> for help with fractions</div><div class="act-time">Yesterday</div></div>
+            <div class="activity-item"><div class="act-dot study"></div><div class="act-text">Studied <strong>Spanish Vocab 101</strong> — got 28/40 correct</div><div class="act-time">3 days ago</div></div>
+          </div>
+        </div>
+        <div class="cbox">
+          <div class="chead"><h3>Set progress</h3></div>
+          <div class="cbody">
+            <div class="prog-row"><div class="prog-label"><span>US History — Civil War</span><span>70%</span></div><div class="prog-bar"><div class="prog-fill" style="width:70%"></div></div></div>
+            <div class="prog-row"><div class="prog-label"><span>Algebra Basics</span><span>78%</span></div><div class="prog-bar"><div class="prog-fill" style="width:78%"></div></div></div>
+            <div class="prog-row"><div class="prog-label"><span>Spanish Vocab 101</span><span>55%</span></div><div class="prog-bar"><div class="prog-fill" style="width:55%"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="cbox">
+          <div class="chead"><h3>Content controls</h3><span style="font-size:12px;color:var(--brown4)">Jake's account</span></div>
+          <div class="cbody">
+            <div style="margin-bottom:14px">
+              <div style="font-size:12px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Age rating</div>
+              <div style="display:flex;gap:8px">
+                <button style="flex:1;padding:9px;border-radius:8px;border:2px solid var(--border2);background:var(--cream2);color:var(--brown3);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:500;cursor:pointer">All ages only</button>
+                <button style="flex:1;padding:9px;border-radius:8px;border:2px solid var(--brown);background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;cursor:pointer">Allow 13+</button>
+              </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--cream2);border-radius:8px;border:1.5px solid var(--border2)">
+                <div><div style="font-size:13px;font-weight:500;color:var(--brown)">Require approval for new sets</div><div style="font-size:11px;color:var(--brown4);font-weight:300">You approve before he can study</div></div>
+                <button class="toggle off" onclick="toggleSwitch(this)"></button>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--cream2);border-radius:8px;border:1.5px solid var(--border2)">
+                <div><div style="font-size:13px;font-weight:500;color:var(--brown)">Leo chat</div><div style="font-size:11px;color:var(--brown4);font-weight:300">Allow Jake to chat with Leo</div></div>
+                <button class="toggle on" onclick="toggleSwitch(this)"></button>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--cream2);border-radius:8px;border:1.5px solid var(--border2)">
+                <div><div style="font-size:13px;font-weight:500;color:var(--brown)">Daily study reminder</div><div style="font-size:11px;color:var(--brown4);font-weight:300">Notify you if Jake doesn't study</div></div>
+                <button class="toggle on" onclick="toggleSwitch(this)"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="cbox">
+          <div class="chead"><h3>Account info</h3></div>
+          <div class="cbody">
+            <div style="background:var(--cream2);border-radius:8px;padding:14px;border:1.5px solid var(--border2);margin-bottom:12px">
+              <div style="font-size:12px;font-weight:600;color:var(--brown);margin-bottom:6px">Jake's account</div>
+              <div style="font-size:12px;color:var(--brown4);font-weight:300;line-height:1.8">Username: jake_lumio<br>Mode: Student<br>Avatar: 🐢<br>Joined: January 2026</div>
+            </div>
+            <button class="btn-ghost" style="font-size:12px;width:100%;justify-content:center" onclick="alert('Password reset link sent!')"><i class="ti ti-lock"></i> Reset password</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-addChild">
+  <div class="modal">
+    <h3>Add a child</h3>
+    <div class="field"><label>Child's name</label><input type="text" placeholder="e.g. Mia"></div>
+    <div class="field"><label>Age</label><input type="number" placeholder="e.g. 9" min="4" max="17"></div>
+    <div class="field"><label>Account type</label><select><option>Kids mode (under 10)</option><option>Student mode (10+)</option></select></div>
+    <div class="field"><label>Username</label><input type="text" placeholder="e.g. mia_lumio"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('addChild')">Cancel</button>
+      <button class="btn-primary" onclick="closeModal('addChild');alert('Child account created!')">Create account</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-changePin">
+  <div class="modal">
+    <h3>Change Mia's PIN</h3>
+    <p style="font-size:13px;color:var(--brown3);font-weight:300;margin-bottom:20px">Enter a new 4-digit PIN for Mia's kids mode login.</p>
+    <div class="new-pin-dots">
+      <div class="npd" id="np0"></div><div class="npd" id="np1"></div><div class="npd" id="np2"></div><div class="npd" id="np3"></div>
+    </div>
+    <div class="pin-pad-modal">
+      <button class="pkey" onclick="npk('1')">1</button><button class="pkey" onclick="npk('2')">2</button><button class="pkey" onclick="npk('3')">3</button>
+      <button class="pkey" onclick="npk('4')">4</button><button class="pkey" onclick="npk('5')">5</button><button class="pkey" onclick="npk('6')">6</button>
+      <button class="pkey" onclick="npk('7')">7</button><button class="pkey" onclick="npk('8')">8</button><button class="pkey" onclick="npk('9')">9</button>
+      <div class="pkey emp"></div><button class="pkey" onclick="npk('0')">0</button><button class="pkey del" onclick="ndp()"><i class="ti ti-backspace"></i></button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('changePin');newPin=''">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-viewPin">
+  <div class="modal">
+    <h3>View Mia's PIN</h3>
+    <p style="font-size:13px;color:var(--brown3);font-weight:300;margin-bottom:16px">Make sure nobody else can see your screen.</p>
+    <div style="background:var(--cream2);border:2px solid var(--border2);border-radius:10px;padding:20px;text-align:center;margin-bottom:16px">
+      <div style="font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:var(--brown);letter-spacing:12px">1234</div>
+    </div>
+    <div class="modal-actions"><button class="btn-primary" onclick="closeModal('viewPin')">Done</button></div>
+  </div>
+</div>
+
+<script>
+let newPin = '';
+
+function showChild(child){
+  document.querySelectorAll('[id^="child-"]').forEach(el=>el.style.display='none');
+  document.querySelectorAll('[id^="cbtn-"]').forEach(el=>el.classList.remove('active'));
+  document.getElementById('child-'+child).style.display='block';
+  document.getElementById('cbtn-'+child).classList.add('active');
+  const names={mia:"Mia's dashboard",jake:"Jake's dashboard"};
+  document.getElementById('topbarTitle').textContent=names[child]||'Parent dashboard';
+}
+
+function toggleSwitch(btn){
+  btn.classList.toggle('on');
+  btn.classList.toggle('off');
+}
+
+function resolveApproval(id, declined){
+  const el=document.getElementById(id);
+  el.style.transition='all 0.3s';
+  el.style.opacity='0';
+  el.style.transform='translateX(20px)';
+  setTimeout(()=>{
+    el.remove();
+    const remaining=document.querySelectorAll('.approval-item').length;
+    document.getElementById('approvalCount').textContent=remaining;
+    if(remaining===0){
+      document.querySelector('#approvalQueue .cbody').innerHTML='<div style="text-align:center;padding:20px;color:var(--brown4);font-size:13px;font-weight:300">No sets waiting for approval</div>';
+    }
+  },300);
+}
+
+function npk(k){
+  if(newPin.length>=4)return;
+  newPin+=k;
+  for(let i=0;i<4;i++)document.getElementById('np'+i).classList.toggle('f',i<newPin.length);
+  if(newPin.length===4){
+    setTimeout(()=>{
+      closeModal('changePin');
+      alert('PIN changed to '+newPin+'!');
+      newPin='';
+      for(let i=0;i<4;i++)document.getElementById('np'+i).classList.remove('f');
+    },300);
+  }
+}
+function ndp(){newPin=newPin.slice(0,-1);for(let i=0;i<4;i++)document.getElementById('np'+i).classList.toggle('f',i<newPin.length);}
+function openModal(name){document.getElementById('modal-'+name).classList.add('show');}
+function closeModal(name){document.getElementById('modal-'+name).classList.remove('show');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');}));
+</script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bn-item" onclick="window.location.href='dashboard.html'" id="bn-home">
+    <i class="ti ti-layout-dashboard"></i><span>Home</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='explore.html'" id="bn-explore">
+    <i class="ti ti-compass"></i><span>Explore</span>
+  </button>
+  <button class="bn-create" onclick="window.location.href='create.html'">
+    <div class="bn-create-icon"><i class="ti ti-plus" style="font-size:22px;color:var(--cream)"></i></div>
+    <span>Create</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='leaderboard.html'" id="bn-ranks">
+    <i class="ti ti-trophy"></i><span>Ranks</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='profile.html'" id="bn-profile">
+    <i class="ti ti-user"></i><span>Profile</span>
+  </button>
+</nav>
+<script>
+// Highlight active tab
+(function(){
+  const page = window.location.pathname.split('/').pop();
+  const map = {'dashboard.html':'bn-home','explore.html':'bn-explore','leaderboard.html':'bn-ranks','profile.html':'bn-profile','create.html':null};
+  const activeId = map[page];
+  if(activeId) { const el=document.getElementById(activeId); if(el) el.classList.add('active'); }
+})();
+</script>
+
+
+<script>
+// Smooth page transitions on navigation
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href]').forEach(function(link){
+    const href = link.getAttribute('href');
+    if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = link.href;
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateY(-6px)';
+      document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      setTimeout(function(){ window.location.href = target; }, 200);
+    });
+  });
+  // Fade in on load
+  document.body.style.opacity = '0';
+  document.body.style.transform = 'translateY(6px)';
+  document.body.style.transition = 'none';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      document.body.style.opacity = '1';
+      document.body.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
+
+
+<!-- SEARCH OVERLAY -->
+<div id="searchOverlay" style="display:none;position:fixed;inset:0;background:rgba(44,26,14,0.5);z-index:9998;backdrop-filter:blur(4px)" onclick="closeSearch()"></div>
+<div id="searchPanel" style="display:none;position:fixed;top:0;left:0;right:0;background:#fff;z-index:9999;padding:16px 24px;box-shadow:0 8px 32px rgba(44,26,14,0.15)">
+  <div style="max-width:700px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <i class="ti ti-search" style="font-size:20px;color:var(--brown4)"></i>
+      <input id="searchInput" type="text" placeholder="Search sets, topics, creators..." style="flex:1;border:none;outline:none;font-family:'Source Sans 3',sans-serif;font-size:16px;color:var(--brown);background:transparent" oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
+      <button onclick="closeSearch()" style="border:none;background:transparent;cursor:pointer;color:var(--brown4);font-size:14px;font-family:'Source Sans 3',sans-serif;font-weight:500">Cancel</button>
+    </div>
+    <div id="searchResults" style="padding-bottom:8px"></div>
+  </div>
+</div>
+<script>
+const SEARCH_DATA = [
+  {type:'set',name:'Cell Division: Mitosis & Meiosis',meta:'48 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'Human Body Systems Overview',meta:'66 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'World Capitals — 195 Countries',meta:'195 cards · Geography',url:'setdetail.html'},
+  {type:'set',name:'SAT Vocabulary High Frequency',meta:'150 cards · English',url:'setdetail.html'},
+  {type:'set',name:'Spanish 101 — Core Vocabulary',meta:'200 cards · Languages',url:'setdetail.html'},
+  {type:'set',name:'WW2 Key Events Timeline',meta:'60 cards · History',url:'setdetail.html'},
+  {type:'set',name:'Calculus Fundamentals',meta:'55 cards · Math',url:'setdetail.html'},
+  {type:'set',name:'Photosynthesis — Complete Guide',meta:'28 cards · Science',url:'setdetail.html'},
+  {type:'page',name:'Explore sets',meta:'Browse the marketplace',url:'explore.html'},
+  {type:'page',name:'Leaderboard',meta:'Weekly rankings',url:'leaderboard.html'},
+  {type:'page',name:'Create a set',meta:'Build your own flashcard set',url:'create.html'},
+  {type:'page',name:'Study with Leo',meta:'Start a study session',url:'study.html'},
+  {type:'page',name:'My profile',meta:'View your profile',url:'profile.html'},
+  {type:'page',name:'Settings',meta:'Account and preferences',url:'settings.html'},
+  {type:'creator',name:'Leo',meta:'AI study coach · 2,840 sets',url:'leo.html'},
+  {type:'creator',name:'sarah_reads',meta:'Verified creator · 12 sets',url:'profile.html'},
+  {type:'creator',name:'nova_prep',meta:'Top creator · 22 sets',url:'profile.html'},
+];
+function openSearch(){
+  document.getElementById('searchOverlay').style.display='block';
+  document.getElementById('searchPanel').style.display='block';
+  setTimeout(()=>document.getElementById('searchInput').focus(),50);
+  doSearch('');
+}
+function closeSearch(){
+  document.getElementById('searchOverlay').style.display='none';
+  document.getElementById('searchPanel').style.display='none';
+  document.getElementById('searchInput').value='';
+}
+function doSearch(q){
+  const results = document.getElementById('searchResults');
+  const query = q.toLowerCase().trim();
+  const matches = query ? SEARCH_DATA.filter(d=>d.name.toLowerCase().includes(query)||d.meta.toLowerCase().includes(query)) : SEARCH_DATA.slice(0,6);
+  if(!matches.length){results.innerHTML='<div style="padding:12px 0;font-size:13px;color:var(--brown4);text-align:center">No results for "'+q+'"</div>';return;}
+  const icons={set:'ti-cards',page:'ti-file',creator:'ti-user'};
+  results.innerHTML = matches.slice(0,8).map(m=>`
+    <div onclick="window.location.href='${m.url}'" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">
+      <div style="width:36px;height:36px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:16px;flex-shrink:0;border:1.5px solid var(--border2)"><i class="ti ${icons[m.type]}"></i></div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--brown)">${m.name}</div><div style="font-size:11px;color:var(--brown4);font-weight:300">${m.meta}</div></div>
+    </div>`).join('');
+}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}});
+</script>
+
+<script src="darkmode.js"></script>
+<script src="polish.js"></script>
+<script src="transitions.js"></script>
+<script src="search.js"></script>
+</body>
+</html>

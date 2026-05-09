@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Welcome</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;--brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;--brown4:#b8956a;--brown5:#d4b896;--green:#3a6b3f;--green2:#e8f0e9;--border2:rgba(92,61,30,0.28);--shadow:rgba(44,26,14,0.12)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--brown);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{background:var(--cream);border-radius:20px;width:100%;max-width:480px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.3)}
+.progress-bar{height:4px;background:var(--cream3)}
+.progress-fill{height:100%;background:var(--brown);transition:width 0.4s ease}
+.step{display:none;padding:36px 32px}
+.step.active{display:block}
+.step-num{font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4);margin-bottom:16px}
+.step-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--brown);margin-bottom:8px;line-height:1.2}
+.step-sub{font-size:14px;color:var(--brown3);font-weight:300;line-height:1.7;margin-bottom:24px}
+.subject-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:24px}
+.subj-opt{padding:14px 10px;border-radius:11px;border:2px solid var(--border2);background:var(--cream2);text-align:center;cursor:pointer;transition:all 0.2s}
+.subj-opt:hover{border-color:var(--brown4)}
+.subj-opt.sel{border-color:var(--brown);background:#fff}
+.subj-opt i{font-size:22px;color:var(--brown3);display:block;margin-bottom:6px}
+.subj-opt.sel i{color:var(--brown)}
+.subj-opt span{font-size:12px;font-weight:500;color:var(--brown)}
+.goal-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.goal-opt{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:11px;border:2px solid var(--border2);background:var(--cream2);cursor:pointer;transition:all 0.2s}
+.goal-opt:hover{border-color:var(--brown4)}
+.goal-opt.sel{border-color:var(--brown);background:#fff}
+.goal-icon{width:40px;height:40px;border-radius:10px;background:var(--cream3);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.goal-opt.sel .goal-icon{background:var(--brown);color:var(--cream)}
+.goal-name{font-size:14px;font-weight:500;color:var(--brown)}
+.goal-sub{font-size:12px;color:var(--brown4);font-weight:300}
+.avatar-grid{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:24px}
+.av-opt{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;cursor:pointer;border:2.5px solid var(--border2);transition:all 0.25s;background:var(--cream2)}
+.av-opt:hover{transform:scale(1.08);border-color:var(--brown4)}
+.av-opt.sel{border-color:var(--brown);box-shadow:0 0 0 4px var(--cream3)}
+.welcome-icon{width:72px;height:72px;border-radius:50%;background:var(--green2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;animation:popIn 0.5s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.next-btn{width:100%;padding:13px;border-radius:10px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.next-btn:hover{background:var(--brown2)}
+.skip{display:block;text-align:center;margin-top:12px;font-size:13px;color:var(--brown4);cursor:pointer;font-weight:300}
+.skip:hover{color:var(--brown)}
+@media(max-width:480px){.step{padding:24px 20px}.subject-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:20%"></div></div>
+
+  <!-- STEP 1: WELCOME -->
+  <div class="step active" id="s1">
+    <div class="step-num">Step 1 of 5</div>
+    <div style="text-align:center;margin-bottom:20px">
+      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--brown);display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:4px">
+        Lumio <span style="width:8px;height:8px;border-radius:50%;background:var(--brown4);display:inline-block"></span>
+      </div>
+    </div>
+    <div class="step-title">Welcome aboard! 👋</div>
+    <div class="step-sub">Let's take 2 minutes to set up your account so Lumio and Leo can personalise your experience.</div>
+    <div style="background:var(--cream2);border-radius:12px;padding:16px;margin-bottom:24px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--brown3)"><i class="ti ti-check" style="color:var(--green);font-size:16px"></i> Personalised set recommendations</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--brown3)"><i class="ti ti-check" style="color:var(--green);font-size:16px"></i> Leo learns how you study best</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:13px;color:var(--brown3)"><i class="ti ti-check" style="color:var(--green);font-size:16px"></i> Track your progress from day one</div>
+      </div>
+    </div>
+    <button class="next-btn" onclick="nextStep(2)">Let's get started →</button>
+    <span class="skip" onclick="finish()">Skip setup</span>
+  </div>
+
+  <!-- STEP 2: SUBJECTS -->
+  <div class="step" id="s2">
+    <div class="step-num">Step 2 of 5</div>
+    <div class="step-title">What do you study?</div>
+    <div class="step-sub">Pick your main subjects — Leo will suggest sets in these areas first.</div>
+    <div class="subject-grid">
+      <div class="subj-opt sel" onclick="toggleSubj(this)"><i class="ti ti-dna"></i><span>Biology</span></div>
+      <div class="subj-opt" onclick="toggleSubj(this)"><i class="ti ti-math"></i><span>Math</span></div>
+      <div class="subj-opt" onclick="toggleSubj(this)"><i class="ti ti-history"></i><span>History</span></div>
+      <div class="subj-opt" onclick="toggleSubj(this)"><i class="ti ti-language"></i><span>Languages</span></div>
+      <div class="subj-opt" onclick="toggleSubj(this)"><i class="ti ti-writing"></i><span>English</span></div>
+      <div class="subj-opt" onclick="toggleSubj(this)"><i class="ti ti-atom"></i><span>Science</span></div>
+      <div class="subj-opt" onclick="toggleSubj(this)"><i class="ti ti-world"></i><span>Geography</span></div>
+      <div class="subj-opt" onclick="toggleSubj(this)"><i class="ti ti-music"></i><span>Arts</span></div>
+      <div class="subj-opt" onclick="toggleSubj(this)"><i class="ti ti-device-laptop"></i><span>Coding</span></div>
+    </div>
+    <button class="next-btn" onclick="nextStep(3)">Continue →</button>
+    <span class="skip" onclick="nextStep(3)">Skip</span>
+  </div>
+
+  <!-- STEP 3: GOAL -->
+  <div class="step" id="s3">
+    <div class="step-num">Step 3 of 5</div>
+    <div class="step-title">What's your main goal?</div>
+    <div class="step-sub">This helps Leo set the right difficulty and pace for you.</div>
+    <div class="goal-opts">
+      <div class="goal-opt sel" onclick="selectGoal(this)"><div class="goal-icon"><i class="ti ti-school" style="font-size:18px"></i></div><div><div class="goal-name">Passing exams</div><div class="goal-sub">Study for upcoming tests and finals</div></div></div>
+      <div class="goal-opt" onclick="selectGoal(this)"><div class="goal-icon"><i class="ti ti-trending-up" style="font-size:18px"></i></div><div><div class="goal-name">Getting better grades</div><div class="goal-sub">Improve my overall academic performance</div></div></div>
+      <div class="goal-opt" onclick="selectGoal(this)"><div class="goal-icon"><i class="ti ti-bulb" style="font-size:18px"></i></div><div><div class="goal-name">Learning for fun</div><div class="goal-sub">Just curious and love learning new things</div></div></div>
+      <div class="goal-opt" onclick="selectGoal(this)"><div class="goal-icon"><i class="ti ti-language" style="font-size:18px"></i></div><div><div class="goal-name">Learning a language</div><div class="goal-sub">Build vocabulary and fluency</div></div></div>
+    </div>
+    <button class="next-btn" onclick="nextStep(4)">Continue →</button>
+  </div>
+
+  <!-- STEP 4: AVATAR -->
+  <div class="step" id="s4">
+    <div class="step-num">Step 4 of 5</div>
+    <div class="step-title">Pick your avatar</div>
+    <div class="step-sub">This shows up on your profile and the leaderboard.</div>
+    <div class="avatar-grid">
+      <div class="av-opt sel" onclick="selectAv(this)">🦁</div>
+      <div class="av-opt" onclick="selectAv(this)">🐢</div>
+      <div class="av-opt" onclick="selectAv(this)">🦋</div>
+      <div class="av-opt" onclick="selectAv(this)">🐙</div>
+      <div class="av-opt" onclick="selectAv(this)">🦊</div>
+      <div class="av-opt" onclick="selectAv(this)">🐻</div>
+      <div class="av-opt" onclick="selectAv(this)">🦅</div>
+      <div class="av-opt" onclick="selectAv(this)">🐬</div>
+      <div class="av-opt" onclick="selectAv(this)">🌟</div>
+    </div>
+    <button class="next-btn" onclick="nextStep(5)">Continue →</button>
+  </div>
+
+  <!-- STEP 5: DONE -->
+  <div class="step" id="s5">
+    <div style="text-align:center;padding:8px 0">
+      <div class="welcome-icon"><i class="ti ti-sparkles" style="color:var(--green)"></i></div>
+      <div class="step-title" style="text-align:center">You're all set!</div>
+      <div class="step-sub" style="text-align:center">Leo has your preferences. Head to the dashboard to start studying — your first set recommendation is waiting!</div>
+      <div style="background:var(--brown);border-radius:12px;padding:16px;margin-bottom:24px;display:flex;gap:12px;align-items:flex-start;text-align:left">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--cream);flex-shrink:0">L</div>
+        <div style="font-size:13px;color:var(--brown5);font-weight:300;line-height:1.6">Hey! I've set up your profile. I'll suggest sets in your subjects and adjust to how you study. Just click the chat button anytime you need help!</div>
+      </div>
+      <button class="next-btn" onclick="finish()"><i class="ti ti-layout-dashboard" style="font-size:15px;margin-right:6px"></i>Go to dashboard</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentStep = 1;
+const totalSteps = 5;
+
+function nextStep(n) {
+  document.getElementById('s' + currentStep).classList.remove('active');
+  document.getElementById('s' + n).classList.add('active');
+  currentStep = n;
+  document.getElementById('progressFill').style.width = (n / totalSteps * 100) + '%';
+}
+
+function toggleSubj(el) { el.classList.toggle('sel'); }
+
+function selectGoal(el) {
+  document.querySelectorAll('.goal-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function selectAv(el) {
+  document.querySelectorAll('.av-opt').forEach(a => a.classList.remove('sel'));
+  el.classList.add('sel');
+}
+
+function finish() {
+  localStorage.setItem('lumio_onboarded', 'true');
+  window.location.href = 'dashboard.html';
+}
+</script>
+</body>
+</html>

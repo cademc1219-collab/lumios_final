@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Mobile Preview</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;--brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;--brown4:#b8956a;--brown5:#d4b896;--green:#3a6b3f;--green2:#e8f0e9;--border:rgba(92,61,30,0.15);--border2:rgba(92,61,30,0.28);--shadow:rgba(44,26,14,0.09)}
+body{font-family:'Source Sans 3',sans-serif;background:#e8e0d8;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px}
+h1{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:#5c3d1e;margin-bottom:6px}
+p{font-size:13px;color:#8b6340;margin-bottom:24px;font-weight:300}
+.page-tabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:24px}
+.ptab{padding:8px 16px;border-radius:100px;border:2px solid var(--border2);background:#fff;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;color:var(--brown3);cursor:pointer;transition:all 0.2s}
+.ptab.active{background:var(--brown);color:var(--cream);border-color:var(--brown)}
+.phone-frame{width:375px;background:var(--cream);border-radius:40px;overflow:hidden;box-shadow:0 24px 64px rgba(44,26,14,0.25),0 0 0 8px #2c1a0e,0 0 0 10px #4a3020}
+.screen{display:none;min-height:700px;position:relative;padding-bottom:80px}
+.screen.active{display:block}
+
+/* SHARED COMPONENTS */
+.mobile-topbar{background:var(--brown);padding:48px 18px 16px}
+.mt-row{display:flex;align-items:center;justify-content:space-between}
+.mt-logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);display:flex;align-items:center;gap:6px}
+.mt-dot{width:6px;height:6px;border-radius:50%;background:var(--brown5)}
+.mt-av{width:36px;height:36px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--cream)}
+.page-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream);margin-top:8px}
+.content{padding:16px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sec-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--brown)}
+.sec-link{font-size:12px;color:var(--brown3)}
+.sets-scroll{display:flex;gap:10px;overflow-x:auto;margin:0 -16px;padding:0 16px 4px;scrollbar-width:none;margin-bottom:16px}
+.sets-scroll::-webkit-scrollbar{display:none}
+.set-card-m{background:#fff;border:2px solid var(--border2);border-radius:12px;padding:14px;flex-shrink:0;width:148px}
+.scm-icon{width:36px;height:36px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:17px;margin-bottom:8px;border:1.5px solid var(--border)}
+.scm-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;color:var(--brown);margin-bottom:3px;line-height:1.3}
+.scm-meta{font-size:11px;color:var(--brown4);font-weight:300}
+.scm-stars{font-size:11px;color:#c4862a;margin-top:5px}
+.cbox-m{background:#fff;border:2px solid var(--border2);border-radius:13px;overflow:hidden;margin-bottom:14px}
+.chead-m{padding:12px 16px;border-bottom:2px solid var(--border2);background:var(--cream2);font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--brown)}
+.cbody-m{padding:14px 16px}
+
+/* BOTTOM NAV */
+.bottom-nav{position:absolute;bottom:0;left:0;right:0;height:72px;background:rgba(250,247,242,0.97);backdrop-filter:blur(10px);display:flex;align-items:center;padding:0 8px 8px;border-top:none}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:transparent;padding:6px 0}
+.bn-item i{font-size:22px;color:var(--brown5)}
+.bn-item span{font-size:10px;color:var(--brown5);font-weight:400}
+.bn-item.active i{color:var(--brown)}
+.bn-item.active span{color:var(--brown);font-weight:600}
+.bn-create{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:transparent;padding:0}
+.bn-create-icon{width:46px;height:46px;border-radius:13px;background:var(--brown);display:flex;align-items:center;justify-content:center;margin-top:-18px;box-shadow:0 4px 14px rgba(44,26,14,0.28)}
+.bn-create span{font-size:10px;color:var(--brown5);margin-top:2px}
+
+/* DASHBOARD */
+.continue-card{background:var(--brown);border-radius:14px;padding:16px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+.cc-info h3{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--cream);margin-bottom:3px}
+.cc-info p{font-size:12px;color:var(--brown5);font-weight:300}
+.cc-bar{height:5px;background:rgba(255,255,255,0.15);border-radius:3px;overflow:hidden;width:90px;margin-top:6px}
+.cc-fill{height:100%;background:var(--brown5);border-radius:3px;width:65%}
+.cc-pct{font-size:10px;color:var(--brown5);margin-top:2px}
+.cc-play{width:42px;height:42px;border-radius:50%;background:var(--cream);display:flex;align-items:center;justify-content:center;color:var(--brown);font-size:20px;flex-shrink:0;margin-left:auto}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.stat-m{background:#fff;border:2px solid var(--border2);border-radius:12px;padding:14px}
+.sm-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--brown)}
+.sm-lbl{font-size:11px;color:var(--brown4);margin-top:2px}
+.sm-trend{font-size:10px;font-weight:600;margin-top:4px;color:var(--green)}
+.leo-m{background:var(--brown);border-radius:14px;padding:14px 16px;margin-bottom:16px;display:flex;gap:12px}
+.leo-m-av{width:36px;height:36px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--cream);flex-shrink:0}
+.leo-m-msg h4{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--cream);margin-bottom:4px}
+.leo-m-msg p{font-size:12px;color:var(--brown5);font-weight:300;line-height:1.6;margin-bottom:8px}
+.leo-m-btn{padding:7px 14px;border-radius:8px;border:none;background:var(--cream);color:var(--brown);font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+
+/* EXPLORE */
+.search-bar{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border-radius:11px;padding:10px 13px;margin-top:12px;border:1px solid rgba(255,255,255,0.12)}
+.search-bar input{background:transparent;border:none;outline:none;color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;flex:1}
+.search-bar input::placeholder{color:rgba(255,255,255,0.35)}
+.filter-scroll{display:flex;gap:7px;overflow-x:auto;margin:0 -16px;padding:0 16px 2px;scrollbar-width:none;margin-bottom:14px}
+.filter-scroll::-webkit-scrollbar{display:none}
+.filter-chip{padding:6px 13px;border-radius:100px;border:2px solid var(--border2);background:#fff;font-size:12px;font-weight:500;color:var(--brown3);white-space:nowrap;cursor:pointer;flex-shrink:0}
+.filter-chip.active{background:var(--brown);color:var(--cream);border-color:var(--brown)}
+.sets-grid-m{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.sgm-card{background:#fff;border:2px solid var(--border2);border-radius:13px;padding:13px}
+.sgm-icon{width:38px;height:38px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:17px;margin-bottom:9px;border:1.5px solid var(--border)}
+.sgm-sub{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--brown4);margin-bottom:3px}
+.sgm-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--brown);margin-bottom:7px;line-height:1.3}
+.sgm-foot{display:flex;align-items:center;justify-content:space-between}
+.sgm-cards{font-size:11px;color:var(--brown4);font-weight:300}
+.sgm-stars{font-size:11px;color:#c4862a}
+
+/* STUDY */
+.study-top{background:#fff;border-bottom:2px solid var(--border2);padding:14px 16px;display:flex;align-items:center;gap:10px}
+.study-prog-bar{flex:1;height:6px;background:var(--cream3);border-radius:3px;overflow:hidden}
+.study-prog-fill{height:100%;background:var(--brown);border-radius:3px;width:40%}
+.study-prog-txt{font-size:12px;color:var(--brown4);white-space:nowrap}
+.flashcard-area{padding:20px 16px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.flashcard-m{width:100%;height:220px;background:#fff;border:2px solid var(--border2);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;box-shadow:0 4px 16px var(--shadow)}
+.fc-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4);margin-bottom:12px}
+.fc-text{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--brown);text-align:center;line-height:1.3}
+.fc-hint{font-size:11px;color:var(--brown5);margin-top:16px;display:flex;align-items:center;gap:4px}
+.fc-actions{display:flex;gap:10px;width:100%}
+.fc-btn{flex:1;padding:13px;border-radius:11px;border:none;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.fc-btn.wrong{background:#fbeaea;color:#c0392b}
+.fc-btn.skip{background:var(--cream2);color:var(--brown3);border:2px solid var(--border2)}
+.fc-btn.correct{background:var(--green2);color:var(--green)}
+.leo-study-btn{position:absolute;bottom:88px;left:16px;width:46px;height:46px;border-radius:50%;background:var(--brown);border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(44,26,14,0.25);cursor:pointer;font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--cream)}
+
+/* MC STYLE */
+.mc-q-m{padding:20px 16px}
+.mc-q-label{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4);margin-bottom:8px}
+.mc-q-text{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown);line-height:1.3;margin-bottom:18px}
+.mc-opts-m{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px}
+.mc-opt-m{height:100px;border-radius:13px;border:none;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;padding:12px}
+.mc-opt-m:nth-child(1){background:#8b2a2a}
+.mc-opt-m:nth-child(2){background:#7a5c1e}
+.mc-opt-m:nth-child(3){background:#1e5c3a}
+.mc-opt-m:nth-child(4){background:#1e3a5c}
+
+/* PROFILE */
+.profile-banner-m{height:90px;background:linear-gradient(135deg,var(--brown),var(--brown3))}
+.profile-av-m{width:64px;height:64px;border-radius:50%;background:var(--brown2);border:4px solid var(--cream);position:absolute;top:62px;left:16px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream)}
+.profile-info-m{padding:44px 16px 16px;position:relative}
+.profile-name-m{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--brown);display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.profile-bio-m{font-size:12px;color:var(--brown3);font-weight:300;line-height:1.6;margin-bottom:10px}
+.profile-stats-m{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:var(--border);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.ps-item-m{background:#fff;padding:14px;text-align:center}
+.ps-val-m{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)}
+.ps-lbl-m{font-size:10px;color:var(--brown4);margin-top:2px}
+.badge-row-m{display:flex;gap:8px;overflow-x:auto;padding:4px 0;scrollbar-width:none;margin-bottom:14px}
+.badge-row-m::-webkit-scrollbar{display:none}
+.badge-m{background:#fff;border:2px solid var(--border2);border-radius:10px;padding:10px 12px;text-align:center;flex-shrink:0;width:76px}
+.badge-m-icon{font-size:22px;margin-bottom:4px}
+.badge-m-name{font-size:10px;font-weight:600;color:var(--brown);line-height:1.3}
+
+/* SET DETAIL */
+.set-hero-m{background:#fff;border-bottom:2px solid var(--border2);padding:16px}
+.set-badges-m{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.sbdg{font-size:10px;font-weight:600;padding:3px 8px;border-radius:100px;border:1.5px solid}
+.sbdg.s{background:var(--cream2);color:var(--brown2);border-color:var(--border2)}
+.sbdg.v{background:var(--brown);color:var(--cream);border-color:var(--brown)}
+.set-title-m{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--brown);margin-bottom:8px;line-height:1.2}
+.set-meta-m{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.set-meta-m span{font-size:12px;color:var(--brown4);display:flex;align-items:center;gap:3px}
+.study-btn-m{width:100%;padding:14px;border-radius:11px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.rating-m{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--cream2);border-top:1.5px solid var(--border2)}
+.rating-big-m{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--brown)}
+.rating-stars-m{font-size:16px;color:#c4862a}
+.rating-ct-m{font-size:11px;color:var(--brown4);font-weight:300}
+.preview-card-m{display:flex;gap:10px;padding:10px 0;border-bottom:1.5px solid var(--border);align-items:flex-start}
+.preview-card-m:last-child{border-bottom:none}
+.pc-front-m{font-size:13px;font-weight:600;color:var(--brown);flex:1}
+.pc-back-m{font-size:13px;color:var(--brown3);font-weight:300;flex:1;border-left:2px solid var(--border2);padding-left:10px;filter:blur(3px)}
+
+/* LOGIN */
+.login-m{padding:32px 20px}
+.login-logo-m{font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--brown);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.login-sub-m{font-size:13px;color:var(--brown4);font-weight:300;margin-bottom:28px}
+.login-tabs-m{display:flex;background:var(--cream2);border-radius:10px;padding:3px;gap:3px;margin-bottom:20px;border:2px solid var(--border2)}
+.login-tab-m{flex:1;padding:9px;border-radius:8px;border:none;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:var(--brown4);transition:all 0.2s}
+.login-tab-m.active{background:#fff;color:var(--brown);font-weight:600}
+.field-m{margin-bottom:14px}
+.field-m label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown3);margin-bottom:5px}
+.field-m input{width:100%;padding:12px 14px;border:2px solid var(--border2);border-radius:9px;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--brown);background:var(--cream2);outline:none}
+.login-btn-m{width:100%;padding:14px;border-radius:11px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-bottom:14px}
+.acct-types-m{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.acct-type-m{padding:12px 10px;border-radius:10px;border:2px solid var(--border2);background:#fff;text-align:center;cursor:pointer;transition:all 0.2s}
+.acct-type-m.active{border-color:var(--brown);background:var(--cream2)}
+.acct-type-m i{font-size:20px;color:var(--brown3);display:block;margin-bottom:5px}
+.acct-type-m span{font-size:12px;font-weight:500;color:var(--brown)}
+
+/* KIDS */
+.kids-pin-m{min-height:600px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px;background:var(--cream)}
+.klogo-m{font-family:'Playfair Display',serif;font-size:26px;font-weight:800;color:var(--brown);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.kdot-m{width:8px;height:8px;border-radius:50%;background:var(--brown4);animation:kb 1s ease-in-out infinite}
+@keyframes kb{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.ksub-m{font-size:15px;color:var(--brown3);font-weight:300;margin-bottom:22px}
+.kav-row-m{display:flex;gap:12px;margin-bottom:22px;flex-wrap:wrap;justify-content:center}
+.kav-m{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;border:3px solid var(--border2);background:var(--cream2);box-shadow:0 2px 8px var(--shadow)}
+.kav-m.sel{border-color:var(--brown);box-shadow:0 0 0 3px var(--cream3)}
+.kpin-label-m{font-size:15px;font-weight:600;color:var(--brown2);margin-bottom:12px}
+.kpin-dots-m{display:flex;gap:11px;margin-bottom:20px}
+.kpd-m{width:14px;height:14px;border-radius:50%;border:2.5px solid var(--brown4);background:transparent}
+.kpd-m.f{background:var(--brown);border-color:var(--brown)}
+.kpad-m{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;max-width:220px;width:100%}
+.kkey-m{padding:15px;border-radius:11px;border:2px solid var(--border2);background:var(--cream2);font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--brown);cursor:pointer;text-align:center;box-shadow:0 2px 0 var(--cream3)}
+.kkey-m.emp{background:transparent;border-color:transparent;box-shadow:none}
+
+/* CREATE */
+.create-steps-m{display:flex;align-items:center;padding:14px 16px;background:#fff;border-bottom:2px solid var(--border2);gap:0}
+.cs-step{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.cs-circle{width:28px;height:28px;border-radius:50%;background:var(--cream2);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:12px;font-weight:700;color:var(--brown4)}
+.cs-circle.done{background:var(--green);border-color:var(--green);color:#fff}
+.cs-circle.active{background:var(--brown);border-color:var(--brown);color:var(--cream)}
+.cs-lbl{font-size:10px;color:var(--brown4);font-weight:400}
+.cs-lbl.active{color:var(--brown);font-weight:600}
+.cs-line{flex:1;height:2px;background:var(--border2);margin-top:-18px}
+.cs-line.done{background:var(--green)}
+.create-body-m{padding:16px}
+.field-create-m{margin-bottom:14px}
+.field-create-m label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown3);margin-bottom:5px}
+.field-create-m input,.field-create-m textarea,.field-create-m select{width:100%;padding:11px 13px;border:2px solid var(--border2);border-radius:9px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);background:var(--cream2);outline:none}
+.next-btn-m{width:100%;padding:14px;border-radius:11px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.import-grid-m{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.import-opt-m{padding:14px 8px;border-radius:11px;border:2px solid var(--border2);background:#fff;text-align:center;cursor:pointer}
+.import-opt-m.active{border-color:var(--brown);background:var(--cream2)}
+.import-opt-m i{font-size:20px;color:var(--brown3);display:block;margin-bottom:6px}
+.import-opt-m span{font-size:11px;font-weight:500;color:var(--brown)}
+</style>
+
+<!-- PAGE TABS -->
+<h1>Lumio Mobile Design</h1>
+<p>Click through each screen to preview the mobile layout</p>
+<div class="page-tabs">
+  <div class="ptab active" onclick="showScreen('dashboard',this)">Dashboard</div>
+  <div class="ptab" onclick="showScreen('explore',this)">Explore</div>
+  <div class="ptab" onclick="showScreen('study',this)">Study</div>
+  <div class="ptab" onclick="showScreen('create',this)">Create</div>
+  <div class="ptab" onclick="showScreen('profile',this)">Profile</div>
+  <div class="ptab" onclick="showScreen('setdetail',this)">Set detail</div>
+  <div class="ptab" onclick="showScreen('login',this)">Login</div>
+  <div class="ptab" onclick="showScreen('kids',this)">Kids</div>
+</div>
+
+<div class="phone-frame">
+
+  <!-- DASHBOARD -->
+  <div class="screen active" id="screen-dashboard">
+    <div class="mobile-topbar">
+      <div class="mt-row"><div class="mt-logo">Lumio <span class="mt-dot"></span></div><div style="display:flex;align-items:center;gap:12px"><i class="ti ti-bell" style="font-size:20px;color:var(--brown5)"></i><div class="mt-av">AS</div></div></div>
+      <div style="font-size:13px;color:var(--brown5);margin-top:10px;font-weight:300">Good morning,</div>
+      <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream);margin-top:2px">alex_studies</div>
+    </div>
+    <div class="content">
+      <div class="continue-card"><div class="cc-info"><h3>Continue studying</h3><p>Cell Division · 13 cards left</p><div class="cc-bar"><div class="cc-fill"></div></div><div class="cc-pct">65% done</div></div><div class="cc-play"><i class="ti ti-player-play" style="font-size:18px"></i></div></div>
+      <div class="stats-grid">
+        <div class="stat-m"><div class="sm-val">12</div><div class="sm-lbl">Day streak</div><div class="sm-trend"><i class="ti ti-flame" style="font-size:11px"></i> Personal best!</div></div>
+        <div class="stat-m"><div class="sm-val">284</div><div class="sm-lbl">Cards studied</div><div class="sm-trend"><i class="ti ti-trending-up" style="font-size:11px"></i> +48 today</div></div>
+        <div class="stat-m"><div class="sm-val">84%</div><div class="sm-lbl">Avg accuracy</div><div class="sm-trend"><i class="ti ti-trending-up" style="font-size:11px"></i> +5% this week</div></div>
+        <div class="stat-m"><div class="sm-val">#1</div><div class="sm-lbl">Weekly rank</div><div class="sm-trend"><i class="ti ti-trophy" style="font-size:11px"></i> Leaderboard</div></div>
+      </div>
+      <div class="sec-head"><div class="sec-title">My sets</div><div class="sec-link">See all</div></div>
+      <div class="sets-scroll">
+        <div class="set-card-m"><div class="scm-icon"><i class="ti ti-dna"></i></div><div class="scm-name">Cell Division</div><div class="scm-meta">48 cards · Bio</div><div class="scm-stars">★★★★★</div></div>
+        <div class="set-card-m"><div class="scm-icon"><i class="ti ti-heart-rate-monitor"></i></div><div class="scm-name">Body Systems</div><div class="scm-meta">66 cards · Bio</div><div class="scm-stars">★★★★★</div></div>
+        <div class="set-card-m"><div class="scm-icon"><i class="ti ti-leaf"></i></div><div class="scm-name">Photosynthesis</div><div class="scm-meta">28 cards · Sci</div><div class="scm-stars">★★★★☆</div></div>
+        <div class="set-card-m"><div class="scm-icon"><i class="ti ti-atom"></i></div><div class="scm-name">AP Chemistry</div><div class="scm-meta">45 cards · Chem</div><div class="scm-stars">★★★★★</div></div>
+      </div>
+      <div class="leo-m"><div class="leo-m-av">L</div><div class="leo-m-msg"><h4>Leo has a tip</h4><p>You've been nailing mitosis but meiosis keeps tripping you up. Want a focused drill?</p><button class="leo-m-btn">Let's do it</button></div></div>
+    </div>
+    <div class="bottom-nav">
+      <button class="bn-item active"><i class="ti ti-layout-dashboard"></i><span>Home</span></button>
+      <button class="bn-item"><i class="ti ti-compass"></i><span>Explore</span></button>
+      <button class="bn-create"><div class="bn-create-icon"><i class="ti ti-plus" style="font-size:21px;color:var(--cream)"></i></div><span>Create</span></button>
+      <button class="bn-item"><i class="ti ti-trophy"></i><span>Ranks</span></button>
+      <button class="bn-item"><i class="ti ti-user"></i><span>Profile</span></button>
+    </div>
+  </div>
+
+  <!-- EXPLORE -->
+  <div class="screen" id="screen-explore">
+    <div class="mobile-topbar">
+      <div class="mt-row"><div class="mt-logo">Lumio <span class="mt-dot"></span></div><i class="ti ti-sliders-horizontal" style="font-size:20px;color:var(--brown5)"></i></div>
+      <div class="page-title">Explore</div>
+      <div class="search-bar"><i class="ti ti-search" style="color:rgba(255,255,255,0.45);font-size:17px"></i><input placeholder="Search sets, topics, creators..."></div>
+    </div>
+    <div class="content">
+      <div class="filter-scroll">
+        <div class="filter-chip active">All</div><div class="filter-chip">Biology</div><div class="filter-chip">History</div><div class="filter-chip">Math</div><div class="filter-chip">Languages</div><div class="filter-chip">Science</div><div class="filter-chip">English</div>
+      </div>
+      <div class="sec-head"><div class="sec-title">Trending now</div><div class="sec-link"><i class="ti ti-arrows-sort" style="font-size:12px"></i> Sort</div></div>
+      <div class="sets-grid-m">
+        <div class="sgm-card"><div class="sgm-icon"><i class="ti ti-dna"></i></div><div class="sgm-sub">Biology</div><div class="sgm-name">Cell Division: Mitosis &amp; Meiosis</div><div class="sgm-foot"><span class="sgm-cards">48 cards</span><span class="sgm-stars">★★★★★</span></div></div>
+        <div class="sgm-card"><div class="sgm-icon"><i class="ti ti-world"></i></div><div class="sgm-sub">Geography</div><div class="sgm-name">World Capitals All 195</div><div class="sgm-foot"><span class="sgm-cards">195 cards</span><span class="sgm-stars">★★★★★</span></div></div>
+        <div class="sgm-card"><div class="sgm-icon"><i class="ti ti-writing"></i></div><div class="sgm-sub">English</div><div class="sgm-name">SAT Vocab High Frequency</div><div class="sgm-foot"><span class="sgm-cards">150 cards</span><span class="sgm-stars">★★★★★</span></div></div>
+        <div class="sgm-card"><div class="sgm-icon"><i class="ti ti-history"></i></div><div class="sgm-sub">History</div><div class="sgm-name">WW2 Key Events Timeline</div><div class="sgm-foot"><span class="sgm-cards">60 cards</span><span class="sgm-stars">★★★★★</span></div></div>
+        <div class="sgm-card"><div class="sgm-icon"><i class="ti ti-atom"></i></div><div class="sgm-sub">Science</div><div class="sgm-name">AP Chemistry Reactions</div><div class="sgm-foot"><span class="sgm-cards">45 cards</span><span class="sgm-stars">★★★★★</span></div></div>
+        <div class="sgm-card"><div class="sgm-icon"><i class="ti ti-language"></i></div><div class="sgm-sub">Languages</div><div class="sgm-name">Spanish 101 Core Vocab</div><div class="sgm-foot"><span class="sgm-cards">200 cards</span><span class="sgm-stars">★★★★★</span></div></div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="bn-item"><i class="ti ti-layout-dashboard"></i><span>Home</span></button>
+      <button class="bn-item active"><i class="ti ti-compass"></i><span>Explore</span></button>
+      <button class="bn-create"><div class="bn-create-icon"><i class="ti ti-plus" style="font-size:21px;color:var(--cream)"></i></div><span>Create</span></button>
+      <button class="bn-item"><i class="ti ti-trophy"></i><span>Ranks</span></button>
+      <button class="bn-item"><i class="ti ti-user"></i><span>Profile</span></button>
+    </div>
+  </div>
+
+  <!-- STUDY -->
+  <div class="screen" id="screen-study">
+    <div class="study-top">
+      <button style="background:transparent;border:none;cursor:pointer;color:var(--brown3);font-size:18px"><i class="ti ti-arrow-left"></i></button>
+      <div class="study-prog-bar"><div class="study-prog-fill"></div></div>
+      <div class="study-prog-txt">4 / 10</div>
+      <button style="background:transparent;border:none;cursor:pointer;color:var(--brown3);font-size:18px"><i class="ti ti-player-pause"></i></button>
+    </div>
+    <div style="padding:10px 16px;background:#fff;border-bottom:1.5px solid var(--border2)"><span style="background:var(--cream2);border:1.5px solid var(--border2);padding:4px 10px;border-radius:100px;font-size:11px;font-weight:500;color:var(--brown3)">Flashcard flip</span></div>
+    <div class="flashcard-area">
+      <div class="flashcard-m"><div class="fc-label">Term</div><div class="fc-text">Mitosis</div><div class="fc-hint"><i class="ti ti-hand-click" style="font-size:13px"></i> Tap to reveal</div></div>
+      <div class="fc-actions">
+        <button class="fc-btn wrong"><i class="ti ti-x" style="font-size:13px"></i> Learning</button>
+        <button class="fc-btn skip">Skip</button>
+        <button class="fc-btn correct"><i class="ti ti-check" style="font-size:13px"></i> Got it</button>
+      </div>
+    </div>
+    <button class="leo-study-btn">L</button>
+    <div class="bottom-nav">
+      <button class="bn-item"><i class="ti ti-layout-dashboard"></i><span>Home</span></button>
+      <button class="bn-item"><i class="ti ti-compass"></i><span>Explore</span></button>
+      <button class="bn-create"><div class="bn-create-icon"><i class="ti ti-plus" style="font-size:21px;color:var(--cream)"></i></div><span>Create</span></button>
+      <button class="bn-item"><i class="ti ti-trophy"></i><span>Ranks</span></button>
+      <button class="bn-item"><i class="ti ti-user"></i><span>Profile</span></button>
+    </div>
+  </div>
+
+  <!-- CREATE -->
+  <div class="screen" id="screen-create">
+    <div class="mobile-topbar">
+      <div class="mt-row"><div class="mt-logo">Lumio <span class="mt-dot"></span></div><i class="ti ti-x" style="font-size:20px;color:var(--brown5)"></i></div>
+      <div class="page-title">Create a set</div>
+    </div>
+    <div class="create-steps-m">
+      <div class="cs-step"><div class="cs-circle done"><i class="ti ti-check" style="font-size:12px"></i></div><div class="cs-lbl">Details</div></div>
+      <div class="cs-line done"></div>
+      <div class="cs-step"><div class="cs-circle active">2</div><div class="cs-lbl active">Cards</div></div>
+      <div class="cs-line"></div>
+      <div class="cs-step"><div class="cs-circle">3</div><div class="cs-lbl">Review</div></div>
+      <div class="cs-line"></div>
+      <div class="cs-step"><div class="cs-circle">4</div><div class="cs-lbl">Publish</div></div>
+    </div>
+    <div class="create-body-m">
+      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:4px">Add your cards</div>
+      <div style="font-size:13px;color:var(--brown4);font-weight:300;margin-bottom:16px">Choose how to add cards to your set</div>
+      <div class="import-grid-m">
+        <div class="import-opt-m active"><i class="ti ti-keyboard"></i><span>Manual</span></div>
+        <div class="import-opt-m"><i class="ti ti-brain"></i><span>AI generate</span></div>
+        <div class="import-opt-m"><i class="ti ti-notes"></i><span>Paste notes</span></div>
+        <div class="import-opt-m"><i class="ti ti-file-upload"></i><span>Upload file</span></div>
+        <div class="import-opt-m"><i class="ti ti-brand-youtube"></i><span>YouTube</span></div>
+        <div class="import-opt-m"><i class="ti ti-world"></i><span>Website</span></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 0 8px;margin-bottom:8px;border-bottom:1.5px solid var(--border)"><span style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--brown4)">Front</span><span style="font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--brown4)">Back</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;background:#fff;border:2px solid var(--border2);border-radius:9px;padding:10px"><input style="border:none;background:transparent;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);outline:none" placeholder="Term" value="Mitosis"><input style="border:none;background:transparent;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);outline:none" placeholder="Definition" value="Cell division..."><i class="ti ti-trash" style="font-size:15px;color:var(--brown5);cursor:pointer"></i></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;background:#fff;border:2px solid var(--border2);border-radius:9px;padding:10px"><input style="border:none;background:transparent;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);outline:none" placeholder="Term"><input style="border:none;background:transparent;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);outline:none" placeholder="Definition"><i class="ti ti-trash" style="font-size:15px;color:var(--brown5);cursor:pointer"></i></div>
+      </div>
+      <button class="next-btn-m">Next — Leo review <i class="ti ti-arrow-right" style="font-size:14px"></i></button>
+    </div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="screen-profile">
+    <div style="position:relative">
+      <div class="profile-banner-m"></div>
+      <div class="profile-av-m">AS</div>
+    </div>
+    <div class="profile-info-m">
+      <div class="profile-name-m">alex_studies <span style="width:16px;height:16px;border-radius:50%;background:var(--brown);display:inline-flex;align-items:center;justify-content:center;color:var(--cream);font-size:9px;font-weight:700">✓</span></div>
+      <div class="profile-bio-m">Biology nerd. Helping students ace their exams one set at a time.</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px">
+        <button style="flex:1;padding:10px;border-radius:9px;border:2px solid var(--border2);background:var(--cream2);color:var(--brown2);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;cursor:pointer">Edit profile</button>
+        <button style="padding:10px 14px;border-radius:9px;border:2px solid var(--border2);background:var(--cream2);color:var(--brown3);cursor:pointer;font-size:16px"><i class="ti ti-share"></i></button>
+      </div>
+    </div>
+    <div class="profile-stats-m">
+      <div class="ps-item-m"><div class="ps-val-m">12</div><div class="ps-lbl-m">Sets</div></div>
+      <div class="ps-item-m"><div class="ps-val-m">98k</div><div class="ps-lbl-m">Plays</div></div>
+      <div class="ps-item-m"><div class="ps-val-m">4.8</div><div class="ps-lbl-m">Rating</div></div>
+    </div>
+    <div class="content" style="padding-top:14px">
+      <div class="sec-head" style="margin-bottom:10px"><div class="sec-title">Badges</div><div class="sec-link">View all</div></div>
+      <div class="badge-row-m">
+        <div class="badge-m"><div class="badge-m-icon">🔥</div><div class="badge-m-name">12 day streak</div></div>
+        <div class="badge-m"><div class="badge-m-icon">🏆</div><div class="badge-m-name">Weekly #1</div></div>
+        <div class="badge-m"><div class="badge-m-icon">⭐</div><div class="badge-m-name">1,000 cards</div></div>
+        <div class="badge-m"><div class="badge-m-icon">✨</div><div class="badge-m-name">Verified</div></div>
+      </div>
+      <div class="sec-head"><div class="sec-title">My sets</div><div class="sec-link">Manage</div></div>
+      <div class="sets-scroll">
+        <div class="set-card-m"><div class="scm-icon"><i class="ti ti-dna"></i></div><div class="scm-name">Cell Division</div><div class="scm-meta">48 cards · 12.4k plays</div><div class="scm-stars">★★★★★</div></div>
+        <div class="set-card-m"><div class="scm-icon"><i class="ti ti-heart-rate-monitor"></i></div><div class="scm-name">Body Systems</div><div class="scm-meta">66 cards · 18.3k plays</div><div class="scm-stars">★★★★★</div></div>
+        <div class="set-card-m"><div class="scm-icon"><i class="ti ti-leaf"></i></div><div class="scm-name">Photosynthesis</div><div class="scm-meta">28 cards · 6.2k plays</div><div class="scm-stars">★★★★☆</div></div>
+      </div>
+    </div>
+    <div class="bottom-nav">
+      <button class="bn-item"><i class="ti ti-layout-dashboard"></i><span>Home</span></button>
+      <button class="bn-item"><i class="ti ti-compass"></i><span>Explore</span></button>
+      <button class="bn-create"><div class="bn-create-icon"><i class="ti ti-plus" style="font-size:21px;color:var(--cream)"></i></div><span>Create</span></button>
+      <button class="bn-item"><i class="ti ti-trophy"></i><span>Ranks</span></button>
+      <button class="bn-item active"><i class="ti ti-user"></i><span>Profile</span></button>
+    </div>
+  </div>
+
+  <!-- SET DETAIL -->
+  <div class="screen" id="screen-setdetail">
+    <div style="background:#fff;border-bottom:1.5px solid var(--border2);padding:14px 16px;display:flex;align-items:center;gap:10px">
+      <button style="background:transparent;border:none;cursor:pointer;color:var(--brown3);font-size:18px"><i class="ti ti-arrow-left"></i></button>
+      <span style="font-size:13px;color:var(--brown4)">Biology</span>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button style="background:transparent;border:none;cursor:pointer;color:var(--brown3);font-size:18px"><i class="ti ti-bookmark"></i></button>
+        <button style="background:transparent;border:none;cursor:pointer;color:var(--brown3);font-size:18px"><i class="ti ti-share"></i></button>
+      </div>
+    </div>
+    <div class="set-hero-m">
+      <div class="set-badges-m"><span class="sbdg s">Biology</span><span class="sbdg s">All ages</span><span class="sbdg v">✨ Leo verified</span></div>
+      <div class="set-title-m">Cell Division: Mitosis &amp; Meiosis</div>
+      <div class="set-meta-m"><span><i class="ti ti-cards" style="font-size:13px"></i> 48 cards</span><span><i class="ti ti-eye" style="font-size:13px"></i> 12,400 plays</span><span><i class="ti ti-clock" style="font-size:13px"></i> ~25 min</span></div>
+      <button class="study-btn-m"><i class="ti ti-player-play"></i> Study this set</button>
+    </div>
+    <div class="rating-m">
+      <div style="padding-right:12px;border-right:1.5px solid var(--border2);text-align:center"><div class="rating-big-m">5.0</div><div class="rating-stars-m">★★★★★</div><div class="rating-ct-m">142 ratings</div></div>
+      <div style="flex:1;padding-left:12px;font-size:13px;color:var(--brown3);font-weight:300;line-height:1.6">98% of students found this helpful. Leo verified quality.</div>
+    </div>
+    <div class="content" style="padding-top:14px">
+      <div class="cbox-m">
+        <div style="padding:12px 16px;border-bottom:2px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--cream2)"><span style="font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--brown)">Cards preview</span><button style="padding:5px 11px;border-radius:6px;border:2px solid var(--border2);background:#fff;color:var(--brown3);font-family:'Source Sans 3',sans-serif;font-size:12px;cursor:pointer">Show answers</button></div>
+        <div style="padding:12px 16px">
+          <div class="preview-card-m"><div class="pc-front-m">Mitosis</div><div class="pc-back-m">Cell division producing 2 identical daughter cells</div></div>
+          <div class="preview-card-m"><div class="pc-front-m">Meiosis</div><div class="pc-back-m">Cell division producing 4 unique sex cells</div></div>
+          <div class="preview-card-m"><div class="pc-front-m">Prophase</div><div class="pc-back-m">First stage — chromosomes condense</div></div>
+        </div>
+      </div>
+      <button class="study-btn-m">Study this set now — 48 cards</button>
+    </div>
+    <div class="bottom-nav">
+      <button class="bn-item"><i class="ti ti-layout-dashboard"></i><span>Home</span></button>
+      <button class="bn-item active"><i class="ti ti-compass"></i><span>Explore</span></button>
+      <button class="bn-create"><div class="bn-create-icon"><i class="ti ti-plus" style="font-size:21px;color:var(--cream)"></i></div><span>Create</span></button>
+      <button class="bn-item"><i class="ti ti-trophy"></i><span>Ranks</span></button>
+      <button class="bn-item"><i class="ti ti-user"></i><span>Profile</span></button>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="screen" id="screen-login">
+    <div style="background:var(--brown);padding:48px 18px 28px;text-align:center">
+      <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:800;color:var(--cream);display:flex;align-items:center;justify-content:center;gap:8px">Lumio <span style="width:8px;height:8px;border-radius:50%;background:var(--brown5);display:inline-block"></span></div>
+      <div style="font-size:14px;color:var(--brown5);margin-top:6px;font-weight:300">Your AI-powered study companion</div>
+    </div>
+    <div class="login-m">
+      <div class="login-tabs-m">
+        <button class="login-tab-m active">Sign up</button>
+        <button class="login-tab-m">Log in</button>
+      </div>
+      <div style="font-size:12px;color:var(--brown4);margin-bottom:12px;font-weight:300">I am a...</div>
+      <div class="acct-types-m">
+        <div class="acct-type-m active"><i class="ti ti-school"></i><span>Student</span></div>
+        <div class="acct-type-m"><i class="ti ti-chalkboard-teacher"></i><span>Teacher</span></div>
+        <div class="acct-type-m"><i class="ti ti-users"></i><span>Parent</span></div>
+        <div class="acct-type-m"><i class="ti ti-mood-smile"></i><span>Young learner</span></div>
+      </div>
+      <div class="field-m"><label>Username</label><input type="text" placeholder="e.g. alex_studies"></div>
+      <div class="field-m"><label>Email</label><input type="email" placeholder="your@email.com"></div>
+      <div class="field-m"><label>Password</label><input type="password" placeholder="Create a password"></div>
+      <button class="login-btn-m">Create account</button>
+      <div style="text-align:center"><button style="background:transparent;border:none;font-size:13px;color:var(--brown3);cursor:pointer">Already have an account? Log in</button></div>
+    </div>
+  </div>
+
+  <!-- KIDS -->
+  <div class="screen" id="screen-kids">
+    <div class="kids-pin-m">
+      <div class="klogo-m">Lumio <span class="kdot-m"></span></div>
+      <div class="ksub-m">Who's studying today?</div>
+      <div class="kav-row-m">
+        <div class="kav-m sel">🦁</div>
+        <div class="kav-m">🐢</div>
+        <div class="kav-m">🦋</div>
+        <div class="kav-m">🐙</div>
+        <div class="kav-m">🦊</div>
+      </div>
+      <div class="kpin-label-m">Enter your PIN</div>
+      <div class="kpin-dots-m">
+        <div class="kpd-m f"></div><div class="kpd-m f"></div><div class="kpd-m"></div><div class="kpd-m"></div>
+      </div>
+      <div class="kpad-m">
+        <div class="kkey-m">1</div><div class="kkey-m">2</div><div class="kkey-m">3</div>
+        <div class="kkey-m">4</div><div class="kkey-m">5</div><div class="kkey-m">6</div>
+        <div class="kkey-m">7</div><div class="kkey-m">8</div><div class="kkey-m">9</div>
+        <div class="kkey-m emp"></div><div class="kkey-m">0</div><div class="kkey-m" style="font-size:15px;color:var(--brown3)"><i class="ti ti-backspace"></i></div>
+      </div>
+      <div style="font-size:12px;color:var(--brown5);font-weight:300;margin-top:8px">Hint: try 1234</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showScreen(name, tab){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  tab.classList.add('active');
+}
+</script>

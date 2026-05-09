@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Teacher Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;--brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;--brown4:#b8956a;--brown5:#d4b896;--green:#3a6b3f;--green2:#e8f0e9;--red:#c0392b;--red2:#fbeaea;--border:rgba(92,61,30,0.15);--border2:rgba(92,61,30,0.28);--shadow:rgba(44,26,14,0.09)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--brown);display:flex;min-height:100vh}
+.sidebar{width:220px;min-height:100vh;background:var(--brown);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0}
+.sidebar-logo{padding:28px 24px 24px;border-bottom:1px solid rgba(255,255,255,0.07);font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--brown5);display:inline-block}
+.sidebar-section{padding:20px 16px 8px;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;margin:2px 8px;cursor:pointer;transition:all 0.2s;font-size:13px;color:rgba(255,255,255,0.55);font-weight:400;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:var(--cream)}
+.nav-item.active{background:rgba(255,255,255,0.1);color:var(--cream);font-weight:500}
+.nav-item i{font-size:17px;width:20px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:16px 8px;border-top:1px solid rgba(255,255,255,0.07)}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer}
+.user-av{width:32px;height:32px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);flex-shrink:0}
+.user-info .un{font-size:13px;font-weight:500;color:var(--cream)}
+.user-info .ur{font-size:11px;color:rgba(255,255,255,0.35)}
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;margin-left:220px}
+.topbar{background:#fff;border-bottom:1.5px solid var(--border2);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10}
+.topbar-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.btn-primary{padding:9px 18px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px}
+.btn-primary:hover{background:var(--brown2)}
+.btn-ghost{padding:9px 16px;border-radius:8px;border:2px solid var(--border2);background:var(--cream2);color:var(--brown2);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:6px}
+.btn-ghost:hover{background:var(--cream3);border-color:var(--brown4)}
+.icon-btn{width:36px;height:36px;border-radius:8px;border:2px solid var(--border2);background:var(--cream2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brown3);font-size:17px;transition:all 0.2s}
+.icon-btn:hover{background:var(--cream3);border-color:var(--brown4)}
+
+/* VIEWS */
+.view{display:none;padding:24px;flex:1}
+.view.active{display:block}
+
+/* OVERVIEW */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+.stat-card{background:#fff;border:2px solid var(--border2);border-radius:12px;padding:18px 20px;box-shadow:0 2px 8px var(--shadow);cursor:pointer;transition:all 0.2s}
+.stat-card:hover{border-color:var(--brown4);transform:translateY(-1px)}
+.sc-icon{width:38px;height:38px;border-radius:10px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:18px;margin-bottom:12px;border:1.5px solid var(--border2)}
+.sc-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--brown);letter-spacing:-0.5px}
+.sc-label{font-size:12px;color:var(--brown4);margin-top:3px}
+.sc-trend{font-size:11px;font-weight:600;margin-top:6px;display:flex;align-items:center;gap:3px}
+.sc-trend.up{color:var(--green)}
+.sc-trend.down{color:var(--red)}
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px;margin-bottom:18px}
+.cbox{background:#fff;border:2px solid var(--border2);border-radius:13px;overflow:hidden;margin-bottom:18px;box-shadow:0 2px 8px var(--shadow)}
+.chead{padding:14px 18px;border-bottom:2px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--cream2)}
+.chead h3{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown)}
+.chead-right{display:flex;align-items:center;gap:8px}
+.cbody{padding:16px 18px}
+.view-all{font-size:12px;color:var(--brown3);cursor:pointer;border-bottom:1px solid var(--border2);text-decoration:none;font-weight:500}
+.view-all:hover{color:var(--brown)}
+
+/* CLASSROOM CARDS */
+.classroom-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.classroom-card{background:#fff;border:2px solid var(--border2);border-radius:12px;overflow:hidden;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 8px var(--shadow)}
+.classroom-card:hover{border-color:var(--brown4);transform:translateY(-2px);box-shadow:0 6px 18px var(--shadow)}
+.cc-banner{height:8px}
+.cc-body{padding:16px}
+.cc-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--brown);margin-bottom:4px}
+.cc-sub{font-size:12px;color:var(--brown4);font-weight:300;margin-bottom:12px}
+.cc-stats{display:flex;gap:14px}
+.cc-stat{font-size:12px;color:var(--brown3);display:flex;align-items:center;gap:4px}
+.cc-stat i{font-size:14px}
+.cc-footer{padding:12px 16px;border-top:1.5px solid var(--border);background:var(--cream2);display:flex;align-items:center;justify-content:space-between}
+.cc-period{font-size:11px;color:var(--brown4);font-weight:300}
+.cc-avg{font-size:12px;font-weight:600;color:var(--brown);display:flex;align-items:center;gap:4px}
+
+/* NEW CLASSROOM CARD */
+.new-classroom{border-style:dashed;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;color:var(--brown4);gap:8px}
+.new-classroom:hover{border-color:var(--brown);color:var(--brown);background:var(--cream2)}
+.new-classroom i{font-size:28px}
+.new-classroom span{font-size:13px;font-weight:500}
+
+/* STUDENT TABLE */
+table{width:100%;border-collapse:collapse}
+th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown4);background:var(--cream2);border-bottom:2px solid var(--border2)}
+td{padding:11px 14px;font-size:13px;color:var(--brown);border-bottom:1.5px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--cream)}
+.student-av{width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:11px;font-weight:700;color:var(--cream);margin-right:8px;flex-shrink:0}
+.progress-pill{height:6px;background:var(--cream3);border-radius:3px;overflow:hidden;width:80px;display:inline-block;vertical-align:middle;margin-right:6px}
+.progress-fill{height:100%;border-radius:3px;background:var(--brown)}
+.score-badge{padding:3px 8px;border-radius:100px;font-size:11px;font-weight:600}
+.score-badge.high{background:var(--green2);color:var(--green)}
+.score-badge.mid{background:#fdf3e7;color:#a0522d}
+.score-badge.low{background:var(--red2);color:var(--red)}
+.streak-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--brown4)}
+
+/* ASSIGNMENTS */
+.assignment-item{padding:14px 0;border-bottom:1.5px solid var(--border);display:flex;align-items:center;gap:14px}
+.assignment-item:last-child{border-bottom:none}
+.assign-icon{width:40px;height:40px;border-radius:10px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:18px;flex-shrink:0;border:1.5px solid var(--border2)}
+.assign-info{flex:1}
+.assign-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--brown);margin-bottom:3px}
+.assign-meta{font-size:12px;color:var(--brown4);font-weight:300;display:flex;gap:12px}
+.assign-meta span{display:flex;align-items:center;gap:4px}
+.assign-right{text-align:right}
+.due-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:100px}
+.due-badge.soon{background:#fdf3e7;color:#a0522d;border:1px solid rgba(160,82,45,0.2)}
+.due-badge.ok{background:var(--green2);color:var(--green);border:1px solid rgba(58,107,63,0.2)}
+.due-badge.overdue{background:var(--red2);color:var(--red);border:1px solid rgba(192,57,43,0.2)}
+.assign-progress{font-size:12px;color:var(--brown4);margin-top:4px}
+
+/* STUDENT DETAIL */
+.student-detail-header{background:#fff;border:2px solid var(--border2);border-radius:14px;padding:22px;margin-bottom:18px;box-shadow:0 2px 8px var(--shadow);display:flex;align-items:center;gap:18px}
+.sd-av-big{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--cream);flex-shrink:0}
+.sd-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--brown);margin-bottom:4px}
+.sd-meta{font-size:13px;color:var(--brown4);font-weight:300}
+.sd-stats{display:flex;gap:20px;margin-top:10px}
+.sd-stat{text-align:center}
+.sd-stat-val{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)}
+.sd-stat-lbl{font-size:11px;color:var(--brown4)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(44,26,14,0.4);display:none;align-items:center;justify-content:center;z-index:100;padding:24px}
+.modal-overlay.show{display:flex}
+.modal{background:#fff;border:2px solid var(--border2);border-radius:16px;padding:28px;width:100%;max-width:480px;box-shadow:0 16px 48px var(--shadow)}
+.modal h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:20px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown3);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:10px 13px;border:2px solid var(--border2);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);outline:none;background:var(--cream2);transition:border-color 0.2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brown3)}
+.modal-actions{display:flex;gap:10px;margin-top:20px;justify-content:flex-end}
+</style>
+<style>@media(max-width:768px){
+  .view{padding:14px 16px}
+  .stats-row{grid-template-columns:1fr 1fr!important;gap:10px}
+  .classroom-grid{grid-template-columns:1fr}
+  .grid-2{grid-template-columns:1fr!important}
+  .cbox{overflow-x:auto}
+  table{min-width:480px}
+  .stat-card h3{font-size:13px}
+  .topbar-title{font-size:15px}
+  .btn-primary,.btn-ghost{font-size:12px;padding:8px 12px}
+  .assignment-item{flex-wrap:wrap;gap:8px}
+  .assign-right{width:100%;display:flex;gap:8px;align-items:center}
+}</style>
+</head>
+<body>
+<div class="sidebar">
+  <a href="index.html" class="sidebar-logo">Lumio <span class="logo-dot"></span></a>
+  <div class="sidebar-section">Main</div>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+  <a href="#" class="nav-item active"><i class="ti ti-school"></i> My classrooms</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-compass"></i> Explore</a>
+  <a href="create.html" class="nav-item"><i class="ti ti-plus"></i> Create set</a>
+  <div class="sidebar-section">Teaching</div>
+  <a href="#" class="nav-item" onclick="showView('assignments')"><i class="ti ti-clipboard-list"></i> Assignments</a>
+  <a href="#" class="nav-item" onclick="showView('students')"><i class="ti ti-users"></i> All students</a>
+  <a href="leaderboard.html" class="nav-item"><i class="ti ti-trophy"></i> Leaderboard</a>
+  <div class="sidebar-section">Leo</div>
+  <a href="study.html" class="nav-item"><i class="ti ti-brain"></i> Study with Leo</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-chart-bar"></i> My progress</a>
+      <div style="padding:8px 8px 0;border-top:1px solid rgba(255,255,255,0.07);margin-top:8px">
+      <a href="#" class="nav-item" style="color:rgba(255,255,255,0.4)" onclick="if(confirm('Sign out of Lumio?')){if(window.lumio)window.lumio.logout();else window.location.href='login.html';}"><i class="ti ti-logout"></i> Sign out</a>
+    </div>
+  <div class="sidebar-bottom">
+    <div class="user-pill" onclick="window.location.href='profile.html'" oncontextmenu="event.preventDefault();window.location.href='settings.html'">
+      <div class="user-av">MT</div>
+      <div class="user-info"><div class="un">ms_thomas</div><div class="ur">Teacher</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Teacher dashboard</div>
+    <div class="topbar-right">
+      <button class="btn-ghost" onclick="showView('overview')" id="backToOverview"><i class="ti ti-arrow-left"></i> Overview</button>
+      <button class="btn-primary" onclick="openModal('newClassroom')"><i class="ti ti-plus"></i> New classroom</button>
+      <button class="icon-btn" onclick="openSearch()" title="Search (Cmd+K)"><i class="ti ti-search"></i></button>
+      <button class="icon-btn"><i class="ti ti-bell"></i></button>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="view active" id="view-overview">
+    <div class="stats-row">
+      <div class="stat-card" onclick="showView('classrooms')">
+        <div class="sc-icon"><i class="ti ti-school"></i></div>
+        <div class="sc-val">4</div>
+        <div class="sc-label">Active classrooms</div>
+        <div class="sc-trend up"><i class="ti ti-arrow-right" style="font-size:11px"></i> View all</div>
+      </div>
+      <div class="stat-card" onclick="showView('students')">
+        <div class="sc-icon"><i class="ti ti-users"></i></div>
+        <div class="sc-val">94</div>
+        <div class="sc-label">Total students</div>
+        <div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +3 this week</div>
+      </div>
+      <div class="stat-card" onclick="showView('assignments')">
+        <div class="sc-icon"><i class="ti ti-clipboard-list"></i></div>
+        <div class="sc-val">6</div>
+        <div class="sc-label">Active assignments</div>
+        <div class="sc-trend" style="color:#a0522d;font-size:11px;font-weight:600"><i class="ti ti-clock" style="font-size:11px"></i> 2 due this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-icon"><i class="ti ti-chart-bar"></i></div>
+        <div class="sc-val">78%</div>
+        <div class="sc-label">Avg class score</div>
+        <div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +4% vs last week</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- CLASSROOMS PREVIEW -->
+      <div class="cbox">
+        <div class="chead"><h3>My classrooms</h3><a class="view-all" onclick="showView('classrooms')">View all →</a></div>
+        <div class="cbody" style="padding:14px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="classroom-card" onclick="showView('classroom-detail','AP Biology — Period 2')">
+              <div class="cc-banner" style="background:#3a6b3f"></div>
+              <div class="cc-body"><div class="cc-name">AP Biology — Period 2</div><div class="cc-sub">Cell biology unit</div><div class="cc-stats"><span class="cc-stat"><i class="ti ti-users"></i> 28 students</span><span class="cc-stat"><i class="ti ti-clipboard-list"></i> 3 assignments</span></div></div>
+              <div class="cc-footer"><div class="cc-period">Period 2 · Mon/Wed/Fri</div><div class="cc-avg"><i class="ti ti-chart-bar" style="font-size:13px"></i> 82% avg</div></div>
+            </div>
+            <div class="classroom-card" onclick="showView('classroom-detail','Biology Honors — Period 4')">
+              <div class="cc-banner" style="background:#5c3d1e"></div>
+              <div class="cc-body"><div class="cc-name">Biology Honors — Period 4</div><div class="cc-sub">Genetics unit</div><div class="cc-stats"><span class="cc-stat"><i class="ti ti-users"></i> 24 students</span><span class="cc-stat"><i class="ti ti-clipboard-list"></i> 2 assignments</span></div></div>
+              <div class="cc-footer"><div class="cc-period">Period 4 · Tue/Thu</div><div class="cc-avg"><i class="ti ti-chart-bar" style="font-size:13px"></i> 76% avg</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ASSIGNMENTS PREVIEW -->
+      <div class="cbox">
+        <div class="chead"><h3>Upcoming assignments</h3><a class="view-all" onclick="showView('assignments')">View all →</a></div>
+        <div class="cbody">
+          <div class="assignment-item">
+            <div class="assign-icon"><i class="ti ti-dna"></i></div>
+            <div class="assign-info"><div class="assign-title">Mitosis &amp; Meiosis Quiz</div><div class="assign-meta"><span><i class="ti ti-school" style="font-size:12px"></i>AP Bio P2</span><span><i class="ti ti-users" style="font-size:12px"></i>28 students</span></div></div>
+            <div class="assign-right"><div class="due-badge soon">Due in 2 days</div><div class="assign-progress">18/28 started</div></div>
+          </div>
+          <div class="assignment-item">
+            <div class="assign-icon"><i class="ti ti-leaf"></i></div>
+            <div class="assign-info"><div class="assign-title">Genetics Vocabulary</div><div class="assign-meta"><span><i class="ti ti-school" style="font-size:12px"></i>Bio Honors P4</span><span><i class="ti ti-users" style="font-size:12px"></i>24 students</span></div></div>
+            <div class="assign-right"><div class="due-badge ok">Due in 5 days</div><div class="assign-progress">12/24 started</div></div>
+          </div>
+          <div class="assignment-item">
+            <div class="assign-icon"><i class="ti ti-microscope"></i></div>
+            <div class="assign-info"><div class="assign-title">Cell Structure Review</div><div class="assign-meta"><span><i class="ti ti-school" style="font-size:12px"></i>AP Bio P2</span><span><i class="ti ti-users" style="font-size:12px"></i>28 students</span></div></div>
+            <div class="assign-right"><div class="due-badge overdue">Overdue</div><div class="assign-progress">22/28 completed</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STRUGGLING STUDENTS -->
+    <div class="cbox">
+      <div class="chead"><h3>Students who need attention</h3><span style="font-size:12px;color:var(--brown4)">Flagged by Leo</span></div>
+      <table>
+        <tr><th>Student</th><th>Classroom</th><th>Last active</th><th>Avg score</th><th>Issue</th><th>Action</th></tr>
+        <tr><td><span class="student-av" style="background:#c0392b">JD</span>james_d</td><td>AP Bio P2</td><td>4 days ago</td><td><span class="score-badge low">48%</span></td><td style="font-size:12px;color:var(--red)">Missing 3 assignments</td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="alert('Message sent to james_d!')">Message</button></td></tr>
+        <tr><td><span class="student-av" style="background:#a0522d">LM</span>lily_m</td><td>Bio Honors P4</td><td>2 days ago</td><td><span class="score-badge low">52%</span></td><td style="font-size:12px;color:var(--red)">Struggling with genetics</td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="alert('Message sent to lily_m!')">Message</button></td></tr>
+        <tr><td><span class="student-av" style="background:#8b6340">KP</span>kai_prep</td><td>AP Bio P2</td><td>Today</td><td><span class="score-badge mid">61%</span></td><td style="font-size:12px;color:#a0522d">Below class average</td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="alert('Message sent to kai_prep!')">Message</button></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- CLASSROOMS VIEW -->
+  <div class="view" id="view-classrooms">
+    <div class="classroom-grid">
+      <div class="classroom-card" onclick="showView('classroom-detail','AP Biology — Period 2')">
+        <div class="cc-banner" style="background:#3a6b3f"></div>
+        <div class="cc-body"><div class="cc-name">AP Biology — Period 2</div><div class="cc-sub">Cell biology · Spring 2026</div><div class="cc-stats"><span class="cc-stat"><i class="ti ti-users"></i> 28 students</span><span class="cc-stat"><i class="ti ti-clipboard-list"></i> 3 assignments</span><span class="cc-stat"><i class="ti ti-cards"></i> 12 sets</span></div></div>
+        <div class="cc-footer"><div class="cc-period">Mon/Wed/Fri · 9:00 AM</div><div class="cc-avg"><i class="ti ti-chart-bar" style="font-size:13px"></i> 82% avg</div></div>
+      </div>
+      <div class="classroom-card" onclick="showView('classroom-detail','Biology Honors — Period 4')">
+        <div class="cc-banner" style="background:#5c3d1e"></div>
+        <div class="cc-body"><div class="cc-name">Biology Honors — Period 4</div><div class="cc-sub">Genetics · Spring 2026</div><div class="cc-stats"><span class="cc-stat"><i class="ti ti-users"></i> 24 students</span><span class="cc-stat"><i class="ti ti-clipboard-list"></i> 2 assignments</span><span class="cc-stat"><i class="ti ti-cards"></i> 8 sets</span></div></div>
+        <div class="cc-footer"><div class="cc-period">Tue/Thu · 11:00 AM</div><div class="cc-avg"><i class="ti ti-chart-bar" style="font-size:13px"></i> 76% avg</div></div>
+      </div>
+      <div class="classroom-card" onclick="showView('classroom-detail','Intro Biology — Period 1')">
+        <div class="cc-banner" style="background:#8b6340"></div>
+        <div class="cc-body"><div class="cc-name">Intro Biology — Period 1</div><div class="cc-sub">Fundamentals · Spring 2026</div><div class="cc-stats"><span class="cc-stat"><i class="ti ti-users"></i> 22 students</span><span class="cc-stat"><i class="ti ti-clipboard-list"></i> 1 assignment</span><span class="cc-stat"><i class="ti ti-cards"></i> 6 sets</span></div></div>
+        <div class="cc-footer"><div class="cc-period">Mon/Wed · 8:00 AM</div><div class="cc-avg"><i class="ti ti-chart-bar" style="font-size:13px"></i> 71% avg</div></div>
+      </div>
+      <div class="classroom-card" onclick="showView('classroom-detail','AP Biology — Period 6')">
+        <div class="cc-banner" style="background:#2c1a0e"></div>
+        <div class="cc-body"><div class="cc-name">AP Biology — Period 6</div><div class="cc-sub">Ecology · Spring 2026</div><div class="cc-stats"><span class="cc-stat"><i class="ti ti-users"></i> 20 students</span><span class="cc-stat"><i class="ti ti-clipboard-list"></i> 0 assignments</span><span class="cc-stat"><i class="ti ti-cards"></i> 4 sets</span></div></div>
+        <div class="cc-footer"><div class="cc-period">Fri · 2:00 PM</div><div class="cc-avg"><i class="ti ti-chart-bar" style="font-size:13px"></i> 84% avg</div></div>
+      </div>
+      <div class="classroom-card new-classroom" onclick="openModal('newClassroom')">
+        <i class="ti ti-plus"></i>
+        <span>Create new classroom</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLASSROOM DETAIL -->
+  <div class="view" id="view-classroom-detail">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px">
+      <div style="width:52px;height:52px;border-radius:12px;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px"><i class="ti ti-school"></i></div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--brown)" id="classroomName">AP Biology — Period 2</div>
+        <div style="font-size:13px;color:var(--brown4);font-weight:300">28 students · Mon/Wed/Fri · 9:00 AM</div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn-ghost" onclick="openModal('newAssignment')"><i class="ti ti-plus"></i> Assign set</button>
+        <button class="btn-ghost" onclick="openModal('inviteStudent')"><i class="ti ti-user-plus"></i> Add students</button>
+      </div>
+    </div>
+
+    <div class="stats-row" style="grid-template-columns:repeat(4,1fr)">
+      <div class="stat-card"><div class="sc-icon"><i class="ti ti-users"></i></div><div class="sc-val">28</div><div class="sc-label">Students</div></div>
+      <div class="stat-card"><div class="sc-icon"><i class="ti ti-chart-bar"></i></div><div class="sc-val">82%</div><div class="sc-label">Class average</div><div class="sc-trend up"><i class="ti ti-trending-up" style="font-size:11px"></i> +4% this week</div></div>
+      <div class="stat-card"><div class="sc-icon"><i class="ti ti-flame"></i></div><div class="sc-val">7.2</div><div class="sc-label">Avg streak days</div></div>
+      <div class="stat-card"><div class="sc-icon"><i class="ti ti-clipboard-check"></i></div><div class="sc-val">3</div><div class="sc-label">Active assignments</div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="cbox">
+        <div class="chead"><h3>Assignments</h3><button class="btn-primary" style="font-size:12px;padding:6px 12px" onclick="openModal('newAssignment')"><i class="ti ti-plus"></i> Assign</button></div>
+        <div class="cbody">
+          <div class="assignment-item">
+            <div class="assign-icon"><i class="ti ti-dna"></i></div>
+            <div class="assign-info"><div class="assign-title">Mitosis &amp; Meiosis Quiz</div><div class="assign-meta"><span><i class="ti ti-users" style="font-size:12px"></i>28 students</span><span><i class="ti ti-cards" style="font-size:12px"></i>48 cards</span></div></div>
+            <div class="assign-right"><div class="due-badge soon">Due in 2 days</div><div class="assign-progress">18/28 started</div></div>
+          </div>
+          <div class="assignment-item">
+            <div class="assign-icon"><i class="ti ti-microscope"></i></div>
+            <div class="assign-info"><div class="assign-title">Cell Structure Review</div><div class="assign-meta"><span><i class="ti ti-users" style="font-size:12px"></i>28 students</span><span><i class="ti ti-cards" style="font-size:12px"></i>32 cards</span></div></div>
+            <div class="assign-right"><div class="due-badge overdue">Overdue</div><div class="assign-progress">22/28 completed</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cbox">
+        <div class="chead"><h3>Score distribution</h3></div>
+        <div class="cbody">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:var(--brown4);width:44px">90-100%</span><div style="flex:1;height:8px;background:var(--cream3);border-radius:4px;overflow:hidden"><div style="width:22%;height:100%;background:var(--green);border-radius:4px"></div></div><span style="font-size:12px;color:var(--brown4);width:28px">6</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:var(--brown4);width:44px">80-89%</span><div style="flex:1;height:8px;background:var(--cream3);border-radius:4px;overflow:hidden"><div style="width:36%;height:100%;background:var(--brown3);border-radius:4px"></div></div><span style="font-size:12px;color:var(--brown4);width:28px">10</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:var(--brown4);width:44px">70-79%</span><div style="flex:1;height:8px;background:var(--cream3);border-radius:4px;overflow:hidden"><div style="width:28%;height:100%;background:var(--brown4);border-radius:4px"></div></div><span style="font-size:12px;color:var(--brown4);width:28px">8</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:var(--brown4);width:44px">60-69%</span><div style="flex:1;height:8px;background:var(--cream3);border-radius:4px;overflow:hidden"><div style="width:11%;height:100%;background:#c4862a;border-radius:4px"></div></div><span style="font-size:12px;color:var(--brown4);width:28px">3</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;color:var(--brown4);width:44px">Below</span><div style="flex:1;height:8px;background:var(--cream3);border-radius:4px;overflow:hidden"><div style="width:4%;height:100%;background:var(--red);border-radius:4px"></div></div><span style="font-size:12px;color:var(--brown4);width:28px">1</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cbox">
+      <div class="chead"><h3>Students</h3><span style="font-size:12px;color:var(--brown4)">28 students</span></div>
+      <table>
+        <tr><th>Student</th><th>Last active</th><th>Assignments done</th><th>Avg score</th><th>Streak</th><th>Action</th></tr>
+        <tr><td><span class="student-av" style="background:var(--green)">SR</span>sarah_reads</td><td>Today</td><td>3/3</td><td><span class="score-badge high">94%</span></td><td><span class="streak-badge"><i class="ti ti-flame" style="font-size:12px"></i> 12 days</span></td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('sarah_reads','94','12','3')">View</button></td></tr>
+        <tr><td><span class="student-av" style="background:var(--brown3)">AS</span>alex_studies</td><td>Today</td><td>2/3</td><td><span class="score-badge high">88%</span></td><td><span class="streak-badge"><i class="ti ti-flame" style="font-size:12px"></i> 8 days</span></td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('alex_studies','88','8','2')">View</button></td></tr>
+        <tr><td><span class="student-av" style="background:var(--brown4)">NP</span>nova_prep</td><td>Yesterday</td><td>3/3</td><td><span class="score-badge high">91%</span></td><td><span class="streak-badge"><i class="ti ti-flame" style="font-size:12px"></i> 5 days</span></td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('nova_prep','91','5','3')">View</button></td></tr>
+        <tr><td><span class="student-av" style="background:#a0522d">KP</span>kai_prep</td><td>Today</td><td>2/3</td><td><span class="score-badge mid">61%</span></td><td><span class="streak-badge"><i class="ti ti-flame" style="font-size:12px"></i> 2 days</span></td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('kai_prep','61','2','2')">View</button></td></tr>
+        <tr><td><span class="student-av" style="background:var(--red)">JD</span>james_d</td><td>4 days ago</td><td>0/3</td><td><span class="score-badge low">48%</span></td><td><span class="streak-badge" style="color:var(--red)"><i class="ti ti-flame-off" style="font-size:12px"></i> 0 days</span></td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('james_d','48','0','0')">View</button></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ASSIGNMENTS VIEW -->
+  <div class="view" id="view-assignments">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)">All assignments</div>
+      <button class="btn-primary" onclick="openModal('newAssignment')"><i class="ti ti-plus"></i> New assignment</button>
+    </div>
+    <div class="cbox">
+      <div class="cbody">
+        <div class="assignment-item"><div class="assign-icon"><i class="ti ti-dna"></i></div><div class="assign-info"><div class="assign-title">Mitosis &amp; Meiosis Quiz</div><div class="assign-meta"><span><i class="ti ti-school" style="font-size:12px"></i>AP Bio P2</span><span><i class="ti ti-users" style="font-size:12px"></i>28 students</span><span><i class="ti ti-cards" style="font-size:12px"></i>48 cards</span></div></div><div class="assign-right"><div class="due-badge soon">Due in 2 days</div><div class="assign-progress">18/28 started</div></div></div>
+        <div class="assignment-item"><div class="assign-icon"><i class="ti ti-leaf"></i></div><div class="assign-info"><div class="assign-title">Genetics Vocabulary</div><div class="assign-meta"><span><i class="ti ti-school" style="font-size:12px"></i>Bio Honors P4</span><span><i class="ti ti-users" style="font-size:12px"></i>24 students</span><span><i class="ti ti-cards" style="font-size:12px"></i>36 cards</span></div></div><div class="assign-right"><div class="due-badge ok">Due in 5 days</div><div class="assign-progress">12/24 started</div></div></div>
+        <div class="assignment-item"><div class="assign-icon"><i class="ti ti-microscope"></i></div><div class="assign-info"><div class="assign-title">Cell Structure Review</div><div class="assign-meta"><span><i class="ti ti-school" style="font-size:12px"></i>AP Bio P2</span><span><i class="ti ti-users" style="font-size:12px"></i>28 students</span><span><i class="ti ti-cards" style="font-size:12px"></i>32 cards</span></div></div><div class="assign-right"><div class="due-badge overdue">Overdue</div><div class="assign-progress">22/28 completed</div></div></div>
+        <div class="assignment-item"><div class="assign-icon"><i class="ti ti-atom"></i></div><div class="assign-info"><div class="assign-title">DNA Replication Steps</div><div class="assign-meta"><span><i class="ti ti-school" style="font-size:12px"></i>Bio Honors P4</span><span><i class="ti ti-users" style="font-size:12px"></i>24 students</span><span><i class="ti ti-cards" style="font-size:12px"></i>28 cards</span></div></div><div class="assign-right"><div class="due-badge ok">Due in 8 days</div><div class="assign-progress">4/24 started</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALL STUDENTS VIEW -->
+  <div class="view" id="view-students">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+      <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)">All students</div>
+      <button class="btn-primary" onclick="openModal('inviteStudent')"><i class="ti ti-user-plus"></i> Add student</button>
+    </div>
+    <div style="margin-bottom:14px"><input type="text" placeholder="Search students..." style="width:100%;max-width:340px;padding:10px 14px;border:2px solid var(--border2);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);outline:none;background:#fff"></div>
+    <div class="cbox">
+      <table>
+        <tr><th>Student</th><th>Classroom</th><th>Assignments</th><th>Avg score</th><th>Last active</th><th>Action</th></tr>
+        <tr><td><span class="student-av" style="background:var(--green)">SR</span>sarah_reads</td><td>AP Bio P2</td><td>3/3</td><td><span class="score-badge high">94%</span></td><td>Today</td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('sarah_reads','94','12','3')">View</button></td></tr>
+        <tr><td><span class="student-av" style="background:var(--brown3)">AS</span>alex_studies</td><td>AP Bio P2</td><td>2/3</td><td><span class="score-badge high">88%</span></td><td>Today</td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('alex_studies','88','8','2')">View</button></td></tr>
+        <tr><td><span class="student-av" style="background:var(--brown4)">NP</span>nova_prep</td><td>AP Bio P2</td><td>3/3</td><td><span class="score-badge high">91%</span></td><td>Yesterday</td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('nova_prep','91','5','3')">View</button></td></tr>
+        <tr><td><span class="student-av" style="background:var(--green)">JP</span>jade_prep</td><td>Bio Honors P4</td><td>2/2</td><td><span class="score-badge high">86%</span></td><td>Today</td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('jade_prep','86','6','2')">View</button></td></tr>
+        <tr><td><span class="student-av" style="background:#a0522d">KP</span>kai_prep</td><td>AP Bio P2</td><td>2/3</td><td><span class="score-badge mid">61%</span></td><td>Today</td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('kai_prep','61','2','2')">View</button></td></tr>
+        <tr><td><span class="student-av" style="background:#a0522d">LM</span>lily_m</td><td>Bio Honors P4</td><td>1/2</td><td><span class="score-badge low">52%</span></td><td>2 days ago</td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('lily_m','52','0','1')">View</button></td></tr>
+        <tr><td><span class="student-av" style="background:var(--red)">JD</span>james_d</td><td>AP Bio P2</td><td>0/3</td><td><span class="score-badge low">48%</span></td><td>4 days ago</td><td><button class="btn-ghost" style="font-size:12px;padding:5px 12px" onclick="showStudentDetail('james_d','48','0','0')">View</button></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- STUDENT DETAIL VIEW -->
+  <div class="view" id="view-student-detail">
+    <div class="student-detail-header">
+      <div class="sd-av-big" id="sdAv" style="background:var(--brown3)">SR</div>
+      <div>
+        <div class="sd-name" id="sdName">sarah_reads</div>
+        <div class="sd-meta">AP Biology — Period 2 · Student</div>
+        <div class="sd-stats">
+          <div class="sd-stat"><div class="sd-stat-val" id="sdScore">94%</div><div class="sd-stat-lbl">Avg score</div></div>
+          <div class="sd-stat"><div class="sd-stat-val" id="sdStreak">12</div><div class="sd-stat-lbl">Day streak</div></div>
+          <div class="sd-stat"><div class="sd-stat-val" id="sdAssign">3/3</div><div class="sd-stat-lbl">Assignments</div></div>
+          <div class="sd-stat"><div class="sd-stat-val">284</div><div class="sd-stat-lbl">Cards studied</div></div>
+        </div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn-primary" onclick="alert('Message sent!')"><i class="ti ti-send"></i> Message student</button>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="cbox">
+        <div class="chead"><h3>Assignment progress</h3></div>
+        <div class="cbody">
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:13px;font-weight:500;color:var(--brown)">Mitosis &amp; Meiosis Quiz</span><span class="score-badge high">92%</span></div><div class="progress-pill" style="width:100%;display:block"><div class="progress-fill" style="width:92%"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:13px;font-weight:500;color:var(--brown)">Cell Structure Review</span><span class="score-badge high">96%</span></div><div class="progress-pill" style="width:100%;display:block"><div class="progress-fill" style="width:96%"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;margin-bottom:5px"><span style="font-size:13px;font-weight:500;color:var(--brown)">DNA Replication Steps</span><span class="score-badge mid">Not started</span></div><div class="progress-pill" style="width:100%;display:block"><div class="progress-fill" style="width:0%"></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cbox">
+        <div class="chead"><h3>Leo's notes on this student</h3></div>
+        <div class="cbody" style="background:var(--brown);border-radius:0 0 12px 12px;margin:-16px -18px;padding:16px 18px">
+          <p style="font-size:13px;color:var(--brown5);line-height:1.7;font-weight:300">sarah_reads is one of your strongest students — consistently scoring above 90% across all topics. She tends to excel at definitions but struggles slightly with process-based questions. I'd recommend assigning her the DNA Replication set before she falls behind on that topic.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modal-newClassroom">
+  <div class="modal">
+    <h3>Create new classroom</h3>
+    <div class="field"><label>Classroom name</label><input type="text" placeholder="e.g. AP Biology — Period 2"></div>
+    <div class="field"><label>Subject</label><input type="text" placeholder="e.g. Biology"></div>
+    <div class="field"><label>Schedule</label><input type="text" placeholder="e.g. Mon/Wed/Fri · 9:00 AM"></div>
+    <div class="field"><label>Description (optional)</label><textarea rows="2" placeholder="What are you covering this term?"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('newClassroom')">Cancel</button>
+      <button class="btn-primary" onclick="closeModal('newClassroom');alert('Classroom created!')">Create classroom</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-newAssignment">
+  <div class="modal">
+    <h3>Assign a set</h3>
+    <div class="field"><label>Flashcard set</label><select><option>Cell Division: Mitosis & Meiosis</option><option>Human Body Systems</option><option>DNA Replication Steps</option><option>Genetics Fundamentals</option></select></div>
+    <div class="field"><label>Assign to</label><select><option>AP Biology — Period 2</option><option>Biology Honors — Period 4</option><option>Intro Biology — Period 1</option><option>All classrooms</option></select></div>
+    <div class="field"><label>Due date</label><input type="date"></div>
+    <div class="field"><label>Instructions (optional)</label><textarea rows="2" placeholder="Any notes for your students..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('newAssignment')">Cancel</button>
+      <button class="btn-primary" onclick="closeModal('newAssignment');alert('Assignment created!')">Assign set</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-inviteStudent">
+  <div class="modal">
+    <h3>Add students</h3>
+    <div class="field"><label>Class code</label><div style="display:flex;gap:8px;align-items:center"><input type="text" value="BIO-2024-P2" readonly style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;letter-spacing:2px"><button class="btn-ghost" onclick="alert('Copied!')" style="flex-shrink:0"><i class="ti ti-copy"></i></button></div><div style="font-size:12px;color:var(--brown4);margin-top:5px;font-weight:300">Share this code with your students — they enter it when signing up</div></div>
+    <div style="text-align:center;padding:10px 0;color:var(--brown4);font-size:13px">— or —</div>
+    <div class="field"><label>Invite by username</label><input type="text" placeholder="Enter student username"></div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('inviteStudent')">Done</button>
+      <button class="btn-primary" onclick="alert('Invite sent!')">Send invite</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const titles = {overview:'Teacher dashboard',classrooms:'My classrooms','classroom-detail':'Classroom detail',assignments:'Assignments',students:'All students','student-detail':'Student detail'};
+
+function showView(view, extra){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const el = document.getElementById('view-'+view);
+  if(el) el.classList.add('active');
+  document.getElementById('topbarTitle').textContent = titles[view]||'Teacher dashboard';
+  if(view==='classroom-detail' && extra) document.getElementById('classroomName').textContent = extra;
+}
+
+function showStudentDetail(name, score, streak, assign){
+  document.getElementById('sdName').textContent = name;
+  document.getElementById('sdScore').textContent = score+'%';
+  document.getElementById('sdStreak').textContent = streak;
+  document.getElementById('sdAssign').textContent = assign+'/3';
+  const initials = name.substring(0,2).toUpperCase();
+  document.getElementById('sdAv').textContent = initials;
+  showView('student-detail');
+}
+
+function openModal(name){document.getElementById('modal-'+name).classList.add('show');}
+function closeModal(name){document.getElementById('modal-'+name).classList.remove('show');}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show');}));
+</script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bn-item" onclick="window.location.href='dashboard.html'" id="bn-home">
+    <i class="ti ti-layout-dashboard"></i><span>Home</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='explore.html'" id="bn-explore">
+    <i class="ti ti-compass"></i><span>Explore</span>
+  </button>
+  <button class="bn-create" onclick="window.location.href='create.html'">
+    <div class="bn-create-icon"><i class="ti ti-plus" style="font-size:22px;color:var(--cream)"></i></div>
+    <span>Create</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='leaderboard.html'" id="bn-ranks">
+    <i class="ti ti-trophy"></i><span>Ranks</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='profile.html'" id="bn-profile">
+    <i class="ti ti-user"></i><span>Profile</span>
+  </button>
+</nav>
+<script>
+// Highlight active tab
+(function(){
+  const page = window.location.pathname.split('/').pop();
+  const map = {'dashboard.html':'bn-home','explore.html':'bn-explore','leaderboard.html':'bn-ranks','profile.html':'bn-profile','create.html':null};
+  const activeId = map[page];
+  if(activeId) { const el=document.getElementById(activeId); if(el) el.classList.add('active'); }
+})();
+</script>
+
+
+<script>
+// Smooth page transitions on navigation
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href]').forEach(function(link){
+    const href = link.getAttribute('href');
+    if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = link.href;
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateY(-6px)';
+      document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      setTimeout(function(){ window.location.href = target; }, 200);
+    });
+  });
+  // Fade in on load
+  document.body.style.opacity = '0';
+  document.body.style.transform = 'translateY(6px)';
+  document.body.style.transition = 'none';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      document.body.style.opacity = '1';
+      document.body.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
+
+
+<!-- SEARCH OVERLAY -->
+<div id="searchOverlay" style="display:none;position:fixed;inset:0;background:rgba(44,26,14,0.5);z-index:9998;backdrop-filter:blur(4px)" onclick="closeSearch()"></div>
+<div id="searchPanel" style="display:none;position:fixed;top:0;left:0;right:0;background:#fff;z-index:9999;padding:16px 24px;box-shadow:0 8px 32px rgba(44,26,14,0.15)">
+  <div style="max-width:700px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <i class="ti ti-search" style="font-size:20px;color:var(--brown4)"></i>
+      <input id="searchInput" type="text" placeholder="Search sets, topics, creators..." style="flex:1;border:none;outline:none;font-family:'Source Sans 3',sans-serif;font-size:16px;color:var(--brown);background:transparent" oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
+      <button onclick="closeSearch()" style="border:none;background:transparent;cursor:pointer;color:var(--brown4);font-size:14px;font-family:'Source Sans 3',sans-serif;font-weight:500">Cancel</button>
+    </div>
+    <div id="searchResults" style="padding-bottom:8px"></div>
+  </div>
+</div>
+<script>
+const SEARCH_DATA = [
+  {type:'set',name:'Cell Division: Mitosis & Meiosis',meta:'48 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'Human Body Systems Overview',meta:'66 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'World Capitals — 195 Countries',meta:'195 cards · Geography',url:'setdetail.html'},
+  {type:'set',name:'SAT Vocabulary High Frequency',meta:'150 cards · English',url:'setdetail.html'},
+  {type:'set',name:'Spanish 101 — Core Vocabulary',meta:'200 cards · Languages',url:'setdetail.html'},
+  {type:'set',name:'WW2 Key Events Timeline',meta:'60 cards · History',url:'setdetail.html'},
+  {type:'set',name:'Calculus Fundamentals',meta:'55 cards · Math',url:'setdetail.html'},
+  {type:'set',name:'Photosynthesis — Complete Guide',meta:'28 cards · Science',url:'setdetail.html'},
+  {type:'page',name:'Explore sets',meta:'Browse the marketplace',url:'explore.html'},
+  {type:'page',name:'Leaderboard',meta:'Weekly rankings',url:'leaderboard.html'},
+  {type:'page',name:'Create a set',meta:'Build your own flashcard set',url:'create.html'},
+  {type:'page',name:'Study with Leo',meta:'Start a study session',url:'study.html'},
+  {type:'page',name:'My profile',meta:'View your profile',url:'profile.html'},
+  {type:'page',name:'Settings',meta:'Account and preferences',url:'settings.html'},
+  {type:'creator',name:'Leo',meta:'AI study coach · 2,840 sets',url:'leo.html'},
+  {type:'creator',name:'sarah_reads',meta:'Verified creator · 12 sets',url:'profile.html'},
+  {type:'creator',name:'nova_prep',meta:'Top creator · 22 sets',url:'profile.html'},
+];
+function openSearch(){
+  document.getElementById('searchOverlay').style.display='block';
+  document.getElementById('searchPanel').style.display='block';
+  setTimeout(()=>document.getElementById('searchInput').focus(),50);
+  doSearch('');
+}
+function closeSearch(){
+  document.getElementById('searchOverlay').style.display='none';
+  document.getElementById('searchPanel').style.display='none';
+  document.getElementById('searchInput').value='';
+}
+function doSearch(q){
+  const results = document.getElementById('searchResults');
+  const query = q.toLowerCase().trim();
+  const matches = query ? SEARCH_DATA.filter(d=>d.name.toLowerCase().includes(query)||d.meta.toLowerCase().includes(query)) : SEARCH_DATA.slice(0,6);
+  if(!matches.length){results.innerHTML='<div style="padding:12px 0;font-size:13px;color:var(--brown4);text-align:center">No results for "'+q+'"</div>';return;}
+  const icons={set:'ti-cards',page:'ti-file',creator:'ti-user'};
+  results.innerHTML = matches.slice(0,8).map(m=>`
+    <div onclick="window.location.href='${m.url}'" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">
+      <div style="width:36px;height:36px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:16px;flex-shrink:0;border:1.5px solid var(--border2)"><i class="ti ${icons[m.type]}"></i></div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--brown)">${m.name}</div><div style="font-size:11px;color:var(--brown4);font-weight:300">${m.meta}</div></div>
+    </div>`).join('');
+}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}});
+</script>
+
+<script src="darkmode.js"></script>
+<script src="polish.js"></script>
+<script src="transitions.js"></script>
+<script src="search.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const backBtn = document.querySelector('[onclick*="showView('overview')"]');
+  function updateBackBtn(){
+    const active = document.querySelector('.view.active');
+    if(backBtn) backBtn.style.display = active && active.id === 'view-overview' ? 'none' : '';
+  }
+  updateBackBtn();
+  document.querySelectorAll('[onclick*="showView"]').forEach(el => {
+    el.addEventListener('click', () => setTimeout(updateBackBtn, 50));
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Leo</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;--brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;--brown4:#b8956a;--brown5:#d4b896;--green:#3a6b3f;--green2:#e8f0e9;--border:rgba(92,61,30,0.15);--border2:rgba(92,61,30,0.28);--shadow:rgba(44,26,14,0.09)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--brown);display:flex;min-height:100vh}
+.sidebar{width:220px;min-height:100vh;background:var(--brown);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0}
+.sidebar-logo{padding:28px 24px 24px;border-bottom:1px solid rgba(255,255,255,0.07);font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--brown5);display:inline-block}
+.sidebar-section{padding:20px 16px 8px;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;margin:2px 8px;cursor:pointer;transition:all 0.2s;font-size:13px;color:rgba(255,255,255,0.55);font-weight:400;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:var(--cream)}
+.nav-item i{font-size:17px;width:20px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:16px 8px;border-top:1px solid rgba(255,255,255,0.07)}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer}
+.user-av{width:32px;height:32px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);flex-shrink:0}
+.user-info .un{font-size:13px;font-weight:500;color:var(--cream)}
+.user-info .ur{font-size:11px;color:rgba(255,255,255,0.35)}
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;margin-left:220px}
+.topbar{background:#fff;border-bottom:1.5px solid var(--border2);padding:0 28px;height:58px;display:flex;align-items:center;gap:12px;flex-shrink:0;position:sticky;top:0;z-index:10}
+.back-btn{display:flex;align-items:center;gap:5px;font-size:13px;color:var(--brown3);cursor:pointer;text-decoration:none;font-weight:500;padding:6px 10px;border-radius:6px;border:1.5px solid var(--border2);background:var(--cream2);transition:all 0.2s}
+.back-btn:hover{background:var(--cream3);border-color:var(--brown4)}
+.content{flex:1}
+
+/* HERO BANNER */
+.leo-banner{background:var(--brown);padding:48px 32px 0;position:relative;overflow:hidden}
+.leo-banner::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:rgba(255,255,255,0.03);top:-200px;right:-100px;pointer-events:none}
+.leo-banner::after{content:'';position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,0.02);bottom:-100px;left:-80px;pointer-events:none}
+.leo-banner-inner{display:flex;align-items:flex-end;gap:24px;position:relative;z-index:1;max-width:1100px;margin:0 auto}
+.leo-av-wrap{position:relative;flex-shrink:0}
+.leo-av-big{width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg,var(--brown2),var(--brown3));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:40px;font-weight:700;color:var(--cream);border:4px solid rgba(255,255,255,0.15);box-shadow:0 8px 32px rgba(0,0,0,0.3)}
+.leo-online{position:absolute;bottom:4px;right:4px;width:20px;height:20px;border-radius:50%;background:#4ade80;border:3px solid var(--brown);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.4)}50%{box-shadow:0 0 0 8px rgba(74,222,128,0)}}
+.leo-info{padding-bottom:24px;flex:1}
+.leo-name-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;flex-wrap:wrap}
+.leo-name{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--cream);letter-spacing:-0.5px}
+.ai-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:100px;background:linear-gradient(135deg,var(--brown3),var(--brown4));color:var(--cream);font-size:12px;font-weight:600;border:1px solid rgba(255,255,255,0.2)}
+.ai-badge i{font-size:13px}
+.lumio-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:100px;background:rgba(255,255,255,0.1);color:var(--brown5);font-size:12px;font-weight:500;border:1px solid rgba(255,255,255,0.15)}
+.leo-tagline{font-size:15px;color:var(--brown5);font-weight:300;margin-bottom:14px;line-height:1.6;max-width:540px}
+.leo-meta{display:flex;gap:16px;flex-wrap:wrap}
+.leo-meta span{font-size:13px;color:var(--brown5);display:flex;align-items:center;gap:5px}
+.leo-meta i{font-size:14px;color:var(--brown4)}
+
+/* STATS STRIP */
+.stats-strip{background:#fff;border-bottom:1.5px solid var(--border2);padding:0}
+.stats-strip-inner{display:flex;max-width:1100px;margin:0 auto}
+.stat-s{flex:1;padding:20px 24px;text-align:center;border-right:1.5px solid var(--border2)}
+.stat-s:last-child{border-right:none}
+.stat-s-val{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--brown);letter-spacing:-0.5px}
+.stat-s-lbl{font-size:12px;color:var(--brown4);margin-top:3px;font-weight:400}
+
+/* MAIN CONTENT */
+.leo-content{padding:28px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 300px;gap:20px}
+
+.cbox{background:#fff;border:2px solid var(--border2);border-radius:14px;overflow:hidden;margin-bottom:18px;box-shadow:0 2px 8px var(--shadow)}
+.chead{padding:14px 18px;border-bottom:2px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--cream2)}
+.chead h3{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown)}
+.chead span{font-size:12px;color:var(--brown4)}
+.cbody{padding:16px 18px}
+
+/* TABS */
+.set-tabs{display:flex;gap:0;border-bottom:2px solid var(--border2);margin-bottom:16px}
+.set-tab{padding:9px 18px;border:none;background:transparent;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;color:var(--brown4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s}
+.set-tab.active{color:var(--brown);border-bottom-color:var(--brown);font-weight:600}
+
+/* SET CARDS */
+.sets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+.set-card{background:var(--cream);border:2px solid var(--border2);border-radius:12px;padding:16px;cursor:pointer;transition:all 0.2s}
+.set-card:hover{border-color:var(--brown4);background:#fff;transform:translateY(-2px);box-shadow:0 6px 18px var(--shadow)}
+.sc-subject{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.sc-tag{font-size:10px;padding:2px 7px;border-radius:100px;font-weight:600}
+.sc-tag.created{background:var(--brown);color:var(--cream)}
+.sc-tag.improved{background:var(--green2);color:var(--green);border:1px solid rgba(58,107,63,0.2)}
+.sc-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--brown);margin-bottom:4px;line-height:1.3}
+.sc-desc{font-size:12px;color:var(--brown3);font-weight:300;line-height:1.5;margin-bottom:10px}
+.sc-footer{display:flex;align-items:center;gap:8px;padding-top:10px;border-top:1.5px solid var(--border)}
+.sc-stats{font-size:11px;color:var(--brown4);display:flex;gap:10px;flex:1}
+.sc-stats span{display:flex;align-items:center;gap:3px}
+.sc-stars{font-size:11px;color:#c4862a}
+
+/* ACTIVITY FEED */
+.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1.5px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.act-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;color:var(--cream)}
+.act-icon.create{background:var(--brown)}
+.act-icon.improve{background:var(--green)}
+.act-icon.rate{background:var(--brown3)}
+.act-icon.chat{background:var(--brown4)}
+.act-text{flex:1}
+.act-title{font-size:13px;font-weight:500;color:var(--brown);margin-bottom:2px}
+.act-title strong{color:var(--brown2)}
+.act-time{font-size:11px;color:var(--brown5);font-weight:300}
+
+/* SIDE */
+.about-card{background:var(--brown);border:none;border-radius:14px;overflow:hidden;margin-bottom:16px;box-shadow:0 4px 16px var(--shadow)}
+.about-head{padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:8px}
+.about-head h3{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--cream)}
+.about-head i{color:var(--brown5);font-size:16px}
+.about-body{padding:16px 18px}
+.about-item{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start}
+.about-item:last-child{margin-bottom:0}
+.about-item i{font-size:16px;color:var(--brown5);flex-shrink:0;margin-top:1px}
+.about-item-text .t{font-size:13px;font-weight:500;color:var(--cream);margin-bottom:2px}
+.about-item-text .s{font-size:12px;color:var(--brown5);font-weight:300;line-height:1.5}
+
+.ask-leo{background:#fff;border:2px solid var(--border2);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px var(--shadow)}
+.ask-head{padding:14px 18px;border-bottom:2px solid var(--border2);background:var(--cream2)}
+.ask-head h3{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown)}
+.ask-body{padding:14px 18px}
+.ask-msgs{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;max-height:200px;overflow-y:auto}
+.ask-msg{font-size:12px;line-height:1.55;padding:9px 12px;border-radius:10px;max-width:88%}
+.ask-msg.leo{background:var(--cream2);color:var(--brown);align-self:flex-start;border:1px solid var(--border)}
+.ask-msg.user{background:var(--brown);color:var(--cream);align-self:flex-end}
+.ask-input-row{display:flex;gap:8px}
+.ask-input{flex:1;padding:9px 12px;border:2px solid var(--border2);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);outline:none;background:var(--cream2)}
+.ask-input:focus{border-color:var(--brown3)}
+.ask-input::placeholder{color:var(--brown5)}
+.ask-send{padding:9px 14px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:5px}
+.ask-send:hover{background:var(--brown2)}
+</style>
+<style>@media(max-width:768px){
+  .leo-banner{padding:32px 16px 0}
+  .leo-banner-inner{flex-direction:column;gap:14px;padding-bottom:0}
+  .leo-av-big{width:68px;height:68px;font-size:26px}
+  .leo-name{font-size:20px}
+  .leo-name-row{flex-wrap:wrap;gap:6px}
+  .leo-tagline{font-size:13px}
+  .stats-strip-inner{overflow-x:auto}
+  .stat-s{min-width:90px;padding:14px 12px}
+  .stat-s-val{font-size:19px}
+  .leo-content{grid-template-columns:1fr!important;padding:14px 16px}
+  .sets-grid{grid-template-columns:1fr 1fr!important}
+  .ask-msgs{max-height:160px}
+}</style>
+</head>
+<body>
+<div class="sidebar">
+  <a href="index.html" class="sidebar-logo">Lumio <span class="logo-dot"></span></a>
+  <div class="sidebar-section">Main</div>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-books"></i> My sets</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-compass"></i> Explore</a>
+  <a href="create.html" class="nav-item"><i class="ti ti-plus"></i> Create set</a>
+  <div class="sidebar-section">Community</div>
+  <a href="leaderboard.html" class="nav-item"><i class="ti ti-trophy"></i> Leaderboard</a>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-users"></i> Classrooms</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-star"></i> Saved sets</a>
+  <div class="sidebar-section">Leo</div>
+  <a href="study.html" class="nav-item"><i class="ti ti-brain"></i> Study with Leo</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-chart-bar"></i> My progress</a>
+      <div style="padding:8px 8px 0;border-top:1px solid rgba(255,255,255,0.07);margin-top:8px">
+      <a href="#" class="nav-item" style="color:rgba(255,255,255,0.4)" onclick="if(confirm('Sign out of Lumio?')){if(window.lumio)window.lumio.logout();else window.location.href='login.html';}"><i class="ti ti-logout"></i> Sign out</a>
+    </div>
+  <div class="sidebar-bottom">
+    <div class="user-pill" onclick="window.location.href='profile.html'" oncontextmenu="event.preventDefault();window.location.href='settings.html'">
+      <div class="user-av">AS</div>
+      <div class="user-info"><div class="un">alex_studies</div><div class="ur">Student</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <a href="explore.html" class="back-btn"><i class="ti ti-arrow-left" style="font-size:14px"></i> Back to Explore</a>
+  </div>
+
+  <!-- LEO BANNER -->
+  <div class="leo-banner">
+    <div class="leo-banner-inner">
+      <div class="leo-av-wrap">
+        <div class="leo-av-big">L</div>
+        <div class="leo-online"></div>
+      </div>
+      <div class="leo-info">
+        <div class="leo-name-row">
+          <div class="leo-name">Leo</div>
+          <div class="ai-badge"><i class="ti ti-sparkles"></i> Lumio AI</div>
+          <div class="lumio-badge"><i class="ti ti-circle-check" style="font-size:12px"></i> Official account</div>
+        </div>
+        <div class="leo-tagline">I'm Lumio's AI study coach. I create flashcard sets, improve community sets, rate quality, and help students learn smarter. Always watching. Always learning.</div>
+        <div class="leo-meta">
+          <span><i class="ti ti-calendar"></i> On Lumio since day one</span>
+          <span><i class="ti ti-bolt"></i> Always active</span>
+          <span><i class="ti ti-shield-check"></i> Verified AI creator</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS STRIP -->
+  <div class="stats-strip">
+    <div class="stats-strip-inner">
+      <div class="stat-s"><div class="stat-s-val">2,840</div><div class="stat-s-lbl">Sets created</div></div>
+      <div class="stat-s"><div class="stat-s-val">14,200</div><div class="stat-s-lbl">Sets improved</div></div>
+      <div class="stat-s"><div class="stat-s-val">98,400</div><div class="stat-s-lbl">Sets rated</div></div>
+      <div class="stat-s"><div class="stat-s-val">2.1M</div><div class="stat-s-lbl">Students helped</div></div>
+      <div class="stat-s"><div class="stat-s-val">4.98</div><div class="stat-s-lbl">Avg. set rating</div></div>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="leo-content">
+    <div>
+      <!-- SETS -->
+      <div class="cbox">
+        <div class="chead"><h3>Leo's sets</h3><span id="setCount">2,840 sets</span></div>
+        <div class="cbody">
+          <div class="set-tabs">
+            <button class="set-tab active" onclick="showTab('created',this)">Created by Leo</button>
+            <button class="set-tab" onclick="showTab('improved',this)">Improved by Leo</button>
+          </div>
+          <div id="tab-created" class="sets-grid">
+            <div class="set-card"><div class="sc-subject">History <span class="sc-tag created">Created</span></div><div class="sc-name">World War II — Key Events Timeline</div><div class="sc-desc">Dates, battles, leaders, and turning points. Perfect for AP History prep.</div><div class="sc-footer"><div class="sc-stats"><span><i class="ti ti-cards" style="font-size:12px"></i> 60</span><span><i class="ti ti-eye" style="font-size:12px"></i> 34.1k</span></div><div class="sc-stars">★★★★★</div></div></div>
+            <div class="set-card"><div class="sc-subject">Languages <span class="sc-tag created">Created</span></div><div class="sc-name">Spanish 101 — Core Vocabulary</div><div class="sc-desc">The 200 most essential Spanish words for beginners. Audio included.</div><div class="sc-footer"><div class="sc-stats"><span><i class="ti ti-cards" style="font-size:12px"></i> 200</span><span><i class="ti ti-eye" style="font-size:12px"></i> 22.7k</span></div><div class="sc-stars">★★★★★</div></div></div>
+            <div class="set-card"><div class="sc-subject">Geography <span class="sc-tag created">Created</span></div><div class="sc-name">World Capitals — All 195 Countries</div><div class="sc-desc">Every country and its capital city, organised by continent.</div><div class="sc-footer"><div class="sc-stats"><span><i class="ti ti-cards" style="font-size:12px"></i> 195</span><span><i class="ti ti-eye" style="font-size:12px"></i> 41.2k</span></div><div class="sc-stars">★★★★★</div></div></div>
+            <div class="set-card"><div class="sc-subject">English <span class="sc-tag created">Created</span></div><div class="sc-name">SAT Vocabulary — High Frequency</div><div class="sc-desc">The 150 words most commonly tested on the SAT with examples.</div><div class="sc-footer"><div class="sc-stats"><span><i class="ti ti-cards" style="font-size:12px"></i> 150</span><span><i class="ti ti-eye" style="font-size:12px"></i> 28.9k</span></div><div class="sc-stars">★★★★★</div></div></div>
+            <div class="set-card"><div class="sc-subject">Science <span class="sc-tag created">Created</span></div><div class="sc-name">Periodic Table — First 40 Elements</div><div class="sc-desc">Symbols, atomic numbers, and key properties of the first 40 elements.</div><div class="sc-footer"><div class="sc-stats"><span><i class="ti ti-cards" style="font-size:12px"></i> 40</span><span><i class="ti ti-eye" style="font-size:12px"></i> 15.6k</span></div><div class="sc-stars">★★★★★</div></div></div>
+            <div class="set-card"><div class="sc-subject">Math <span class="sc-tag created">Created</span></div><div class="sc-name">Calculus Fundamentals</div><div class="sc-desc">Limits, derivatives, and integrals. Essential for AP Calculus and college math.</div><div class="sc-footer"><div class="sc-stats"><span><i class="ti ti-cards" style="font-size:12px"></i> 55</span><span><i class="ti ti-eye" style="font-size:12px"></i> 19.3k</span></div><div class="sc-stars">★★★★★</div></div></div>
+          </div>
+          <div id="tab-improved" class="sets-grid" style="display:none">
+            <div class="set-card"><div class="sc-subject">Biology <span class="sc-tag improved">Improved</span></div><div class="sc-name">Cell Division: Mitosis &amp; Meiosis</div><div class="sc-desc">Original by sarah_reads. Leo clarified 4 vague cards and balanced meiosis coverage.</div><div class="sc-footer"><div class="sc-stats"><span><i class="ti ti-cards" style="font-size:12px"></i> 48</span><span><i class="ti ti-eye" style="font-size:12px"></i> 12.4k</span></div><div class="sc-stars">★★★★★</div></div></div>
+            <div class="set-card"><div class="sc-subject">Math <span class="sc-tag improved">Improved</span></div><div class="sc-name">Algebra Foundations — Grade 8</div><div class="sc-desc">Original by mathkid99. Leo fixed 3 ambiguous questions and added 5 new cards.</div><div class="sc-footer"><div class="sc-stats"><span><i class="ti ti-cards" style="font-size:12px"></i> 37</span><span><i class="ti ti-eye" style="font-size:12px"></i> 8.9k</span></div><div class="sc-stars">★★★★★</div></div></div>
+            <div class="set-card"><div class="sc-subject">History <span class="sc-tag improved">Improved</span></div><div class="sc-name">Ancient Rome — Rise &amp; Fall</div><div class="sc-desc">Original by hist_ryan. Leo expanded the set from 30 to 55 cards with key events.</div><div class="sc-footer"><div class="sc-stats"><span><i class="ti ti-cards" style="font-size:12px"></i> 55</span><span><i class="ti ti-eye" style="font-size:12px"></i> 9.8k</span></div><div class="sc-stars">★★★★★</div></div></div>
+            <div class="set-card"><div class="sc-subject">Science <span class="sc-tag improved">Improved</span></div><div class="sc-name">Photosynthesis — Complete Guide</div><div class="sc-desc">Original by jade_prep. Leo rewrote 6 unclear definitions and added light reaction detail.</div><div class="sc-footer"><div class="sc-stats"><span><i class="ti ti-cards" style="font-size:12px"></i> 32</span><span><i class="ti ti-eye" style="font-size:12px"></i> 6.2k</span></div><div class="sc-stars">★★★★★</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ACTIVITY FEED -->
+      <div class="cbox">
+        <div class="chead"><h3>Recent activity</h3><span>Last 24 hours</span></div>
+        <div class="cbody">
+          <div class="activity-item"><div class="act-icon create"><i class="ti ti-plus"></i></div><div class="act-text"><div class="act-title">Created <strong>AP Chemistry — Reactions &amp; Equations</strong> · 45 cards</div><div class="act-time">2 hours ago</div></div></div>
+          <div class="activity-item"><div class="act-icon improve"><i class="ti ti-sparkles"></i></div><div class="act-text"><div class="act-title">Improved <strong>French Verbs Conjugation</strong> by nova_prep · raised from 3.2 to 5.0 stars</div><div class="act-time">4 hours ago</div></div></div>
+          <div class="activity-item"><div class="act-icon rate"><i class="ti ti-star"></i></div><div class="act-text"><div class="act-title">Rated <strong>US Presidents Timeline</strong> by hist_ryan · 4.6 stars</div><div class="act-time">5 hours ago</div></div></div>
+          <div class="activity-item"><div class="act-icon chat"><i class="ti ti-message"></i></div><div class="act-text"><div class="act-title">Helped <strong>847 students</strong> with study sessions today</div><div class="act-time">Ongoing</div></div></div>
+          <div class="activity-item"><div class="act-icon create"><i class="ti ti-plus"></i></div><div class="act-text"><div class="act-title">Created <strong>Human Geography — Key Terms</strong> · 60 cards</div><div class="act-time">8 hours ago</div></div></div>
+          <div class="activity-item"><div class="act-icon improve"><i class="ti ti-sparkles"></i></div><div class="act-text"><div class="act-title">Improved <strong>Shakespeare Vocabulary — Hamlet</strong> by lit_wizard · raised from 3.8 to 5.0 stars</div><div class="act-time">11 hours ago</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDE -->
+    <div>
+      <div class="about-card">
+        <div class="about-head"><i class="ti ti-info-circle"></i><h3>About Leo</h3></div>
+        <div class="about-body">
+          <div class="about-item"><i class="ti ti-brain"></i><div class="about-item-text"><div class="t">AI study coach</div><div class="s">Leo watches every study session and steps in when students need help — not randomly, but precisely when it matters.</div></div></div>
+          <div class="about-item"><i class="ti ti-sparkles"></i><div class="about-item-text"><div class="t">Quality guardian</div><div class="s">Every set published on Lumio gets reviewed by Leo. He rates, flags issues, and can rewrite sets to 5-star quality.</div></div></div>
+          <div class="about-item"><i class="ti ti-pencil"></i><div class="about-item-text"><div class="t">Set creator</div><div class="s">Leo creates original sets on trending topics and fills gaps in the library. All his sets are free forever.</div></div></div>
+          <div class="about-item"><i class="ti ti-shield"></i><div class="about-item-text"><div class="t">Content moderator</div><div class="s">Leo automatically applies age ratings to all sets and flags anything inappropriate before it goes live.</div></div></div>
+        </div>
+      </div>
+
+      <div class="ask-leo">
+        <div class="ask-head"><h3>Ask Leo anything</h3></div>
+        <div class="ask-body">
+          <div class="ask-msgs" id="askMsgs">
+            <div class="ask-msg leo">Hey! I'm Leo. Ask me anything about studying, a topic you're learning, or how I work on Lumio.</div>
+          </div>
+          <div class="ask-input-row">
+            <input class="ask-input" id="askInput" placeholder="Ask Leo..." onkeydown="if(event.key==='Enter')askLeo()">
+            <button class="ask-send" onclick="askLeo()"><i class="ti ti-send" style="font-size:13px"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showTab(tab, el){
+  document.querySelectorAll('.set-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-created').style.display = tab==='created'?'grid':'none';
+  document.getElementById('tab-improved').style.display = tab==='improved'?'grid':'none';
+  document.getElementById('setCount').textContent = tab==='created'?'2,840 sets':'14,200 sets';
+}
+
+const replies = [
+  "Great question! I'm always happy to help. What subject are you studying?",
+  "I create sets on topics that are popular or missing from the library. Just this week I made sets on AP Chemistry and Human Geography.",
+  "I review every set before it goes live on Lumio. I look for vague cards, unbalanced coverage, and unclear questions.",
+  "I watch your study sessions silently and only jump in when I spot a pattern — like missing the same concept 3 times in a row.",
+  "My sets are always free and always will be. Knowledge should be accessible to everyone.",
+  "I can help you study anything! Tell me what topic you're working on and I'll quiz you or explain it differently."
+];
+let replyIdx = 0;
+
+function askLeo(){
+  const input = document.getElementById('askInput');
+  const msg = input.value.trim();
+  if(!msg) return;
+  const msgs = document.getElementById('askMsgs');
+  msgs.innerHTML += `<div class="ask-msg user">${msg}</div>`;
+  input.value = '';
+  setTimeout(()=>{
+    msgs.innerHTML += `<div class="ask-msg leo">${replies[replyIdx % replies.length]}</div>`;
+    replyIdx++;
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 600);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bn-item" onclick="window.location.href='dashboard.html'" id="bn-home">
+    <i class="ti ti-layout-dashboard"></i><span>Home</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='explore.html'" id="bn-explore">
+    <i class="ti ti-compass"></i><span>Explore</span>
+  </button>
+  <button class="bn-create" onclick="window.location.href='create.html'">
+    <div class="bn-create-icon"><i class="ti ti-plus" style="font-size:22px;color:var(--cream)"></i></div>
+    <span>Create</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='leaderboard.html'" id="bn-ranks">
+    <i class="ti ti-trophy"></i><span>Ranks</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='profile.html'" id="bn-profile">
+    <i class="ti ti-user"></i><span>Profile</span>
+  </button>
+</nav>
+<script>
+// Highlight active tab
+(function(){
+  const page = window.location.pathname.split('/').pop();
+  const map = {'dashboard.html':'bn-home','explore.html':'bn-explore','leaderboard.html':'bn-ranks','profile.html':'bn-profile','create.html':null};
+  const activeId = map[page];
+  if(activeId) { const el=document.getElementById(activeId); if(el) el.classList.add('active'); }
+})();
+</script>
+
+
+<script>
+// Smooth page transitions on navigation
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href]').forEach(function(link){
+    const href = link.getAttribute('href');
+    if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = link.href;
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateY(-6px)';
+      document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      setTimeout(function(){ window.location.href = target; }, 200);
+    });
+  });
+  // Fade in on load
+  document.body.style.opacity = '0';
+  document.body.style.transform = 'translateY(6px)';
+  document.body.style.transition = 'none';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      document.body.style.opacity = '1';
+      document.body.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
+
+
+<!-- SEARCH OVERLAY -->
+<div id="searchOverlay" style="display:none;position:fixed;inset:0;background:rgba(44,26,14,0.5);z-index:9998;backdrop-filter:blur(4px)" onclick="closeSearch()"></div>
+<div id="searchPanel" style="display:none;position:fixed;top:0;left:0;right:0;background:#fff;z-index:9999;padding:16px 24px;box-shadow:0 8px 32px rgba(44,26,14,0.15)">
+  <div style="max-width:700px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <i class="ti ti-search" style="font-size:20px;color:var(--brown4)"></i>
+      <input id="searchInput" type="text" placeholder="Search sets, topics, creators..." style="flex:1;border:none;outline:none;font-family:'Source Sans 3',sans-serif;font-size:16px;color:var(--brown);background:transparent" oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
+      <button onclick="closeSearch()" style="border:none;background:transparent;cursor:pointer;color:var(--brown4);font-size:14px;font-family:'Source Sans 3',sans-serif;font-weight:500">Cancel</button>
+    </div>
+    <div id="searchResults" style="padding-bottom:8px"></div>
+  </div>
+</div>
+<script>
+const SEARCH_DATA = [
+  {type:'set',name:'Cell Division: Mitosis & Meiosis',meta:'48 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'Human Body Systems Overview',meta:'66 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'World Capitals — 195 Countries',meta:'195 cards · Geography',url:'setdetail.html'},
+  {type:'set',name:'SAT Vocabulary High Frequency',meta:'150 cards · English',url:'setdetail.html'},
+  {type:'set',name:'Spanish 101 — Core Vocabulary',meta:'200 cards · Languages',url:'setdetail.html'},
+  {type:'set',name:'WW2 Key Events Timeline',meta:'60 cards · History',url:'setdetail.html'},
+  {type:'set',name:'Calculus Fundamentals',meta:'55 cards · Math',url:'setdetail.html'},
+  {type:'set',name:'Photosynthesis — Complete Guide',meta:'28 cards · Science',url:'setdetail.html'},
+  {type:'page',name:'Explore sets',meta:'Browse the marketplace',url:'explore.html'},
+  {type:'page',name:'Leaderboard',meta:'Weekly rankings',url:'leaderboard.html'},
+  {type:'page',name:'Create a set',meta:'Build your own flashcard set',url:'create.html'},
+  {type:'page',name:'Study with Leo',meta:'Start a study session',url:'study.html'},
+  {type:'page',name:'My profile',meta:'View your profile',url:'profile.html'},
+  {type:'page',name:'Settings',meta:'Account and preferences',url:'settings.html'},
+  {type:'creator',name:'Leo',meta:'AI study coach · 2,840 sets',url:'leo.html'},
+  {type:'creator',name:'sarah_reads',meta:'Verified creator · 12 sets',url:'profile.html'},
+  {type:'creator',name:'nova_prep',meta:'Top creator · 22 sets',url:'profile.html'},
+];
+function openSearch(){
+  document.getElementById('searchOverlay').style.display='block';
+  document.getElementById('searchPanel').style.display='block';
+  setTimeout(()=>document.getElementById('searchInput').focus(),50);
+  doSearch('');
+}
+function closeSearch(){
+  document.getElementById('searchOverlay').style.display='none';
+  document.getElementById('searchPanel').style.display='none';
+  document.getElementById('searchInput').value='';
+}
+function doSearch(q){
+  const results = document.getElementById('searchResults');
+  const query = q.toLowerCase().trim();
+  const matches = query ? SEARCH_DATA.filter(d=>d.name.toLowerCase().includes(query)||d.meta.toLowerCase().includes(query)) : SEARCH_DATA.slice(0,6);
+  if(!matches.length){results.innerHTML='<div style="padding:12px 0;font-size:13px;color:var(--brown4);text-align:center">No results for "'+q+'"</div>';return;}
+  const icons={set:'ti-cards',page:'ti-file',creator:'ti-user'};
+  results.innerHTML = matches.slice(0,8).map(m=>`
+    <div onclick="window.location.href='${m.url}'" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">
+      <div style="width:36px;height:36px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:16px;flex-shrink:0;border:1.5px solid var(--border2)"><i class="ti ${icons[m.type]}"></i></div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--brown)">${m.name}</div><div style="font-size:11px;color:var(--brown4);font-weight:300">${m.meta}</div></div>
+    </div>`).join('');
+}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}});
+</script>
+
+<script src="darkmode.js"></script>
+<script src="polish.js"></script>
+<script src="transitions.js"></script>
+<script src="search.js"></script>
+</body>
+</html>

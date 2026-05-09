@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Create a Set</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;
+  --brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;
+  --brown4:#b8956a;--brown5:#d4b896;
+  --green:#3a6b3f;--green2:#e8f0e9;
+  --border:rgba(92,61,30,0.12);--border2:rgba(92,61,30,0.22);
+  --shadow:rgba(44,26,14,0.07);
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--brown);display:flex;min-height:100vh}
+.sidebar{width:220px;min-height:100vh;background:var(--brown);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0}
+.sidebar-logo{padding:28px 24px 24px;border-bottom:1px solid rgba(255,255,255,0.07);font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--brown5);display:inline-block}
+.sidebar-section{padding:20px 16px 8px;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;margin:2px 8px;cursor:pointer;transition:all 0.2s;font-size:13px;color:rgba(255,255,255,0.55);font-weight:400;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:var(--cream)}
+.nav-item.active{background:rgba(255,255,255,0.1);color:var(--cream);font-weight:500}
+.nav-item i{font-size:17px;width:20px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:16px 8px;border-top:1px solid rgba(255,255,255,0.07)}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer}
+.user-av{width:32px;height:32px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);flex-shrink:0}
+.user-info .un{font-size:13px;font-weight:500;color:var(--cream)}
+.user-info .ur{font-size:11px;color:rgba(255,255,255,0.35)}
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;margin-left:220px}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10}
+.topbar-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.icon-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border2);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brown3);font-size:17px;transition:all 0.2s}
+.icon-btn:hover{background:var(--cream2);color:var(--brown)}
+.content{padding:28px;flex:1;max-width:860px;margin:0 auto;width:100%}
+.wizard-steps{display:flex;align-items:center;margin-bottom:36px;gap:0}
+.step{display:flex;align-items:center;gap:10px;flex:1}
+.step:last-child{flex:0}
+.step-circle{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;flex-shrink:0;transition:all 0.3s;border:2px solid var(--border2);color:var(--brown4);background:#fff}
+.step.active .step-circle{background:var(--brown);color:var(--cream);border-color:var(--brown)}
+.step.done .step-circle{background:var(--green);color:#fff;border-color:var(--green)}
+.step-label{font-size:13px;font-weight:500;color:var(--brown4);transition:color 0.3s}
+.step.active .step-label{color:var(--brown);font-weight:600}
+.step.done .step-label{color:var(--green)}
+.step-line{flex:1;height:2px;background:var(--border2);margin:0 12px;transition:background 0.3s}
+.step-line.done{background:var(--green)}
+.panel{display:none}
+.panel.active{display:block}
+.panel-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--brown);margin-bottom:6px;letter-spacing:-0.3px}
+.panel-sub{font-size:14px;color:var(--brown3);margin-bottom:28px;font-weight:300;line-height:1.6}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--brown2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;padding:11px 14px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--brown);outline:none;transition:border-color 0.2s;resize:vertical}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--brown3)}
+.field input::placeholder,.field textarea::placeholder{color:var(--brown5)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.import-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:24px}
+.import-opt{border:1.5px solid var(--border2);border-radius:12px;padding:18px 16px;cursor:pointer;transition:all 0.2s;background:#fff;text-align:center}
+.import-opt:hover{border-color:var(--brown4);background:var(--cream)}
+.import-opt.selected{border-color:var(--brown);background:var(--cream2)}
+.import-opt i{font-size:24px;color:var(--brown3);margin-bottom:8px;display:block}
+.import-opt.selected i{color:var(--brown)}
+.import-opt .io-name{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--brown);margin-bottom:3px}
+.import-opt .io-desc{font-size:11px;color:var(--brown4);font-weight:300;line-height:1.4}
+.import-input-area{background:var(--cream2);border:1.5px dashed var(--border2);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:16px;display:none}
+.import-input-area.show{display:block}
+.import-input-area:hover{border-color:var(--brown4);background:var(--cream3)}
+.import-input-area i{font-size:28px;color:var(--brown4);margin-bottom:8px;display:block}
+.import-input-area p{font-size:13px;color:var(--brown3);font-weight:300}
+.url-input-wrap{display:none;margin-bottom:16px}
+.url-input-wrap.show{display:block}
+.url-input{width:100%;padding:11px 14px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--brown);outline:none;transition:border-color 0.2s}
+.url-input:focus{border-color:var(--brown3)}
+.url-input::placeholder{color:var(--brown5)}
+.topic-input-wrap{display:none;margin-bottom:16px}
+.topic-input-wrap.show{display:flex;gap:10px}
+.topic-input{flex:1;padding:11px 14px;border:1.5px solid var(--border2);border-radius:8px;background:#fff;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--brown);outline:none;transition:border-color 0.2s}
+.topic-input:focus{border-color:var(--brown3)}
+.topic-input::placeholder{color:var(--brown5)}
+.notes-wrap{display:none;margin-bottom:16px}
+.notes-wrap.show{display:block}
+.cards-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.card-row{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:1fr 1fr auto;gap:12px;align-items:start}
+.card-row input{width:100%;padding:9px 12px;border:1.5px solid var(--border2);border-radius:7px;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown);outline:none;transition:border-color 0.2s;background:var(--cream)}
+.card-row input:focus{border-color:var(--brown3)}
+.card-row input::placeholder{color:var(--brown5)}
+.del-btn{width:32px;height:32px;border:1px solid var(--border2);background:transparent;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brown4);font-size:15px;transition:all 0.2s;align-self:center;flex-shrink:0}
+.del-btn:hover{background:#fbeaea;border-color:#fca5a5;color:#c0392b}
+.add-card-btn{display:flex;align-items:center;gap:8px;padding:10px 16px;border:1.5px dashed var(--border2);border-radius:10px;background:transparent;color:var(--brown3);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s;width:100%;justify-content:center}
+.add-card-btn:hover{border-color:var(--brown4);background:var(--cream2);color:var(--brown)}
+.card-col-labels{display:grid;grid-template-columns:1fr 1fr auto;gap:12px;padding:0 16px;margin-bottom:6px}
+.card-col-labels span{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown4)}
+.leo-review-box{background:var(--brown);border-radius:14px;padding:24px;margin-bottom:20px}
+.lrb-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.lrb-av{width:38px;height:38px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--cream);flex-shrink:0}
+.lrb-name{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--cream)}
+.lrb-status{font-size:12px;color:var(--brown5)}
+.lrb-msg{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.lrb-msg p{font-size:13px;color:var(--cream);line-height:1.6;font-weight:300}
+.lrb-plan{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.lrb-plan-item{background:rgba(255,255,255,0.07);border-radius:8px;padding:12px;text-align:center}
+.lrb-plan-item .lpi-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream)}
+.lrb-plan-item .lpi-label{font-size:11px;color:var(--brown5);margin-top:3px;font-weight:300}
+.lrb-actions{display:flex;gap:10px}
+.lrb-btn{padding:9px 20px;border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;border:none}
+.lrb-btn.primary{background:var(--cream);color:var(--brown)}
+.lrb-btn.primary:hover{background:var(--cream2)}
+.lrb-btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--cream)}
+.lrb-btn.ghost:hover{background:rgba(255,255,255,0.08)}
+.leo-feedback-input{width:100%;padding:11px 14px;border:1.5px solid rgba(255,255,255,0.15);border-radius:8px;background:rgba(255,255,255,0.07);font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--cream);outline:none;margin-top:10px;display:none}
+.leo-feedback-input::placeholder{color:rgba(255,255,255,0.3)}
+.leo-feedback-input.show{display:block}
+.publish-preview{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:20px}
+.rating-display{display:flex;align-items:center;gap:16px;background:var(--cream2);border-radius:10px;padding:16px 20px;margin-bottom:16px}
+.visibility-opts{display:flex;gap:10px;margin-bottom:16px}
+.vis-opt{flex:1;border:1.5px solid var(--border2);border-radius:10px;padding:14px;cursor:pointer;transition:all 0.2s;background:#fff;text-align:center}
+.vis-opt:hover{border-color:var(--brown4);background:var(--cream)}
+.vis-opt.selected{border-color:var(--brown);background:var(--cream2)}
+.vis-opt i{font-size:20px;color:var(--brown3);margin-bottom:6px;display:block}
+.vis-opt.selected i{color:var(--brown)}
+.vis-opt h4{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;color:var(--brown);margin-bottom:2px}
+.vis-opt p{font-size:11px;color:var(--brown4);font-weight:300}
+.btn-primary{padding:11px 28px;border-radius:8px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn-primary:hover{background:var(--brown2);transform:translateY(-1px)}
+.btn-ghost{padding:11px 22px;border-radius:8px;border:1.5px solid var(--border2);background:transparent;color:var(--brown2);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s}
+.btn-ghost:hover{background:var(--cream2)}
+.nav-btns-row{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:20px;border-top:1px solid var(--border)}
+.success-screen{display:none;text-align:center;padding:48px 20px}
+.success-screen.show{display:block}
+.success-icon{width:64px;height:64px;border-radius:50%;background:var(--green2);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:28px;color:var(--green)}
+@keyframes blink{0%,100%{opacity:0.3}50%{opacity:1}}
+</style>
+<style>@media(max-width:768px){
+  .wizard-nav{padding:14px 16px;flex-wrap:nowrap;overflow-x:auto}
+  .step-label{display:none}
+  .step-circle{width:28px;height:28px;font-size:12px}
+  .step-line{min-width:24px}
+  .panel{padding:16px}
+  .panel-title{font-size:18px}
+  .import-grid{grid-template-columns:1fr 1fr 1fr!important}
+  .card-row{grid-template-columns:1fr 1fr auto;gap:7px}
+  .vis-grid{grid-template-columns:1fr!important}
+  .btn-primary,.btn-ghost{font-size:13px;padding:10px 16px}
+}</style>
+</head>
+<body>
+<div class="sidebar">
+  <a href="index.html" class="sidebar-logo">Lumio <span class="logo-dot"></span></a>
+  <div class="sidebar-section">Main</div>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-books"></i> My sets</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-compass"></i> Explore</a>
+  <a href="create.html" class="nav-item active"><i class="ti ti-plus"></i> Create set</a>
+  <div class="sidebar-section">Community</div>
+  <a href="leaderboard.html" class="nav-item"><i class="ti ti-trophy"></i> Leaderboard</a>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-users"></i> Classrooms</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-star"></i> Saved sets</a>
+  <div class="sidebar-section">Leo</div>
+  <a href="study.html" class="nav-item"><i class="ti ti-brain"></i> Study with Leo</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-chart-bar"></i> My progress</a>
+      <div style="padding:8px 8px 0;border-top:1px solid rgba(255,255,255,0.07);margin-top:8px">
+      <a href="#" class="nav-item" style="color:rgba(255,255,255,0.4)" onclick="if(confirm('Sign out of Lumio?')){if(window.lumio)window.lumio.logout();else window.location.href='login.html';}"><i class="ti ti-logout"></i> Sign out</a>
+    </div>
+  <div class="sidebar-bottom">
+    <div class="user-pill" onclick="window.location.href='profile.html'" oncontextmenu="event.preventDefault();window.location.href='settings.html'" style="cursor:pointer">
+      <div class="user-av">AS</div>
+      <div class="user-info"><div class="un">alex_studies</div><div class="ur">Student</div></div>
+    </div>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Create a set</div>
+    <div class="topbar-right"><button class="icon-btn" onclick="openSearch()" title="Search (Cmd+K)"><i class="ti ti-search"></i></button>
+      <button class="icon-btn"><i class="ti ti-bell"></i></button></div>
+  </div>
+  <div class="content">
+    <div class="wizard-steps">
+      <div class="step active" id="step1"><div class="step-circle">1</div><div class="step-label">Details</div></div>
+      <div class="step-line" id="line1"></div>
+      <div class="step" id="step2"><div class="step-circle">2</div><div class="step-label">Add cards</div></div>
+      <div class="step-line" id="line2"></div>
+      <div class="step" id="step3"><div class="step-circle">3</div><div class="step-label">Leo review</div></div>
+      <div class="step-line" id="line3"></div>
+      <div class="step" id="step4"><div class="step-circle">4</div><div class="step-label">Publish</div></div>
+    </div>
+
+    <div class="panel active" id="panel1">
+      <div class="panel-title">Set details</div>
+      <div class="panel-sub">Give your set a title, subject, and difficulty so students know what to expect before they study.</div>
+      <div class="field"><label>Set title</label><input type="text" placeholder="e.g. Cell Division: Mitosis & Meiosis" id="setTitle"></div>
+      <div class="field-row">
+        <div class="field"><label>Subject</label><select><option value="">Select a subject...</option><option>Biology</option><option>History</option><option>Math</option><option>Science</option><option>English</option><option>Languages</option><option>Geography</option><option>Art</option><option>Music</option><option>Other</option></select></div>
+        <div class="field"><label>Difficulty</label><select><option value="">Select difficulty...</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>Mixed</option></select></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Grade level (optional)</label><select><option value="">Any grade</option><option>Elementary (K-5)</option><option>Middle school (6-8)</option><option>High school (9-12)</option><option>College</option><option>Adult</option></select></div>
+        <div class="field"><label>Default question type</label><select><option>Mixed (all types)</option><option>Flashcard flip</option><option>Multiple choice</option><option>Type the answer</option><option>Sequence</option><option>Spelling & audio</option></select></div>
+      </div>
+      <div class="field"><label>Description (optional — Leo will generate one if left blank)</label><textarea rows="3" placeholder="What will students learn from this set?"></textarea></div>
+      <div class="nav-btns-row">
+        <div style="font-size:13px;color:var(--brown4)">Step 1 of 4</div>
+        <button class="btn-primary" onclick="goTo(2)">Next — Add cards &rarr;</button>
+      </div>
+    </div>
+
+    <div class="panel" id="panel2">
+      <div class="panel-title">Add your cards</div>
+      <div class="panel-sub">Type cards manually, let Leo generate them from a topic, or import from your notes, a file, or a URL. No limits on how many you add.</div>
+      <div style="font-size:12px;font-weight:600;color:var(--brown2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px">How do you want to add cards?</div>
+      <div class="import-grid">
+        <div class="import-opt selected" id="imp-manual" onclick="selectImport('manual')"><i class="ti ti-pencil"></i><div class="io-name">Manual</div><div class="io-desc">Type each card yourself</div></div>
+        <div class="import-opt" id="imp-ai" onclick="selectImport('ai')"><i class="ti ti-brain"></i><div class="io-name">AI generate</div><div class="io-desc">Describe a topic, Leo builds the set</div></div>
+        <div class="import-opt" id="imp-notes" onclick="selectImport('notes')"><i class="ti ti-notes"></i><div class="io-name">Paste notes</div><div class="io-desc">Drop in your class notes</div></div>
+        <div class="import-opt" id="imp-file" onclick="selectImport('file')"><i class="ti ti-file-upload"></i><div class="io-name">Upload file</div>
+              <div class='import-card' id='imp-sheets' onclick="openSheetsModal()" style="cursor:pointer">
+                <i class='ti ti-table'></i>
+                <h3>Spreadsheet</h3>
+                <p>Google Sheets or Excel template with your own wrong answers</p>
+              </div><div class="io-desc">PDF, Word doc, image of notes</div></div>
+        <div class="import-opt" id="imp-youtube" onclick="selectImport('youtube')"><i class="ti ti-brand-youtube"></i><div class="io-name">YouTube</div><div class="io-desc">Paste a video link, Leo reads it</div></div>
+        <div class="import-opt" id="imp-url" onclick="selectImport('url')"><i class="ti ti-world"></i><div class="io-name">Website / URL</div><div class="io-desc">Paste any webpage or article</div></div>
+      </div>
+      <div class="topic-input-wrap" id="aiWrap"><input class="topic-input" type="text" placeholder="e.g. The causes of World War 1 for a 10th grade class, 30 cards, medium difficulty"><button class="btn-primary" style="white-space:nowrap;padding:11px 20px" onclick="showLeoThinking()">Generate with Leo</button></div>
+      <div class="notes-wrap" id="notesWrap"><textarea style="width:100%;min-height:120px;padding:12px 14px;border:1.5px solid var(--border2);border-radius:8px;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--brown);outline:none;resize:vertical;background:#fff" placeholder="Paste your class notes here — Leo will extract key concepts and turn them into flashcards automatically. No limit on length."></textarea><button class="btn-primary" style="margin-top:10px" onclick="showLeoThinking()">Extract cards with Leo</button></div>
+      <div class="import-input-area" id="fileWrap"><i class="ti ti-cloud-upload"></i><p><strong>Drag and drop files here</strong> or click to browse</p><p style="margin-top:6px;font-size:12px">PDF, Word, images of notes — no size or quantity limit</p></div>
+      <div class="url-input-wrap" id="urlWrap"><input class="url-input" type="text" placeholder="Paste a YouTube link or any webpage URL"><button class="btn-primary" style="margin-top:10px" onclick="showLeoThinking()">Import with Leo</button></div>
+      <div id="leoThinking" style="display:none;background:var(--brown);border-radius:12px;padding:18px 20px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:34px;height:34px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--cream);flex-shrink:0">L</div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--cream);margin-bottom:3px">Leo is reading your content...</div><div style="font-size:12px;color:var(--brown5);font-weight:300">Identifying key concepts and building your card plan</div></div>
+          <div style="margin-left:auto;display:flex;gap:4px"><div style="width:6px;height:6px;border-radius:50%;background:var(--brown5);animation:blink 1.2s infinite 0s"></div><div style="width:6px;height:6px;border-radius:50%;background:var(--brown5);animation:blink 1.2s infinite 0.2s"></div><div style="width:6px;height:6px;border-radius:50%;background:var(--brown5);animation:blink 1.2s infinite 0.4s"></div></div>
+        </div>
+      </div>
+      <div id="leoPlan" style="display:none;background:var(--brown);border-radius:12px;padding:18px 20px;margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+          <div style="width:34px;height:34px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--cream);flex-shrink:0">L</div>
+          <div><div style="font-size:13px;font-weight:600;color:var(--cream)">Here's my plan before I build</div><div style="font-size:12px;color:var(--brown5);font-weight:300">Does this look right? You can adjust before I make anything.</div></div>
+        </div>
+        <div id="leoPlanText" style="background:rgba(255,255,255,0.07);border-radius:8px;padding:14px;margin-bottom:12px;font-size:13px;color:var(--cream);line-height:1.6;font-weight:300">I found <strong style="color:var(--cream)">4 main topics</strong> in your content: Cell Structure, Mitosis, Meiosis, and the Cell Cycle. I'm thinking <strong style="color:var(--cream)">32 cards</strong>, medium difficulty, with a mix of definitions and process questions. Does that sound right?</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px"><button class="lrb-btn primary" onclick="acceptPlan()">Yes, build it</button><button class="lrb-btn ghost" onclick="showFeedback()">Change something</button></div>
+        <input class="leo-feedback-input" id="leoFeedbackInput" placeholder="e.g. Skip cell structure, focus only on mitosis, make it harder..." onkeydown="if(event.key==='Enter') adjustPlan()">
+      </div>
+      <div id="manualCards">
+        <div class="card-col-labels"><span>Front (term / question)</span><span>Back (answer / definition)</span><span></span></div>
+        <div class="cards-list" id="cardsList">
+          <div class="card-row"><input type="text" placeholder="Term or question"><input type="text" placeholder="Answer or definition"><button class="del-btn" onclick="delCard(this)"><i class="ti ti-trash"></i></button></div>
+          <div class="card-row"><input type="text" placeholder="Term or question"><input type="text" placeholder="Answer or definition"><button class="del-btn" onclick="delCard(this)"><i class="ti ti-trash"></i></button></div>
+          <div class="card-row"><input type="text" placeholder="Term or question"><input type="text" placeholder="Answer or definition"><button class="del-btn" onclick="delCard(this)"><i class="ti ti-trash"></i></button></div>
+        </div>
+        <button class="add-card-btn" onclick="addCard()"><i class="ti ti-plus"></i> Add another card</button>
+      </div>
+      <div class="nav-btns-row">
+        <button class="btn-ghost" onclick="goTo(1)">&larr; Back</button>
+        <div style="font-size:13px;color:var(--brown4)">Step 2 of 4</div>
+        <button class="btn-primary" onclick="goTo(3)">Next — Leo review &rarr;</button>
+      </div>
+    </div>
+
+    <div class="panel" id="panel3">
+      <div class="panel-title">Leo's review</div>
+      <div class="panel-sub">Leo will analyse your cards using real AI and give you an honest quality rating. You can publish as-is or let Leo improve it.</div>
+      <div class="leo-review-box">
+        <div class="lrb-head">
+          <div class="lrb-av">L</div>
+          <div><div class="lrb-name">Leo's verdict</div><div class="lrb-status">Powered by real AI</div></div>
+        </div>
+        <div id="leo-review-box-inner" style="font-size:13px;color:var(--brown5);font-weight:300">Leo will analyse your cards when you reach this step.</div>
+      </div>
+      <div class="nav-btns-row">
+        <button class="btn-ghost" onclick="goTo(2)">&larr; Back</button>
+        <div style="font-size:13px;color:var(--brown4)">Step 3 of 4</div>
+        <button class="btn-primary" onclick="goTo(4)">Next — Publish &rarr;</button>
+      </div>
+    </div>
+
+    <div class="panel" id="panel4">
+      <div class="panel-title">Ready to publish</div>
+      <div class="panel-sub">Choose who can see your set and make any final adjustments before it goes live on Lumio.</div>
+      <div class="publish-preview">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--brown4);margin-bottom:12px">Set preview</div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px">
+          <div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:4px" id="previewTitle">Cell Division: Mitosis &amp; Meiosis</div><div style="font-size:13px;color:var(--brown3);margin-bottom:8px;font-weight:300">Biology &middot; Intermediate &middot; 22 cards</div><div style="font-size:13px;color:var(--brown3);font-weight:300;line-height:1.55">A complete breakdown of both processes, phases, and key differences. Leo-verified and ready to study.</div></div>
+          <div style="background:var(--cream2);border-radius:10px;padding:14px 18px;text-align:center;flex-shrink:0"><div style="font-size:20px;color:#c4862a">&#9733;&#9733;&#9733;&#9733;&#9733;</div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)">5.0</div><div style="font-size:11px;color:var(--brown4)">Leo verified</div></div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:var(--brown2);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px">Visibility</div>
+      <div class="visibility-opts">
+        <div class="vis-opt selected" onclick="selectVis(this)"><i class="ti ti-world"></i><h4>Public</h4><p>Anyone on Lumio can find and study it</p></div>
+        <div class="vis-opt" onclick="selectVis(this)"><i class="ti ti-link"></i><h4>Link only</h4><p>Only people with the link can access it</p></div>
+        <div class="vis-opt" onclick="selectVis(this)"><i class="ti ti-lock"></i><h4>Private</h4><p>Only you can see and study it</p></div>
+      </div>
+      <div class="field" style="margin-top:8px"><label>Age rating</label><select><option>All ages</option><option>13+ (Teen)</option><option>18+ (Adult)</option></select></div>
+      <div class="nav-btns-row">
+        <button class="btn-ghost" onclick="goTo(3)">&larr; Back</button>
+        <div style="font-size:13px;color:var(--brown4)">Step 4 of 4</div>
+        <button class="btn-primary" onclick="publish()" style="background:var(--green);padding:12px 32px;font-size:15px"><i class="ti ti-rocket" style="font-size:14px;margin-right:6px"></i> Publish to Lumio</button>
+      </div>
+    </div>
+
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon"><i class="ti ti-rocket"></i></div>
+      <div style="font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--brown);margin-bottom:8px">Your set is live!</div>
+      <div style="font-size:15px;color:var(--brown3);margin-bottom:28px;font-weight:300">It's been published to Lumio and is now available for the whole community to study.</div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap"><button class="btn-primary">View my set</button><button class="btn-ghost" onclick="resetWizard()">Create another set</button></div>
+    </div>
+  </div>
+</div>
+<script>
+let currentStep=1,currentImport='manual',generatedCards=[],leoFeedbackText='';
+
+// ── NAVIGATION ──────────────────────────────────────────────────────────────
+function goTo(step){
+  document.getElementById('panel'+currentStep).classList.remove('active');
+  document.getElementById('panel'+step).classList.add('active');
+  for(let i=1;i<=4;i++){const s=document.getElementById('step'+i);s.classList.remove('active','done');if(i<step){s.classList.add('done');s.querySelector('.step-circle').innerHTML='<i class="ti ti-check" style="font-size:13px"></i>';}else if(i===step){s.classList.add('active');s.querySelector('.step-circle').textContent=i;}else{s.querySelector('.step-circle').textContent=i;}}
+  for(let i=1;i<=3;i++)document.getElementById('line'+i).classList.toggle('done',i<step);
+  const t=document.getElementById('setTitle');if(t&&t.value)document.getElementById('previewTitle').textContent=t.value;
+  if(step===3) triggerLeoReview();
+  currentStep=step;window.scrollTo(0,0);
+}
+
+// ── IMPORT MODE ──────────────────────────────────────────────────────────────
+function selectImport(type){
+  currentImport=type;
+  ['manual','ai','notes','file','youtube','url'].forEach(t=>document.getElementById('imp-'+t).classList.remove('selected'));
+  document.getElementById('imp-'+type).classList.add('selected');
+  document.getElementById('manualCards').style.display=type==='manual'?'block':'none';
+  document.getElementById('aiWrap').classList.toggle('show',type==='ai');
+  document.getElementById('notesWrap').classList.toggle('show',type==='notes');
+  document.getElementById('fileWrap').classList.toggle('show',type==='file');
+  document.getElementById('urlWrap').classList.toggle('show',type==='youtube'||type==='url');
+  document.getElementById('leoPlan').style.display='none';
+  document.getElementById('leoThinking').style.display='none';
+}
+
+// ── AI HELPERS ───────────────────────────────────────────────────────────────
+// SETUP: Replace YOUR_API_KEY_HERE with your Anthropic API key
+// Get one at console.anthropic.com — costs ~$0.002 per Leo interaction
+const ANTHROPIC_KEY = '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';
+
+async function groqCall(messages, maxTokens=1000){
+  if(ANTHROPIC_KEY === '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'){
+    throw new Error('Add your Anthropic API key to this file to enable Leo.');
+  }
+  const systemMsg = messages.find(m => m.role === 'system');
+  const userMsgs = messages.filter(m => m.role !== 'system');
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': ANTHROPIC_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: maxTokens,
+      system: systemMsg?.content || 'You are Leo, a helpful AI study coach on Lumio.',
+      messages: userMsgs
+    })
+  });
+  const data = await res.json();
+  if(data.error) throw new Error(data.error.message);
+  return data.content?.[0]?.text || '';
+}
+
+async function callLeo(system, userMessage, maxTokens=2000){
+  const messages = [];
+  if(system) messages.push({role:'system', content:system});
+  messages.push({role:'user', content:userMessage});
+  return await groqCall(messages, maxTokens);
+}
+
+async function callLeoChat(system, history, maxTokens=400){
+  const messages = [];
+  if(system) messages.push({role:'system', content:system});
+  history.forEach(m => messages.push({role:m.role==='assistant'?'assistant':'user', content:m.content}));
+  return await groqCall(messages, maxTokens);
+}
+
+async function callClaude(system, user, maxTokens=2000){
+  return await callLeo(system, user, maxTokens);
+}
+
+function parseJSON(text){
+  const clean=text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+  return JSON.parse(clean);
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ── LEO PLAN (AI GENERATE / IMPORT) ─────────────────────────────────────────
+async function showLeoThinking(){
+  document.getElementById('leoThinking').style.display='block';
+  document.getElementById('leoPlan').style.display='none';
+
+  const input = currentImport==='ai'
+    ? document.querySelector('#aiWrap .topic-input')?.value?.trim()
+    : currentImport==='notes'
+    ? document.querySelector('#notesWrap textarea')?.value?.trim()
+    : document.querySelector('#urlWrap .url-input')?.value?.trim();
+
+  if(!input){document.getElementById('leoThinking').style.display='none';return;}
+
+  try{
+    const system=`You are Leo, a flashcard AI. Analyse the input briefly. Respond ONLY with JSON: {"topics":["topic1","topic2"],"cardCount":12,"difficulty":"medium","summary":"one sentence plan"}`;
+    const result = await callClaude(system, input, 500);
+    const plan = parseJSON(result);
+    document.getElementById('leoThinking').style.display='none';
+    document.getElementById('leoPlan').style.display='block';
+    document.getElementById('leoPlanText').innerHTML=`I found <strong style="color:var(--cream)">${plan.topics.length} main topics</strong>: ${plan.topics.slice(0,3).join(', ')}. I'm thinking <strong style="color:var(--cream)">${plan.cardCount} cards</strong>, ${plan.difficulty} difficulty — ${plan.summary}. Does that sound right?`;
+    document.getElementById('leoPlan').dataset.input=input;
+  }catch(e){
+    document.getElementById('leoThinking').style.display='none';
+    document.getElementById('leoPlan').style.display='block';
+    document.getElementById('leoPlanText').textContent='I\'ve analysed your content. Ready to build the cards — does this look right?';
+    document.getElementById('leoPlan').dataset.input=input;
+  }
+}
+
+async function acceptPlan(){
+  const input = document.getElementById('leoPlan').dataset.input||'';
+  document.getElementById('leoPlan').style.display='none';
+  document.getElementById('leoThinking').style.display='block';
+  document.getElementById('leoThinking').querySelector('div div:first-child').textContent='Leo is building your cards...';
+
+  try{
+    const system=`You are Leo, a flashcard AI. Generate flashcards from the user's content. Respond ONLY with valid JSON: {"cards":[{"front":"term","back":"definition"}]}
+Make 10-15 cards. One concept per card. Be concise.`;
+    const feedback = leoFeedbackText ? `\n\nUser preferences: ${leoFeedbackText}` : '';
+    const result = await callClaude(system, input+feedback, 2000);
+    const parsed = parseJSON(result);
+    generatedCards = parsed.cards||[];
+    document.getElementById('leoThinking').style.display='none';
+    document.getElementById('manualCards').style.display='block';
+    renderCards(generatedCards, 'cardsList', 'delCard');
+  }catch(e){
+    document.getElementById('leoThinking').style.display='none';
+    document.getElementById('manualCards').style.display='block';
+  }
+}
+
+function showFeedback(){
+  document.getElementById('leoFeedbackInput').classList.add('show');
+  document.getElementById('leoFeedbackInput').focus();
+}
+
+function adjustPlan(){
+  leoFeedbackText = document.getElementById('leoFeedbackInput').value.trim();
+  if(!leoFeedbackText) return;
+  document.getElementById('leoPlanText').textContent = 'Got it! I\'ll adjust — '+leoFeedbackText+'. Ready to build?';
+  document.getElementById('leoFeedbackInput').classList.remove('show');
+}
+
+// ── CARD HELPERS ─────────────────────────────────────────────────────────────
+function renderCards(cards, listId, delFn){
+  const list=document.getElementById(listId);
+  list.innerHTML='';
+  cards.forEach((c,i)=>{
+    const row=document.createElement('div');
+    row.className='card-row';
+    row.innerHTML=`<input type="text" placeholder="Term or question" value="${esc(c.front||'')}"><input type="text" placeholder="Answer or definition" value="${esc(c.back||'')}"><button class="del-btn" onclick="${delFn}(this)"><i class="ti ti-trash"></i></button>`;
+    list.appendChild(row);
+  });
+}
+
+function makeCardRow(front='',back=''){
+  const row=document.createElement('div');
+  row.className='card-row';
+  row.innerHTML=`<input type="text" placeholder="Term or question" value="${esc(front)}"><input type="text" placeholder="Answer or definition" value="${esc(back)}"><button class="del-btn" onclick="delCard(this)"><i class="ti ti-trash"></i></button>`;
+  return row;
+}
+
+function addCard(){document.getElementById('cardsList').appendChild(makeCardRow());}
+function delCard(btn){const row=btn.closest('.card-row');if(document.querySelectorAll('#cardsList .card-row').length>1)row.remove();}
+
+function getCards(listId='cardsList'){
+  const cards=[];
+  document.querySelectorAll('#'+listId+' .card-row').forEach(row=>{
+    const ins=row.querySelectorAll('input');
+    if(ins[0].value.trim()) cards.push({front:ins[0].value.trim(),back:ins[1].value.trim()});
+  });
+  return cards;
+}
+
+// ── LEO REVIEW (STEP 3) ──────────────────────────────────────────────────────
+async function triggerLeoReview(){
+  const cards = getCards('cardsList');
+  if(cards.length===0) return;
+
+  const box = document.getElementById('leo-review-box-inner');
+  if(!box) return;
+
+  box.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:14px 0"><div style="display:flex;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--brown5);animation:blink 1.2s infinite 0s;display:inline-block"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--brown5);animation:blink 1.2s infinite 0.2s;display:inline-block"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--brown5);animation:blink 1.2s infinite 0.4s;display:inline-block"></span></div><div style="font-size:13px;color:var(--cream);font-weight:300">Analysing your ${cards.length} cards...</div></div>`;
+
+  try{
+    const system=`You are Leo, a flashcard quality reviewer. Respond ONLY with JSON: {"rating":4.2,"summary":"brief assessment","issues":["issue1"],"strengths":["strength1"],"suggestion":"one tip"}`;
+    const cardText=cards.map((c,i)=>`${i+1}. Front: "${c.front}" | Back: "${c.back}"`).join('\n');
+    const result = await callClaude(system, cardText, 800);
+    const parsed = parseJSON(result);
+
+    const stars='★'.repeat(Math.round(parsed.rating))+'☆'.repeat(5-Math.round(parsed.rating));
+    let feedback=parsed.summary+'\n\n';
+    if(parsed.strengths?.length) feedback+='✓ '+parsed.strengths.join(', ')+'\n';
+    if(parsed.issues?.length) feedback+='⚠ '+parsed.issues.join(', ')+'\n';
+    if(parsed.suggestion) feedback+='💡 '+parsed.suggestion;
+
+    box.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:8px 14px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream)">${parsed.rating.toFixed(1)}</div>
+          <div style="font-size:16px;color:#c4862a">${stars}</div>
+        </div>
+        <div style="font-size:13px;color:var(--cream);line-height:1.6;font-weight:300;flex:1;white-space:pre-wrap">${esc(feedback.trim())}</div>
+      </div>
+      <div style="display:flex;gap:8px" id="lrbActions">
+        ${parsed.rating<4.5?'<button onclick="leoFix()" style="padding:8px 16px;border-radius:7px;background:var(--cream);color:var(--brown);border:none;font-family:Source Sans 3,sans-serif;font-size:12px;font-weight:600;cursor:pointer">✨ Let Leo fix it</button>':''}
+        <button onclick="goTo(4)" style="padding:8px 16px;border-radius:7px;background:transparent;border:1px solid rgba(255,255,255,0.2);color:var(--cream);font-family:Source Sans 3,sans-serif;font-size:12px;font-weight:600;cursor:pointer">Publish as-is</button>
+      </div>`;
+  }catch(e){
+    box.innerHTML=`<div style="font-size:13px;color:var(--brown5);font-weight:300">Could not analyse set right now. You can still publish or go back to edit.</div>`;
+  }
+}
+
+async function leoFix(){
+  const cards=getCards('cardsList');
+  const box=document.getElementById('leo-review-box-inner');
+  box.innerHTML=`<div style="font-size:13px;color:var(--cream);font-weight:300;padding:8px 0">Improving your set — one moment...</div>`;
+
+  try{
+    const system=`You are Leo. Improve these flashcards to 5-star quality. Respond ONLY with JSON: {"cards":[{"front":"improved","back":"improved"}],"changes":"what changed"}`;
+    const cardText=cards.map((c,i)=>`${i+1}. "${c.front}" | "${c.back}"`).join('\n');
+    const result=await callClaude(system,cardText,2000);
+    const parsed=parseJSON(result);
+
+    renderCards(parsed.cards,'cardsList','delCard');
+    box.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="background:rgba(255,255,255,0.1);border-radius:8px;padding:8px 14px;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream)">5.0</div>
+          <div style="font-size:16px;color:#c4862a">★★★★★</div>
+        </div>
+        <div style="font-size:13px;color:var(--cream);font-weight:300;flex:1">${esc(parsed.changes||'Your set has been improved to 5 stars!')}</div>
+      </div>
+      <button onclick="goTo(4)" style="padding:8px 18px;border-radius:7px;background:var(--cream);color:var(--brown);border:none;font-family:Source Sans 3,sans-serif;font-size:13px;font-weight:600;cursor:pointer">Looks great — publish →</button>`;
+  }catch(e){
+    box.innerHTML=`<div style="font-size:13px;color:var(--brown5)">Fix failed: ${esc(e.message)}</div>`;
+  }
+}
+
+// ── VISIBILITY & PUBLISH ──────────────────────────────────────────────────────
+function selectVis(el){document.querySelectorAll('.vis-opt').forEach(v=>v.classList.remove('selected'));el.classList.add('selected');}
+function publish(){ if(window.showToast) showToast("Set published successfully!");
+for(let i=1;i<=4;i++)document.getElementById('panel'+i).classList.remove('active');document.getElementById('successScreen').classList.add('show');}
+function resetWizard(){document.getElementById('successScreen').classList.remove('show');currentStep=1;generatedCards=[];leoFeedbackText='';goTo(1);}
+</script>
+
+
+
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bn-item" onclick="window.location.href='dashboard.html'" id="bn-home">
+    <i class="ti ti-layout-dashboard"></i><span>Home</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='explore.html'" id="bn-explore">
+    <i class="ti ti-compass"></i><span>Explore</span>
+  </button>
+  <button class="bn-create" onclick="window.location.href='create.html'">
+    <div class="bn-create-icon"><i class="ti ti-plus" style="font-size:22px;color:var(--cream)"></i></div>
+    <span>Create</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='leaderboard.html'" id="bn-ranks">
+    <i class="ti ti-trophy"></i><span>Ranks</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='profile.html'" id="bn-profile">
+    <i class="ti ti-user"></i><span>Profile</span>
+  </button>
+</nav>
+<script>
+// Highlight active tab
+(function(){
+  const page = window.location.pathname.split('/').pop();
+  const map = {'dashboard.html':'bn-home','explore.html':'bn-explore','leaderboard.html':'bn-ranks','profile.html':'bn-profile','create.html':null};
+  const activeId = map[page];
+  if(activeId) { const el=document.getElementById(activeId); if(el) el.classList.add('active'); }
+})();
+</script>
+
+
+<script>
+// Smooth page transitions on navigation
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href]').forEach(function(link){
+    const href = link.getAttribute('href');
+    if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = link.href;
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateY(-6px)';
+      document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      setTimeout(function(){ window.location.href = target; }, 200);
+    });
+  });
+  // Fade in on load
+  document.body.style.opacity = '0';
+  document.body.style.transform = 'translateY(6px)';
+  document.body.style.transition = 'none';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      document.body.style.opacity = '1';
+      document.body.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
+
+
+<!-- SEARCH OVERLAY -->
+<div id="searchOverlay" style="display:none;position:fixed;inset:0;background:rgba(44,26,14,0.5);z-index:9998;backdrop-filter:blur(4px)" onclick="closeSearch()"></div>
+<div id="searchPanel" style="display:none;position:fixed;top:0;left:0;right:0;background:#fff;z-index:9999;padding:16px 24px;box-shadow:0 8px 32px rgba(44,26,14,0.15)">
+  <div style="max-width:700px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <i class="ti ti-search" style="font-size:20px;color:var(--brown4)"></i>
+      <input id="searchInput" type="text" placeholder="Search sets, topics, creators..." style="flex:1;border:none;outline:none;font-family:'Source Sans 3',sans-serif;font-size:16px;color:var(--brown);background:transparent" oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
+      <button onclick="closeSearch()" style="border:none;background:transparent;cursor:pointer;color:var(--brown4);font-size:14px;font-family:'Source Sans 3',sans-serif;font-weight:500">Cancel</button>
+    </div>
+    <div id="searchResults" style="padding-bottom:8px"></div>
+  </div>
+</div>
+<script>
+const SEARCH_DATA = [
+  {type:'set',name:'Cell Division: Mitosis & Meiosis',meta:'48 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'Human Body Systems Overview',meta:'66 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'World Capitals — 195 Countries',meta:'195 cards · Geography',url:'setdetail.html'},
+  {type:'set',name:'SAT Vocabulary High Frequency',meta:'150 cards · English',url:'setdetail.html'},
+  {type:'set',name:'Spanish 101 — Core Vocabulary',meta:'200 cards · Languages',url:'setdetail.html'},
+  {type:'set',name:'WW2 Key Events Timeline',meta:'60 cards · History',url:'setdetail.html'},
+  {type:'set',name:'Calculus Fundamentals',meta:'55 cards · Math',url:'setdetail.html'},
+  {type:'set',name:'Photosynthesis — Complete Guide',meta:'28 cards · Science',url:'setdetail.html'},
+  {type:'page',name:'Explore sets',meta:'Browse the marketplace',url:'explore.html'},
+  {type:'page',name:'Leaderboard',meta:'Weekly rankings',url:'leaderboard.html'},
+  {type:'page',name:'Create a set',meta:'Build your own flashcard set',url:'create.html'},
+  {type:'page',name:'Study with Leo',meta:'Start a study session',url:'study.html'},
+  {type:'page',name:'My profile',meta:'View your profile',url:'profile.html'},
+  {type:'page',name:'Settings',meta:'Account and preferences',url:'settings.html'},
+  {type:'creator',name:'Leo',meta:'AI study coach · 2,840 sets',url:'leo.html'},
+  {type:'creator',name:'sarah_reads',meta:'Verified creator · 12 sets',url:'profile.html'},
+  {type:'creator',name:'nova_prep',meta:'Top creator · 22 sets',url:'profile.html'},
+];
+function openSearch(){
+  document.getElementById('searchOverlay').style.display='block';
+  document.getElementById('searchPanel').style.display='block';
+  setTimeout(()=>document.getElementById('searchInput').focus(),50);
+  doSearch('');
+}
+function closeSearch(){
+  document.getElementById('searchOverlay').style.display='none';
+  document.getElementById('searchPanel').style.display='none';
+  document.getElementById('searchInput').value='';
+}
+function doSearch(q){
+  const results = document.getElementById('searchResults');
+  const query = q.toLowerCase().trim();
+  const matches = query ? SEARCH_DATA.filter(d=>d.name.toLowerCase().includes(query)||d.meta.toLowerCase().includes(query)) : SEARCH_DATA.slice(0,6);
+  if(!matches.length){results.innerHTML='<div style="padding:12px 0;font-size:13px;color:var(--brown4);text-align:center">No results for "'+q+'"</div>';return;}
+  const icons={set:'ti-cards',page:'ti-file',creator:'ti-user'};
+  results.innerHTML = matches.slice(0,8).map(m=>`
+    <div onclick="window.location.href='${m.url}'" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">
+      <div style="width:36px;height:36px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:16px;flex-shrink:0;border:1.5px solid var(--border2)"><i class="ti ${icons[m.type]}"></i></div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--brown)">${m.name}</div><div style="font-size:11px;color:var(--brown4);font-weight:300">${m.meta}</div></div>
+    </div>`).join('');
+}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}});
+</script>
+
+<script src="api.js"></script>
+<script src="loading.js"></script>
+<script src="darkmode.js"></script>
+<script src="shortcuts.js"></script>
+<script src="polish.js"></script>
+<script src="transitions.js"></script>
+<script src="search.js"></script>
+
+<script>
+async function importFromUrl(){
+  const input = document.querySelector('#urlWrap .url-input, #urlWrap input');
+  if(!input || !input.value.trim()){ alert('Please enter a URL first.'); return; }
+  const url = input.value.trim();
+  // Show Leo thinking
+  document.getElementById('leoThinking').style.display = 'block';
+  document.getElementById('leoPlan').style.display = 'none';
+  document.getElementById('leoPlan').dataset.input = `Create flashcards from the content at this URL: ${url}. Extract the key concepts and turn them into a high quality flashcard set.`;
+  setTimeout(() => showLeoThinking(), 100);
+}
+
+async function importFromNotes(){
+  const textarea = document.querySelector('#notesWrap textarea');
+  if(!textarea || !textarea.value.trim()){ alert('Please paste your notes first.'); return; }
+  document.getElementById('leoPlan').dataset.input = textarea.value;
+  showLeoThinking();
+}
+
+// Wire import buttons
+document.addEventListener('DOMContentLoaded', () => {
+  const urlBtn = document.querySelector('#urlWrap button, #urlWrap .import-btn');
+  if(urlBtn) urlBtn.addEventListener('click', importFromUrl);
+  const notesBtn = document.querySelector('#notesWrap button, #notesWrap .import-btn');
+  if(notesBtn) notesBtn.addEventListener('click', importFromNotes);
+});
+</script>
+
+<!-- SHEETS IMPORT MODAL -->
+<div id="sheetsModal" style="position:fixed;inset:0;background:rgba(44,26,14,0.5);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)">
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(44,26,14,0.2)">
+    <div style="background:var(--cream2);padding:16px 20px;border-bottom:2px solid var(--border2);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:1">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--brown)">Import from spreadsheet</div>
+        <div style="font-size:12px;color:var(--brown4);font-weight:300;margin-top:2px">Use our template in Google Sheets or Excel</div>
+      </div>
+      <button onclick="closeSheetsModal()" style="background:transparent;border:none;cursor:pointer;color:var(--brown4);font-size:20px"><i class="ti ti-x"></i></button>
+    </div>
+    <div style="padding:20px">
+
+      <!-- STEP TABS -->
+      <div style="display:flex;gap:0;margin-bottom:20px" id="sheetStepTabs">
+        <div class="sheet-step-tab active" id="tab-step1" style="flex:1;padding:10px;text-align:center;border-bottom:2px solid var(--brown);cursor:pointer;font-size:13px;font-weight:600;color:var(--brown)" onclick="showSheetStep(1)">1. Get template</div>
+        <div class="sheet-step-tab" id="tab-step2" style="flex:1;padding:10px;text-align:center;border-bottom:2px solid var(--border);cursor:pointer;font-size:13px;font-weight:400;color:var(--brown4)" onclick="showSheetStep(2)">2. Fill it in</div>
+        <div class="sheet-step-tab" id="tab-step3" style="flex:1;padding:10px;text-align:center;border-bottom:2px solid var(--border);cursor:pointer;font-size:13px;font-weight:400;color:var(--brown4)" onclick="showSheetStep(3)">3. Import</div>
+      </div>
+
+      <!-- STEP 1: GET TEMPLATE -->
+      <div id="sheet-step1">
+        <div style="font-size:14px;font-weight:500;color:var(--brown);margin-bottom:8px">Download the Lumio template</div>
+        <div style="font-size:13px;color:var(--brown3);font-weight:300;line-height:1.7;margin-bottom:16px">The template has 5 columns. Fill in one row per question — Lumio will turn each row into a multiple choice card.</div>
+
+        <!-- COLUMN GUIDE -->
+        <div style="border:2px solid var(--border2);border-radius:10px;overflow:hidden;margin-bottom:16px">
+          <div style="display:grid;grid-template-columns:120px 1fr;background:var(--brown);padding:0">
+            <div style="padding:8px 12px;font-size:11px;font-weight:600;color:var(--brown5);letter-spacing:1px;text-transform:uppercase">Column</div>
+            <div style="padding:8px 12px;font-size:11px;font-weight:600;color:var(--brown5);letter-spacing:1px;text-transform:uppercase">What to put</div>
+          </div>
+          ${[
+            ['A — Question','The question or term you want to test'],
+            ['B — Correct','The right answer'],
+            ['C — Wrong 1','A plausible but incorrect answer'],
+            ['D — Wrong 2','Another wrong answer'],
+            ['E — Wrong 3','A third wrong answer (optional)'],
+          ].map(([col, desc]) => `
+            <div style="display:grid;grid-template-columns:120px 1fr;border-top:1.5px solid var(--border)">
+              <div style="padding:10px 12px;font-size:12px;font-weight:600;color:var(--brown);background:var(--cream2)">${col}</div>
+              <div style="padding:10px 12px;font-size:12px;color:var(--brown3);font-weight:300">${desc}</div>
+            </div>`).join('')}
+        </div>
+
+        <!-- EXAMPLE ROW -->
+        <div style="background:var(--cream2);border-radius:9px;padding:12px 14px;margin-bottom:16px;border:1.5px solid var(--border2)">
+          <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--brown4);margin-bottom:8px">Example row</div>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
+            ${[
+              ['A','What process creates 2 identical cells?'],
+              ['B','Mitosis ✓'],
+              ['C','Meiosis'],
+              ['D','Osmosis'],
+              ['E','Cytokinesis'],
+            ].map(([col, val]) => `
+              <div style="background:#fff;border-radius:6px;padding:7px 8px;border:1.5px solid var(--border2)">
+                <div style="font-size:9px;font-weight:600;color:var(--brown4);margin-bottom:3px">${col}</div>
+                <div style="font-size:11px;color:var(--brown);line-height:1.4">${val}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px">
+          <button onclick="downloadTemplate()" style="flex:1;padding:11px;border-radius:9px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px"><i class="ti ti-download" style="font-size:15px"></i> Download CSV template</button>
+          <button onclick="copyTemplate()" style="padding:11px 16px;border-radius:9px;border:2px solid var(--border2);background:var(--cream2);color:var(--brown2);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px"><i class="ti ti-copy" style="font-size:14px"></i> Copy</button>
+        </div>
+
+        <div style="margin-top:12px;text-align:center;font-size:12px;color:var(--brown4);font-weight:300">
+          Open in <strong style="color:var(--brown)">Google Sheets</strong> or <strong style="color:var(--brown)">Excel</strong> — both work perfectly
+        </div>
+        <button onclick="showSheetStep(2)" style="width:100%;margin-top:14px;padding:10px;border-radius:9px;border:2px solid var(--border2);background:transparent;color:var(--brown3);font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;cursor:pointer">I've filled it in → Next step</button>
+      </div>
+
+      <!-- STEP 2: INSTRUCTIONS -->
+      <div id="sheet-step2" style="display:none">
+        <div style="font-size:14px;font-weight:500;color:var(--brown);margin-bottom:8px">Fill in your questions</div>
+        <div style="font-size:13px;color:var(--brown3);font-weight:300;line-height:1.7;margin-bottom:16px">Once you've filled the template, export it back as CSV and paste the contents here — or just paste your data directly if you already have it in the right format.</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+          ${[
+            ['<i class="ti ti-file-spreadsheet"></i>', 'Open the CSV in Google Sheets', 'File → Open → Upload your downloaded template'],
+            ['<i class="ti ti-pencil"></i>', 'Fill in your questions', 'One question per row, correct answer in column B, wrong answers in C/D/E'],
+            ['<i class="ti ti-download"></i>', 'Export back to CSV', 'File → Download → Comma Separated Values (.csv)'],
+            ['<i class="ti ti-clipboard"></i>', 'Copy the file contents', 'Open the CSV file in a text editor and copy everything'],
+          ].map(([icon,title,desc]) => `
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 14px;background:var(--cream2);border-radius:9px;border:1.5px solid var(--border2)">
+              <div style="font-size:20px;color:var(--brown3);flex-shrink:0;margin-top:1px">${icon}</div>
+              <div><div style="font-size:13px;font-weight:500;color:var(--brown);margin-bottom:2px">${title}</div><div style="font-size:12px;color:var(--brown4);font-weight:300">${desc}</div></div>
+            </div>`).join('')}
+        </div>
+        <button onclick="showSheetStep(3)" style="width:100%;padding:11px;border-radius:9px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer">Ready to import →</button>
+      </div>
+
+      <!-- STEP 3: PASTE & IMPORT -->
+      <div id="sheet-step3" style="display:none">
+        <div style="font-size:14px;font-weight:500;color:var(--brown);margin-bottom:8px">Paste your data</div>
+        <div style="font-size:13px;color:var(--brown3);font-weight:300;line-height:1.6;margin-bottom:12px">Paste the contents of your filled CSV file below. Each row becomes one multiple choice card.</div>
+        <textarea id="sheetsInput" placeholder="Question,Correct Answer,Wrong 1,Wrong 2,Wrong 3&#10;What is mitosis?,Cell division making 2 identical cells,Cell division making 4 cells,DNA replication,Cell death&#10;..." style="width:100%;height:130px;padding:12px;border:2px solid var(--border2);border-radius:9px;font-family:monospace;font-size:12px;color:var(--brown);background:var(--cream);outline:none;resize:none;margin-bottom:12px;line-height:1.5" oninput="previewImport()"></textarea>
+
+        <div id="importPreview" style="display:none;margin-bottom:14px">
+          <div style="font-size:12px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px" id="importCount"></div>
+          <div id="importCards" style="display:flex;flex-direction:column;gap:7px;max-height:180px;overflow-y:auto"></div>
+        </div>
+
+        <div id="importError" style="display:none;background:var(--red2);border:1.5px solid rgba(192,57,43,0.2);border-radius:9px;padding:10px 14px;margin-bottom:12px;font-size:13px;color:var(--red)"></div>
+
+        <div style="display:flex;gap:10px">
+          <button onclick="doImport()" id="importBtn" disabled style="flex:1;padding:11px;border-radius:9px;border:none;background:var(--brown);color:var(--cream);font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer;opacity:0.5;display:flex;align-items:center;justify-content:center;gap:7px"><i class="ti ti-sparkles" style="font-size:15px"></i> Import cards</button>
+          <button onclick="closeSheetsModal()" style="padding:11px 16px;border-radius:9px;border:2px solid var(--border2);background:var(--cream2);color:var(--brown2);font-family:'Source Sans 3',sans-serif;font-size:13px;cursor:pointer">Cancel</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const TEMPLATE_HEADER = 'Question,Correct Answer,Wrong Answer 1,Wrong Answer 2,Wrong Answer 3';
+const TEMPLATE_EXAMPLE = [
+  'What process creates 2 identical daughter cells?,Mitosis,Meiosis,Osmosis,Cytokinesis',
+  'What does prophase involve?,Chromosomes condense and become visible,DNA replication,Cell division,Cytokinesis',
+  'How many cells does meiosis produce?,4 genetically unique cells,2 identical cells,1 cell,8 cells',
+];
+
+function openSheetsModal(){ document.getElementById('sheetsModal').style.display='flex'; showSheetStep(1); }
+function closeSheetsModal(){ document.getElementById('sheetsModal').style.display='none'; }
+
+function showSheetStep(n){
+  [1,2,3].forEach(i => {
+    document.getElementById('sheet-step'+i).style.display = i===n ? 'block' : 'none';
+    const tab = document.getElementById('tab-step'+i);
+    tab.style.borderBottomColor = i===n ? 'var(--brown)' : 'var(--border)';
+    tab.style.fontWeight = i===n ? '600' : '400';
+    tab.style.color = i===n ? 'var(--brown)' : 'var(--brown4)';
+  });
+}
+
+function downloadTemplate(){
+  const csv = TEMPLATE_HEADER + '\n' + TEMPLATE_EXAMPLE.join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'lumio-template.csv';
+  a.click();
+  if(window.showToast) showToast('Template downloaded!');
+}
+
+function copyTemplate(){
+  const csv = TEMPLATE_HEADER + '\n' + TEMPLATE_EXAMPLE.join('\n');
+  navigator.clipboard.writeText(csv);
+  if(window.showToast) showToast('Template copied to clipboard!');
+}
+
+function parseCSVLine(line){
+  const result = [];
+  let cur = '', inQuotes = false;
+  for(let i=0;i<line.length;i++){
+    if(line[i]==='"'){
+      if(inQuotes && line[i+1]==='"'){ cur+='"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if(line[i]===',' && !inQuotes){
+      result.push(cur.trim()); cur='';
+    } else cur += line[i];
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+function previewImport(){
+  const raw = document.getElementById('sheetsInput').value.trim();
+  const preview = document.getElementById('importPreview');
+  const error = document.getElementById('importError');
+  const btn = document.getElementById('importBtn');
+  const cardsDiv = document.getElementById('importCards');
+
+  if(!raw){ preview.style.display='none'; error.style.display='none'; btn.disabled=true; btn.style.opacity='0.5'; return; }
+
+  const lines = raw.split('\n').filter(l => l.trim());
+  let start = 0;
+  // Skip header row
+  if(lines[0].toLowerCase().includes('question') || lines[0].toLowerCase().includes('correct')){
+    start = 1;
+  }
+
+  const cards = [];
+  const errors = [];
+  lines.slice(start).forEach((line, i) => {
+    const cols = parseCSVLine(line);
+    if(cols.length < 2){ errors.push('Row '+(i+1+start)+': needs at least a question and correct answer'); return; }
+    cards.push({ question: cols[0], correct: cols[1], wrong: [cols[2],cols[3],cols[4]].filter(Boolean) });
+  });
+
+  if(errors.length > 0 && cards.length === 0){
+    error.style.display='block'; error.textContent = errors[0];
+    preview.style.display='none'; btn.disabled=true; btn.style.opacity='0.5'; return;
+  }
+
+  error.style.display='none';
+  document.getElementById('importCount').textContent = cards.length + ' cards ready to import';
+  cardsDiv.innerHTML = cards.slice(0,5).map(c => `
+    <div style="padding:10px 12px;background:var(--cream2);border-radius:8px;border:1.5px solid var(--border2)">
+      <div style="font-size:12px;font-weight:600;color:var(--brown);margin-bottom:4px">${c.question}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11px;padding:2px 8px;border-radius:100px;background:var(--green2);color:var(--green);font-weight:600">✓ ${c.correct}</span>
+        ${c.wrong.map(w=>`<span style="font-size:11px;padding:2px 8px;border-radius:100px;background:var(--cream3);color:var(--brown4)">${w}</span>`).join('')}
+      </div>
+    </div>`).join('') + (cards.length > 5 ? `<div style="text-align:center;font-size:12px;color:var(--brown4);padding:6px">...and ${cards.length-5} more cards</div>` : '');
+
+  preview.style.display = 'block';
+  btn.disabled = false; btn.style.opacity='1';
+  btn._cards = cards;
+}
+
+function doImport(){
+  const btn = document.getElementById('importBtn');
+  const cards = btn._cards;
+  if(!cards || cards.length === 0) return;
+
+  // Go to create page with cards pre-loaded
+  sessionStorage.setItem('lumio_import_cards', JSON.stringify(cards));
+  sessionStorage.setItem('lumio_import_type', 'multiple_choice');
+  closeSheetsModal();
+  if(window.showToast) showToast(cards.length + ' cards imported! Opening set creator...');
+  setTimeout(() => window.location.href = 'create.html?import=sheets', 1200);
+}
+
+document.getElementById('sheetsModal').addEventListener('click', function(e){ if(e.target===this) closeSheetsModal(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Leaderboard</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;
+  --brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;
+  --brown4:#b8956a;--brown5:#d4b896;
+  --green:#3a6b3f;--green2:#e8f0e9;
+  --border:rgba(92,61,30,0.12);--border2:rgba(92,61,30,0.22);
+  --shadow:rgba(44,26,14,0.07);
+  --gold:#c4862a;--silver:#94a3b8;--bronze:#b45309;
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--brown);display:flex;min-height:100vh}
+.sidebar{width:220px;min-height:100vh;background:var(--brown);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0}
+.sidebar-logo{padding:28px 24px 24px;border-bottom:1px solid rgba(255,255,255,0.07);font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--brown5);display:inline-block}
+.sidebar-section{padding:20px 16px 8px;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;margin:2px 8px;cursor:pointer;transition:all 0.2s;font-size:13px;color:rgba(255,255,255,0.55);font-weight:400;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:var(--cream)}
+.nav-item.active{background:rgba(255,255,255,0.1);color:var(--cream);font-weight:500}
+.nav-item i{font-size:17px;width:20px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:16px 8px;border-top:1px solid rgba(255,255,255,0.07)}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer}
+.user-av{width:32px;height:32px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);flex-shrink:0}
+.user-info .un{font-size:13px;font-weight:500;color:var(--cream)}
+.user-info .ur{font-size:11px;color:rgba(255,255,255,0.35)}
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;margin-left:220px}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10}
+.topbar-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.icon-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border2);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brown3);font-size:17px;transition:all 0.2s}
+.icon-btn:hover{background:var(--cream2);color:var(--brown)}
+.streak-pill{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:100px;background:var(--cream2);border:1px solid var(--border2);font-size:13px;font-weight:600;color:var(--brown2)}
+.content{padding:24px 28px;flex:1}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:16px;margin-bottom:32px;padding:28px 0 0}
+.podium-item{display:flex;flex-direction:column;align-items:center;gap:8px}
+.podium-av{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#fff;position:relative}
+.podium-av .crown{position:absolute;top:-16px;font-size:18px;left:50%;transform:translateX(-50%)}
+.podium-name{font-size:13px;font-weight:600;color:var(--brown);text-align:center}
+.podium-pts{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;color:var(--brown3)}
+.podium-base{border-radius:10px 10px 0 0;width:90px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:24px;font-weight:800;color:rgba(255,255,255,0.7)}
+.podium-item.first .podium-base{height:80px;background:var(--brown)}
+.podium-item.second .podium-base{height:56px;background:var(--brown3)}
+.podium-item.third .podium-base{height:40px;background:var(--brown4)}
+.tab-btn{padding:10px 20px;border:none;background:transparent;font-family:'Source Sans 3',sans-serif;font-size:13px;font-weight:500;color:var(--brown4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.tab-btn:hover{color:var(--brown)}
+.tab-btn.active{color:var(--brown);border-bottom-color:var(--brown);font-weight:600}
+.tab-btn i{font-size:15px}
+.time-toggle{display:flex;background:var(--cream2);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px}
+.time-btn{padding:6px 16px;border:none;background:transparent;border-radius:6px;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:500;color:var(--brown4);cursor:pointer;transition:all 0.2s}
+.time-btn.active{background:#fff;color:var(--brown);box-shadow:0 1px 3px var(--shadow)}
+.lb-layout{display:grid;grid-template-columns:1fr 340px;gap:20px}
+.lb-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.lb-card-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.lb-card-head h3{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown)}
+.lb-card-head span{font-size:12px;color:var(--brown4)}
+.lb-row{display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:1px solid var(--border);transition:background 0.15s;cursor:pointer}
+.lb-row:last-child{border-bottom:none}
+.lb-row:hover{background:var(--cream)}
+.lb-row.me{background:var(--cream2)}
+.lb-rank{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;width:32px;text-align:center;flex-shrink:0}
+.lb-rank.gold{color:var(--gold)}.lb-rank.silver{color:var(--silver)}.lb-rank.bronze{color:var(--bronze)}.lb-rank.normal{color:var(--brown4)}
+.lb-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;flex-shrink:0}
+.lb-info{flex:1}
+.lb-username{font-size:14px;font-weight:500;color:var(--brown);display:flex;align-items:center;gap:6px}
+.lb-username .v-badge{width:14px;height:14px;border-radius:50%;background:var(--brown);display:inline-flex;align-items:center;justify-content:center;color:var(--cream);font-size:8px}
+.lb-sub{font-size:11px;color:var(--brown4);margin-top:1px}
+.lb-right{display:flex;flex-direction:column;align-items:flex-end;gap:3px}
+.lb-pts{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--brown2)}
+.lb-change{font-size:11px;font-weight:600}
+.lb-change.up{color:var(--green)}.lb-change.down{color:#c0392b}.lb-change.same{color:var(--brown4)}
+.side-panels{display:flex;flex-direction:column;gap:16px}
+.side-card{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden}
+.side-card-head{padding:14px 18px;border-bottom:1px solid var(--border);font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--brown);display:flex;align-items:center;gap:8px}
+.side-card-head i{font-size:16px;color:var(--brown4)}
+.side-card-body{padding:14px 18px}
+.my-rank-card{background:var(--brown);border:none}
+.my-rank-card .side-card-head{border-bottom:1px solid rgba(255,255,255,0.1);color:var(--cream)}
+.my-rank-card .side-card-head i{color:var(--brown5)}
+.my-rank-stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mrs{background:rgba(255,255,255,0.07);border-radius:8px;padding:12px;text-align:center}
+.mrs-val{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--cream)}
+.mrs-label{font-size:11px;color:var(--brown5);margin-top:2px;font-weight:300}
+.badge-row{display:flex;flex-wrap:wrap;gap:8px}
+.badge-item{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:8px;background:var(--cream);border:1px solid var(--border);font-size:12px;color:var(--brown2);font-weight:500}
+.badge-item i{font-size:14px;color:var(--brown3)}
+.badge-item.earned{background:var(--cream2);border-color:var(--border2)}
+.reset-notice{background:var(--cream2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--brown3);display:flex;align-items:center;gap:8px;margin-top:12px}
+.reset-notice i{color:var(--brown4);font-size:14px;flex-shrink:0}
+</style>
+<style>@media(max-width:768px){
+  .lb-tabs{overflow-x:auto;flex-wrap:nowrap;padding:0 16px}
+  .lb-tab{white-space:nowrap;padding:12px 14px;font-size:12px}
+  .podium{gap:6px}
+  .podium-item{padding:12px 8px}
+  .podium-name{font-size:11px}
+  .lb-row td,.lb-row th{padding:10px 10px;font-size:12px}
+  .lb-section-title{font-size:16px}
+}</style>
+</head>
+<body>
+<div class="sidebar">
+  <a href="index.html" class="sidebar-logo">Lumio <span class="logo-dot"></span></a>
+  <div class="sidebar-section">Main</div>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-books"></i> My sets</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-compass"></i> Explore</a>
+  <a href="create.html" class="nav-item"><i class="ti ti-plus"></i> Create set</a>
+  <div class="sidebar-section">Community</div>
+  <a href="leaderboard.html" class="nav-item active"><i class="ti ti-trophy"></i> Leaderboard</a>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-users"></i> Classrooms</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-star"></i> Saved sets</a>
+  <div class="sidebar-section">Leo</div>
+  <a href="study.html" class="nav-item"><i class="ti ti-brain"></i> Study with Leo</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-chart-bar"></i> My progress</a>
+      <div style="padding:8px 8px 0;border-top:1px solid rgba(255,255,255,0.07);margin-top:8px">
+      <a href="#" class="nav-item" style="color:rgba(255,255,255,0.4)" onclick="if(confirm('Sign out of Lumio?')){if(window.lumio)window.lumio.logout();else window.location.href='login.html';}"><i class="ti ti-logout"></i> Sign out</a>
+    </div>
+  <div class="sidebar-bottom">
+    <div class="user-pill" onclick="window.location.href='profile.html'" oncontextmenu="event.preventDefault();window.location.href='settings.html'" style="cursor:pointer">
+      <div class="user-av">AS</div>
+      <div class="user-info"><div class="un">alex_studies</div><div class="ur">Student</div></div>
+    </div>
+  </div>
+</div>
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Leaderboard</div>
+    <div class="topbar-right">
+      <div class="streak-pill"><i class="ti ti-flame"></i> 12-day streak</div>
+      <button class="icon-btn" onclick="openSearch()" title="Search (Cmd+K)"><i class="ti ti-search"></i></button>
+      <button class="icon-btn"><i class="ti ti-bell"></i></button>
+    </div>
+  </div>
+  <div class="content">
+    <div class="podium" id="podium"></div>
+    <div style="display:flex;align-items:center;margin-bottom:24px;border-bottom:2px solid var(--border)">
+      <div style="display:flex;gap:0">
+        <button class="tab-btn active" onclick="setCategory('most_studied',this)"><i class="ti ti-cards"></i> Most studied</button>
+        <button class="tab-btn" onclick="setCategory('accuracy',this)"><i class="ti ti-target"></i> Top accuracy</button>
+        <button class="tab-btn" onclick="setCategory('streak',this)"><i class="ti ti-flame"></i> Longest streak</button>
+        <button class="tab-btn" onclick="setCategory('improved',this)"><i class="ti ti-trending-up"></i> Most improved</button>
+        <button class="tab-btn" onclick="setCategory('creator',this)"><i class="ti ti-star"></i> Top creators</button>
+      </div>
+      <div class="time-toggle" style="margin-left:auto;margin-bottom:2px">
+        <button class="time-btn active" onclick="setTime('weekly',this)">This week</button>
+        <button class="time-btn" onclick="setTime('alltime',this)">All time</button>
+      </div>
+    </div>
+    <div class="lb-layout">
+      <div>
+        <div class="lb-card">
+          <div class="lb-card-head"><h3 id="lbTitle"></h3><span id="lbSub"></span></div>
+          <div id="lbRows"></div>
+        </div>
+      </div>
+      <div class="side-panels">
+        <div class="side-card my-rank-card">
+          <div class="side-card-head"><i class="ti ti-user"></i> Your standing</div>
+          <div class="side-card-body">
+            <div class="my-rank-stats">
+              <div class="mrs"><div class="mrs-val" id="myRank">#1</div><div class="mrs-label">Current rank</div></div>
+              <div class="mrs"><div class="mrs-val" id="myPts">4,820</div><div class="mrs-label">Points</div></div>
+              <div class="mrs"><div class="mrs-val">12</div><div class="mrs-label">Day streak</div></div>
+              <div class="mrs"><div class="mrs-val">84%</div><div class="mrs-label">Accuracy</div></div>
+            </div>
+            <div class="reset-notice"><i class="ti ti-clock"></i> Leaderboard resets in 3 days</div>
+          </div>
+        </div>
+        <div class="side-card">
+          <div class="side-card-head"><i class="ti ti-award"></i> Your badges</div>
+          <div class="side-card-body">
+            <div class="badge-row">
+              <div class="badge-item earned"><i class="ti ti-flame"></i> 12-day streak</div>
+              <div class="badge-item earned"><i class="ti ti-trophy"></i> Weekly #1</div>
+              <div class="badge-item earned"><i class="ti ti-cards"></i> 1,000 cards</div>
+              <div class="badge-item earned"><i class="ti ti-star"></i> Top creator</div>
+              <div class="badge-item" style="opacity:0.45"><i class="ti ti-certificate"></i> 30-day streak</div>
+              <div class="badge-item" style="opacity:0.45"><i class="ti ti-crown"></i> All-time #1</div>
+            </div>
+          </div>
+        </div>
+        <div class="side-card">
+          <div class="side-card-head"><i class="ti ti-chart-bar"></i> Category breakdown</div>
+          <div class="side-card-body" style="display:flex;flex-direction:column;gap:10px">
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--brown3)">Most studied</span><span style="font-weight:600;color:var(--brown)">#1</span></div><div style="height:6px;background:var(--cream3);border-radius:3px"><div style="height:100%;width:100%;background:var(--brown);border-radius:3px"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--brown3)">Top accuracy</span><span style="font-weight:600;color:var(--brown)">#3</span></div><div style="height:6px;background:var(--cream3);border-radius:3px"><div style="height:100%;width:72%;background:var(--brown3);border-radius:3px"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--brown3)">Longest streak</span><span style="font-weight:600;color:var(--brown)">#2</span></div><div style="height:6px;background:var(--cream3);border-radius:3px"><div style="height:100%;width:85%;background:var(--brown3);border-radius:3px"></div></div></div>
+            <div><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--brown3)">Most improved</span><span style="font-weight:600;color:var(--brown)">#5</span></div><div style="height:6px;background:var(--cream3);border-radius:3px"><div style="height:100%;width:50%;background:var(--brown4);border-radius:3px"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const DATA={most_studied:{title:'Most Cards Studied',sub:'Resets every Monday',weekly:[{user:'alex_studies',pts:'4,820',sub:'1,240 cards this week',change:'up',delta:'+2',verified:true,me:true,av:'AS',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'jamie_m',pts:'4,210',sub:'1,080 cards this week',change:'up',delta:'+1',verified:false,me:false,av:'JM',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'khan_reads',pts:'3,990',sub:'980 cards this week',change:'same',delta:'—',verified:true,me:false,av:'KR',avBg:'#fdf3e7',avColor:'#a0522d'},{user:'studi_luna',pts:'3,540',sub:'860 cards this week',change:'up',delta:'+3',verified:false,me:false,av:'SL',avBg:'#f4ede0',avColor:'#8b6340'},{user:'nova_prep',pts:'3,210',sub:'780 cards this week',change:'down',delta:'-1',verified:true,me:false,av:'NP',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'bright_ben',pts:'2,980',sub:'720 cards this week',change:'up',delta:'+2',verified:false,me:false,av:'BB',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'sara_science',pts:'2,760',sub:'680 cards this week',change:'down',delta:'-2',verified:true,me:false,av:'SS',avBg:'#fdf3e7',avColor:'#a0522d'},{user:'mathkid99',pts:'2,540',sub:'620 cards this week',change:'same',delta:'—',verified:true,me:false,av:'MK',avBg:'#f4ede0',avColor:'#8b6340'},{user:'hist_ryan',pts:'2,310',sub:'560 cards this week',change:'up',delta:'+1',verified:false,me:false,av:'HR',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'jade_prep',pts:'2,100',sub:'510 cards this week',change:'down',delta:'-1',verified:true,me:false,av:'JP',avBg:'#e8f0e9',avColor:'#3a6b3f'}],alltime:[{user:'nova_prep',pts:'142,800',sub:'All time record holder',change:'same',delta:'—',verified:true,me:false,av:'NP',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'alex_studies',pts:'98,240',sub:'Studying since Jan 2024',change:'up',delta:'+1',verified:true,me:true,av:'AS',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'khan_reads',pts:'87,990',sub:'Consistent top 3',change:'same',delta:'—',verified:true,me:false,av:'KR',avBg:'#fdf3e7',avColor:'#a0522d'},{user:'jamie_m',pts:'76,210',sub:'Rising fast',change:'up',delta:'+2',verified:false,me:false,av:'JM',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'sara_science',pts:'65,440',sub:'Biology specialist',change:'down',delta:'-1',verified:true,me:false,av:'SS',avBg:'#fdf3e7',avColor:'#a0522d'}]},accuracy:{title:'Top Accuracy',sub:'Min. 100 cards studied to qualify',weekly:[{user:'jade_prep',pts:'98%',sub:'412 cards, near perfect',change:'up',delta:'+2',verified:true,me:false,av:'JP',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'sara_science',pts:'96%',sub:'380 cards studied',change:'same',delta:'—',verified:true,me:false,av:'SS',avBg:'#fdf3e7',avColor:'#a0522d'},{user:'alex_studies',pts:'84%',sub:'1,240 cards studied',change:'down',delta:'-1',verified:true,me:true,av:'AS',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'mathkid99',pts:'82%',sub:'620 cards studied',change:'up',delta:'+1',verified:true,me:false,av:'MK',avBg:'#f4ede0',avColor:'#8b6340'},{user:'nova_prep',pts:'80%',sub:'780 cards studied',change:'same',delta:'—',verified:true,me:false,av:'NP',avBg:'#ede0cc',avColor:'#5c3d1e'}],alltime:[{user:'jade_prep',pts:'97%',sub:'Lifetime accuracy record',change:'same',delta:'—',verified:true,me:false,av:'JP',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'sara_science',pts:'94%',sub:'Consistently high accuracy',change:'same',delta:'—',verified:true,me:false,av:'SS',avBg:'#fdf3e7',avColor:'#a0522d'},{user:'mathkid99',pts:'91%',sub:'Math specialist',change:'up',delta:'+1',verified:true,me:false,av:'MK',avBg:'#f4ede0',avColor:'#8b6340'},{user:'nova_prep',pts:'88%',sub:'High volume, high accuracy',change:'down',delta:'-1',verified:true,me:false,av:'NP',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'alex_studies',pts:'84%',sub:'Improving every week',change:'up',delta:'+2',verified:true,me:true,av:'AS',avBg:'#ede0cc',avColor:'#5c3d1e'}]},streak:{title:'Longest Study Streak',sub:'Consecutive days studied',weekly:[{user:'nova_prep',pts:'21 days',sub:'On fire — no days missed',change:'same',delta:'—',verified:true,me:false,av:'NP',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'alex_studies',pts:'12 days',sub:'Current active streak',change:'up',delta:'+1',verified:true,me:true,av:'AS',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'khan_reads',pts:'9 days',sub:'Bounced back this week',change:'up',delta:'+3',verified:true,me:false,av:'KR',avBg:'#fdf3e7',avColor:'#a0522d'},{user:'jamie_m',pts:'7 days',sub:'Perfect week so far',change:'same',delta:'—',verified:false,me:false,av:'JM',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'bright_ben',pts:'5 days',sub:'Building momentum',change:'up',delta:'+2',verified:false,me:false,av:'BB',avBg:'#e8f0e9',avColor:'#3a6b3f'}],alltime:[{user:'sara_science',pts:'142 days',sub:'All time record',change:'same',delta:'—',verified:true,me:false,av:'SS',avBg:'#fdf3e7',avColor:'#a0522d'},{user:'nova_prep',pts:'98 days',sub:'Previous best streak',change:'same',delta:'—',verified:true,me:false,av:'NP',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'jade_prep',pts:'76 days',sub:'Dedicated learner',change:'same',delta:'—',verified:true,me:false,av:'JP',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'khan_reads',pts:'44 days',sub:'Personal best',change:'same',delta:'—',verified:true,me:false,av:'KR',avBg:'#fdf3e7',avColor:'#a0522d'},{user:'alex_studies',pts:'12 days',sub:'Current streak — still going!',change:'up',delta:'New',verified:true,me:true,av:'AS',avBg:'#ede0cc',avColor:'#5c3d1e'}]},improved:{title:'Most Improved',sub:'Biggest accuracy gain this period',weekly:[{user:'studi_luna',pts:'+340%',sub:'Went from 20% to 88% accuracy',change:'up',delta:'New',verified:false,me:false,av:'SL',avBg:'#f4ede0',avColor:'#8b6340'},{user:'bright_ben',pts:'+180%',sub:'Huge improvement this week',change:'up',delta:'+2',verified:false,me:false,av:'BB',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'hist_ryan',pts:'+95%',sub:'History sets clicked this week',change:'up',delta:'+1',verified:false,me:false,av:'HR',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'alex_studies',pts:'+6%',sub:'Steady upward trend',change:'same',delta:'—',verified:true,me:true,av:'AS',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'mathkid99',pts:'+4%',sub:'Consistency paying off',change:'down',delta:'-1',verified:true,me:false,av:'MK',avBg:'#f4ede0',avColor:'#8b6340'}],alltime:[{user:'studi_luna',pts:'+820%',sub:'Fastest rise in platform history',change:'same',delta:'—',verified:false,me:false,av:'SL',avBg:'#f4ede0',avColor:'#8b6340'},{user:'bright_ben',pts:'+640%',sub:'From beginner to top 10',change:'same',delta:'—',verified:false,me:false,av:'BB',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'alex_studies',pts:'+320%',sub:'Steady consistent growth',change:'up',delta:'+1',verified:true,me:true,av:'AS',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'hist_ryan',pts:'+280%',sub:'Found his groove',change:'down',delta:'-1',verified:false,me:false,av:'HR',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'jamie_m',pts:'+210%',sub:'Consistent improver',change:'same',delta:'—',verified:false,me:false,av:'JM',avBg:'#e8f0e9',avColor:'#3a6b3f'}]},creator:{title:'Top Creators',sub:'By total set quality & plays',weekly:[{user:'nova_prep',pts:'5 sets',sub:'All rated 5 stars this week',change:'same',delta:'—',verified:true,me:false,av:'NP',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'jade_prep',pts:'3 sets',sub:'18k total plays this week',change:'up',delta:'+1',verified:true,me:false,av:'JP',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'sara_science',pts:'2 sets',sub:'Top biology creator',change:'same',delta:'—',verified:true,me:false,av:'SS',avBg:'#fdf3e7',avColor:'#a0522d'},{user:'alex_studies',pts:'1 set',sub:'First set published!',change:'up',delta:'New',verified:true,me:true,av:'AS',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'mathkid99',pts:'1 set',sub:'Algebra set trending',change:'same',delta:'—',verified:true,me:false,av:'MK',avBg:'#f4ede0',avColor:'#8b6340'}],alltime:[{user:'nova_prep',pts:'142 sets',sub:'Most prolific creator',change:'same',delta:'—',verified:true,me:false,av:'NP',avBg:'#ede0cc',avColor:'#5c3d1e'},{user:'jade_prep',pts:'98 sets',sub:'4.9 avg rating all time',change:'same',delta:'—',verified:true,me:false,av:'JP',avBg:'#e8f0e9',avColor:'#3a6b3f'},{user:'sara_science',pts:'76 sets',sub:'Biology & science specialist',change:'up',delta:'+1',verified:true,me:false,av:'SS',avBg:'#fdf3e7',avColor:'#a0522d'},{user:'mathkid99',pts:'54 sets',sub:'Most remixed sets',change:'down',delta:'-1',verified:true,me:false,av:'MK',avBg:'#f4ede0',avColor:'#8b6340'},{user:'alex_studies',pts:'1 set',sub:'Just getting started',change:'up',delta:'New',verified:true,me:true,av:'AS',avBg:'#ede0cc',avColor:'#5c3d1e'}]}};
+let currentCategory='most_studied',currentTime='weekly';
+function setCategory(cat,el){currentCategory=cat;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');render();}
+function setTime(t,el){currentTime=t;document.querySelectorAll('.time-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');render();}
+function rankClass(i){return i===0?'gold':i===1?'silver':i===2?'bronze':'normal';}
+function render(){
+  const d=DATA[currentCategory];const rows=d[currentTime];
+  document.getElementById('lbTitle').textContent=d.title+' — '+(currentTime==='weekly'?'This Week':'All Time');
+  document.getElementById('lbSub').textContent=currentTime==='weekly'?d.sub:'All time record';
+  const top3=rows.slice(0,3);const podiumOrder=[top3[1],top3[0],top3[2]];const podiumClass=['second','first','third'];const podiumNum=['2','1','3'];
+  document.getElementById('podium').innerHTML=podiumOrder.map((p,i)=>p?`<div class="podium-item ${podiumClass[i]}"><div class="podium-av" style="background:${p.avBg};color:${p.avColor};width:${i===1?'60px':'52px'};height:${i===1?'60px':'52px'}">${i===1?'<span class="crown">👑</span>':''}${p.av}</div><div class="podium-name">${p.user}</div><div class="podium-pts">${p.pts}</div><div class="podium-base">${podiumNum[i]}</div></div>`:'').join('');
+  document.getElementById('lbRows').innerHTML=rows.map((r,i)=>`<div class="lb-row ${r.me?'me':''}"><div class="lb-rank ${rankClass(i)}">${i+1}</div><div class="lb-av" style="background:${r.avBg};color:${r.avColor}">${r.av}</div><div class="lb-info"><div class="lb-username">${r.user}${r.me?' <span style="font-size:11px;padding:1px 6px;border-radius:4px;background:var(--brown);color:var(--cream);font-weight:600">you</span>':''}${r.verified?'<span class="v-badge">✓</span>':''}</div><div class="lb-sub">${r.sub}</div></div><div class="lb-right"><div class="lb-pts">${r.pts}</div><div class="lb-change ${r.change}">${r.change==='up'?'↑':r.change==='down'?'↓':'—'} ${r.delta}</div></div></div>`).join('');
+  const myIdx=rows.findIndex(r=>r.me);if(myIdx>=0){document.getElementById('myRank').textContent='#'+(myIdx+1);document.getElementById('myPts').textContent=rows[myIdx].pts;}
+}
+render();
+</script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bn-item" onclick="window.location.href='dashboard.html'" id="bn-home">
+    <i class="ti ti-layout-dashboard"></i><span>Home</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='explore.html'" id="bn-explore">
+    <i class="ti ti-compass"></i><span>Explore</span>
+  </button>
+  <button class="bn-create" onclick="window.location.href='create.html'">
+    <div class="bn-create-icon"><i class="ti ti-plus" style="font-size:22px;color:var(--cream)"></i></div>
+    <span>Create</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='leaderboard.html'" id="bn-ranks">
+    <i class="ti ti-trophy"></i><span>Ranks</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='profile.html'" id="bn-profile">
+    <i class="ti ti-user"></i><span>Profile</span>
+  </button>
+</nav>
+<script>
+// Highlight active tab
+(function(){
+  const page = window.location.pathname.split('/').pop();
+  const map = {'dashboard.html':'bn-home','explore.html':'bn-explore','leaderboard.html':'bn-ranks','profile.html':'bn-profile','create.html':null};
+  const activeId = map[page];
+  if(activeId) { const el=document.getElementById(activeId); if(el) el.classList.add('active'); }
+})();
+</script>
+
+
+<script>
+// Smooth page transitions on navigation
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href]').forEach(function(link){
+    const href = link.getAttribute('href');
+    if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = link.href;
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateY(-6px)';
+      document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      setTimeout(function(){ window.location.href = target; }, 200);
+    });
+  });
+  // Fade in on load
+  document.body.style.opacity = '0';
+  document.body.style.transform = 'translateY(6px)';
+  document.body.style.transition = 'none';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      document.body.style.opacity = '1';
+      document.body.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
+
+
+<!-- SEARCH OVERLAY -->
+<div id="searchOverlay" style="display:none;position:fixed;inset:0;background:rgba(44,26,14,0.5);z-index:9998;backdrop-filter:blur(4px)" onclick="closeSearch()"></div>
+<div id="searchPanel" style="display:none;position:fixed;top:0;left:0;right:0;background:#fff;z-index:9999;padding:16px 24px;box-shadow:0 8px 32px rgba(44,26,14,0.15)">
+  <div style="max-width:700px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <i class="ti ti-search" style="font-size:20px;color:var(--brown4)"></i>
+      <input id="searchInput" type="text" placeholder="Search sets, topics, creators..." style="flex:1;border:none;outline:none;font-family:'Source Sans 3',sans-serif;font-size:16px;color:var(--brown);background:transparent" oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
+      <button onclick="closeSearch()" style="border:none;background:transparent;cursor:pointer;color:var(--brown4);font-size:14px;font-family:'Source Sans 3',sans-serif;font-weight:500">Cancel</button>
+    </div>
+    <div id="searchResults" style="padding-bottom:8px"></div>
+  </div>
+</div>
+<script>
+const SEARCH_DATA = [
+  {type:'set',name:'Cell Division: Mitosis & Meiosis',meta:'48 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'Human Body Systems Overview',meta:'66 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'World Capitals — 195 Countries',meta:'195 cards · Geography',url:'setdetail.html'},
+  {type:'set',name:'SAT Vocabulary High Frequency',meta:'150 cards · English',url:'setdetail.html'},
+  {type:'set',name:'Spanish 101 — Core Vocabulary',meta:'200 cards · Languages',url:'setdetail.html'},
+  {type:'set',name:'WW2 Key Events Timeline',meta:'60 cards · History',url:'setdetail.html'},
+  {type:'set',name:'Calculus Fundamentals',meta:'55 cards · Math',url:'setdetail.html'},
+  {type:'set',name:'Photosynthesis — Complete Guide',meta:'28 cards · Science',url:'setdetail.html'},
+  {type:'page',name:'Explore sets',meta:'Browse the marketplace',url:'explore.html'},
+  {type:'page',name:'Leaderboard',meta:'Weekly rankings',url:'leaderboard.html'},
+  {type:'page',name:'Create a set',meta:'Build your own flashcard set',url:'create.html'},
+  {type:'page',name:'Study with Leo',meta:'Start a study session',url:'study.html'},
+  {type:'page',name:'My profile',meta:'View your profile',url:'profile.html'},
+  {type:'page',name:'Settings',meta:'Account and preferences',url:'settings.html'},
+  {type:'creator',name:'Leo',meta:'AI study coach · 2,840 sets',url:'leo.html'},
+  {type:'creator',name:'sarah_reads',meta:'Verified creator · 12 sets',url:'profile.html'},
+  {type:'creator',name:'nova_prep',meta:'Top creator · 22 sets',url:'profile.html'},
+];
+function openSearch(){
+  document.getElementById('searchOverlay').style.display='block';
+  document.getElementById('searchPanel').style.display='block';
+  setTimeout(()=>document.getElementById('searchInput').focus(),50);
+  doSearch('');
+}
+function closeSearch(){
+  document.getElementById('searchOverlay').style.display='none';
+  document.getElementById('searchPanel').style.display='none';
+  document.getElementById('searchInput').value='';
+}
+function doSearch(q){
+  const results = document.getElementById('searchResults');
+  const query = q.toLowerCase().trim();
+  const matches = query ? SEARCH_DATA.filter(d=>d.name.toLowerCase().includes(query)||d.meta.toLowerCase().includes(query)) : SEARCH_DATA.slice(0,6);
+  if(!matches.length){results.innerHTML='<div style="padding:12px 0;font-size:13px;color:var(--brown4);text-align:center">No results for "'+q+'"</div>';return;}
+  const icons={set:'ti-cards',page:'ti-file',creator:'ti-user'};
+  results.innerHTML = matches.slice(0,8).map(m=>`
+    <div onclick="window.location.href='${m.url}'" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">
+      <div style="width:36px;height:36px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:16px;flex-shrink:0;border:1.5px solid var(--border2)"><i class="ti ${icons[m.type]}"></i></div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--brown)">${m.name}</div><div style="font-size:11px;color:var(--brown4);font-weight:300">${m.meta}</div></div>
+    </div>`).join('');
+}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}});
+</script>
+
+<script src="api.js"></script>
+<script src="loading.js"></script>
+<script src="darkmode.js"></script>
+<script src="shortcuts.js"></script>
+<script src="polish.js"></script>
+<script src="transitions.js"></script>
+<script src="search.js"></script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Explore</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#faf7f2;--cream2:#f4ede0;--cream3:#ede0cc;
+  --brown:#2c1a0e;--brown2:#5c3d1e;--brown3:#8b6340;
+  --brown4:#b8956a;--brown5:#d4b896;
+  --green:#3a6b3f;--green2:#e8f0e9;
+  --border:rgba(92,61,30,0.12);--border2:rgba(92,61,30,0.22);
+  --shadow:rgba(44,26,14,0.07);
+}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--brown);display:flex;min-height:100vh}
+.sidebar{width:220px;min-height:100vh;background:var(--brown);display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;bottom:0}
+.sidebar-logo{padding:28px 24px 24px;border-bottom:1px solid rgba(255,255,255,0.07);font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--cream);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-dot{width:7px;height:7px;border-radius:50%;background:var(--brown5);display:inline-block}
+.sidebar-section{padding:20px 16px 8px;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.25)}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;margin:2px 8px;cursor:pointer;transition:all 0.2s;font-size:13px;color:rgba(255,255,255,0.55);font-weight:400;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,0.07);color:var(--cream)}
+.nav-item.active{background:rgba(255,255,255,0.1);color:var(--cream);font-weight:500}
+.nav-item i{font-size:17px;width:20px;text-align:center}
+.sidebar-bottom{margin-top:auto;padding:16px 8px;border-top:1px solid rgba(255,255,255,0.07)}
+.user-pill{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer}
+.user-av{width:32px;height:32px;border-radius:50%;background:var(--brown3);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;color:var(--cream);flex-shrink:0}
+.user-info .un{font-size:13px;font-weight:500;color:var(--cream)}
+.user-info .ur{font-size:11px;color:rgba(255,255,255,0.35)}
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;margin-left:220px}
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;z-index:10}
+.topbar-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.icon-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border2);background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brown3);font-size:17px;transition:all 0.2s}
+.icon-btn:hover{background:var(--cream2);color:var(--brown)}
+.content{padding:24px 28px;flex:1}
+.search-bar-wrap{display:flex;gap:12px;margin-bottom:20px;align-items:center}
+.search-input-wrap{position:relative;flex:1}
+.search-input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--brown4);font-size:17px;pointer-events:none}
+.search-input{width:100%;padding:11px 14px 11px 44px;border:1.5px solid var(--border2);border-radius:10px;background:#fff;font-family:'Source Sans 3',sans-serif;font-size:14px;color:var(--brown);outline:none;transition:border-color 0.2s}
+.search-input:focus{border-color:var(--brown3)}
+.search-input::placeholder{color:var(--brown5)}
+.view-toggle{display:flex;background:var(--cream2);border:1px solid var(--border);border-radius:8px;padding:3px;gap:2px}
+.view-btn{width:34px;height:34px;border:none;background:transparent;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--brown4);font-size:17px;transition:all 0.2s}
+.view-btn.active{background:#fff;color:var(--brown);box-shadow:0 1px 3px var(--shadow)}
+.filters-row{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;align-items:center}
+.filter-label{font-size:12px;font-weight:600;color:var(--brown4);letter-spacing:0.5px;white-space:nowrap}
+.filter-group{display:flex;gap:6px;flex-wrap:wrap}
+.filter-chip{padding:6px 14px;border-radius:100px;border:1px solid var(--border2);background:#fff;font-size:12px;font-weight:500;color:var(--brown3);cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:'Source Sans 3',sans-serif}
+.filter-chip:hover{border-color:var(--brown4);background:var(--cream)}
+.filter-chip.active{background:var(--brown);color:var(--cream);border-color:var(--brown)}
+.filter-divider{width:1px;height:20px;background:var(--border2);margin:0 4px}
+.sort-select{padding:7px 12px;border-radius:8px;border:1px solid var(--border2);background:#fff;font-family:'Source Sans 3',sans-serif;font-size:13px;color:var(--brown2);outline:none;cursor:pointer}
+.results-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.results-count{font-size:13px;color:var(--brown4)}
+.results-count strong{color:var(--brown);font-weight:600}
+.sets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.set-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.25s;box-shadow:0 2px 8px var(--shadow)}
+.set-card:hover{border-color:var(--brown4);transform:translateY(-2px);box-shadow:0 6px 20px var(--shadow)}
+.set-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.set-subject{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4)}
+.age-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:100px;border:1px solid var(--border2);color:var(--brown4)}
+.age-badge.all{background:var(--green2);color:var(--green);border-color:rgba(58,107,63,0.2)}
+.age-badge.teen{background:#fdf3e7;color:#a0522d;border-color:rgba(160,82,45,0.2)}
+.age-badge.adult{background:#fbeaea;color:#a33;border-color:rgba(170,51,51,0.2)}
+.set-card h4{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown);margin-bottom:6px;line-height:1.3}
+.set-card p{font-size:12px;color:var(--brown3);line-height:1.55;font-weight:300;margin-bottom:12px}
+.set-stats{display:flex;gap:12px;margin-bottom:12px}
+.set-stat{font-size:11px;color:var(--brown4);display:flex;align-items:center;gap:4px}
+.set-stat i{font-size:13px}
+.set-footer{display:flex;align-items:center;gap:8px;padding-top:12px;border-top:1px solid var(--border)}
+.set-av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;font-family:'Playfair Display',serif;flex-shrink:0}
+.set-creator{font-size:12px;color:var(--brown3);flex:1}
+.v-badge{width:14px;height:14px;border-radius:50%;background:var(--brown);display:inline-flex;align-items:center;justify-content:center;color:var(--cream);font-size:8px;font-weight:700}
+.leo-badge{width:14px;height:14px;border-radius:50%;background:linear-gradient(135deg,var(--brown3),var(--brown4));display:inline-flex;align-items:center;justify-content:center;color:var(--cream);font-size:8px}
+.sets-list{display:flex;flex-direction:column;gap:10px}
+.list-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:16px;box-shadow:0 1px 4px var(--shadow)}
+.list-card:hover{border-color:var(--brown4);box-shadow:0 3px 12px var(--shadow)}
+.list-icon{width:44px;height:44px;border-radius:10px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:20px;flex-shrink:0}
+.list-main{flex:1}
+.list-top{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.list-subject{font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--brown4)}
+.list-card h4{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown);margin-bottom:3px}
+.list-card p{font-size:12px;color:var(--brown3);font-weight:300;line-height:1.4}
+.list-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.list-stats{display:flex;gap:12px}
+.trending-banner{background:var(--brown);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.tb-left{display:flex;align-items:center;gap:12px}
+.tb-left i{font-size:20px;color:var(--brown5)}
+.tb-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--cream)}
+.tb-sub{font-size:12px;color:var(--brown5);font-weight:300}
+.tb-btn{padding:7px 16px;border-radius:6px;background:var(--cream);color:var(--brown);border:none;font-family:'Source Sans 3',sans-serif;font-size:12px;font-weight:600;cursor:pointer}
+.no-results{text-align:center;padding:48px 20px;color:var(--brown4);font-size:14px;display:none}
+.no-results i{font-size:36px;display:block;margin-bottom:12px;color:var(--brown5)}
+</style>
+<style>@media(max-width:768px){
+  .topbar{flex-wrap:wrap;height:auto;padding:14px 16px;gap:10px}
+  .explore-filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px}
+  .explore-grid{grid-template-columns:1fr 1fr!important}
+  .filter-tag{white-space:nowrap}
+  .search-wrap{width:100%}
+}</style>
+<style>
+.age-badge-18{background:#7a1a1a;color:#fbeaea;font-size:10px;font-weight:600;padding:2px 7px;border-radius:100px;border:1px solid rgba(192,57,43,0.3)}
+.set-card[data-age="18+"]{cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <a href="index.html" class="sidebar-logo">Lumio <span class="logo-dot"></span></a>
+  <div class="sidebar-section">Main</div>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-layout-dashboard"></i> Dashboard</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-books"></i> My sets</a>
+  <a href="explore.html" class="nav-item active"><i class="ti ti-compass"></i> Explore</a>
+  <a href="create.html" class="nav-item"><i class="ti ti-plus"></i> Create set</a>
+  <div class="sidebar-section">Community</div>
+  <a href="leaderboard.html" class="nav-item"><i class="ti ti-trophy"></i> Leaderboard</a>
+  <a href="dashboard.html" class="nav-item"><i class="ti ti-users"></i> Classrooms</a>
+  <a href="explore.html" class="nav-item"><i class="ti ti-star"></i> Saved sets</a>
+  <div class="sidebar-section">Leo</div>
+  <a href="study.html" class="nav-item"><i class="ti ti-brain"></i> Study with Leo</a>
+  <a href="profile.html" class="nav-item"><i class="ti ti-chart-bar"></i> My progress</a>
+      <div style="padding:8px 8px 0;border-top:1px solid rgba(255,255,255,0.07);margin-top:8px">
+      <a href="#" class="nav-item" style="color:rgba(255,255,255,0.4)" onclick="if(confirm('Sign out of Lumio?')){if(window.lumio)window.lumio.logout();else window.location.href='login.html';}"><i class="ti ti-logout"></i> Sign out</a>
+    </div>
+  <div class="sidebar-bottom">
+    <div class="user-pill" onclick="window.location.href='profile.html'" oncontextmenu="event.preventDefault();window.location.href='settings.html'" style="cursor:pointer">
+      <div class="user-av">AS</div>
+      <div class="user-info"><div class="un">alex_studies</div><div class="ur">Student</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">Explore</div>
+    <div class="topbar-right"><button class="icon-btn" onclick="openSearch()" title="Search (Cmd+K)"><i class="ti ti-search"></i></button>
+      <button class="icon-btn"><i class="ti ti-bell"></i></button></div>
+  </div>
+  <div class="content">
+    <div class="trending-banner">
+      <div class="tb-left"><i class="ti ti-trending-up"></i><div><div class="tb-title">Trending this week</div><div class="tb-sub">AP Biology sets are surging — 12,000 new students this week</div></div></div>
+      <button class="tb-btn">See trending &rarr;</button>
+    </div>
+    <div class="search-bar-wrap">
+      <div class="search-input-wrap">
+        <i class="ti ti-search"></i>
+        <input class="search-input" type="text" placeholder="Search sets, subjects, creators..." id="searchInput" oninput="render()">
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="gridBtn" onclick="setView('grid')"><i class="ti ti-layout-grid"></i></button>
+        <button class="view-btn" id="listBtn" onclick="setView('list')"><i class="ti ti-list"></i></button>
+      </div>
+      <select class="sort-select" id="sortSelect" onchange="render()">
+        <option value="trending">Trending</option>
+        <option value="top">Top rated</option>
+        <option value="newest">Newest</option>
+        <option value="studied">Most studied</option>
+      </select>
+    </div>
+    <div class="filters-row">
+      <span class="filter-label">Subject</span>
+      <div class="filter-group">
+        <button class="filter-chip active" onclick="setFilter('subject','All',this)">All</button>
+        <button class="filter-chip" onclick="setFilter('subject','Biology',this)">Biology</button>
+        <button class="filter-chip" onclick="setFilter('subject','History',this)">History</button>
+        <button class="filter-chip" onclick="setFilter('subject','Math',this)">Math</button>
+        <button class="filter-chip" onclick="setFilter('subject','Science',this)">Science</button>
+        <button class="filter-chip" onclick="setFilter('subject','English',this)">English</button>
+        <button class="filter-chip" onclick="setFilter('subject','Languages',this)">Languages</button>
+        <button class="filter-chip" onclick="setFilter('subject','Geography',this)">Geography</button>
+      </div>
+      <div class="filter-divider"></div>
+      <span class="filter-label">Age</span>
+      <div class="filter-group">
+        <button class="filter-chip active" onclick="setFilter('age','all',this)">All ages</button>
+        <button class="filter-chip" onclick="setFilter('age','teen',this)">13+</button>
+        <button class="filter-chip" onclick="setFilter('age','adult',this)">18+</button>
+      </div>
+    </div>
+    <div class="results-header">
+      <div class="results-count"><strong id="resultCount">0</strong> sets found</div>
+    </div>
+    <div id="gridView" class="sets-grid"></div>
+    <div id="listView" class="sets-list" style="display:none"></div>
+    <div class="no-results" id="noResults"><i class="ti ti-search-off"></i>No sets found. Try a different search or filter.</div>
+  </div>
+</div>
+
+<script>
+const ALL_SETS=[
+  {title:"Cell Division: Mitosis & Meiosis",subject:"Biology",age:"all",desc:"Complete breakdown of both processes, phases, and key differences.",cards:48,views:12400,rating:5.0,creator:"sarah_reads",verified:true,leo:false,icon:"ti-dna",trending:1,newest:5},
+  {title:"World War II — Key Events Timeline",subject:"History",age:"all",desc:"Dates, battles, leaders, and turning points. Perfect for AP History prep.",cards:60,views:34100,rating:5.0,creator:"Leo",verified:false,leo:true,icon:"ti-world",trending:2,newest:8},
+  {title:"Algebra Foundations — Grade 8",subject:"Math",age:"all",desc:"Variables, equations, inequalities, and graphing basics.",cards:32,views:8900,rating:4.2,creator:"mathkid99",verified:true,leo:false,icon:"ti-math",trending:3,newest:2},
+  {title:"Photosynthesis — Complete Guide",subject:"Science",age:"all",desc:"Light reactions, Calvin cycle, and chloroplast structure.",cards:28,views:6200,rating:4.8,creator:"jade_prep",verified:true,leo:false,icon:"ti-leaf",trending:4,newest:1},
+  {title:"Shakespeare Vocabulary — Hamlet",subject:"English",age:"teen",desc:"Key archaic words and phrases from Hamlet with modern definitions.",cards:40,views:4100,rating:4.6,creator:"lit_wizard",verified:true,leo:false,icon:"ti-book",trending:5,newest:3},
+  {title:"Spanish 101 — Core Vocabulary",subject:"Languages",age:"all",desc:"The 200 most essential Spanish words for beginners.",cards:200,views:22700,rating:4.9,creator:"Leo",verified:false,leo:true,icon:"ti-language",trending:6,newest:9},
+  {title:"Ancient Rome — Rise & Fall",subject:"History",age:"all",desc:"From the founding of Rome to the fall of the Western Empire.",cards:55,views:9800,rating:4.7,creator:"hist_ryan",verified:false,leo:false,icon:"ti-building",trending:7,newest:11},
+  {title:"Human Body Systems Overview",subject:"Biology",age:"all",desc:"All 11 body systems, their organs, and key functions.",cards:66,views:18300,rating:5.0,creator:"nova_prep",verified:true,leo:false,icon:"ti-heart-rate-monitor",trending:8,newest:6},
+  {title:"World Capitals — All 195 Countries",subject:"Geography",age:"all",desc:"Every country and its capital city, organised by continent.",cards:195,views:41200,rating:4.9,creator:"Leo",verified:false,leo:true,icon:"ti-map",trending:9,newest:12},
+  {title:"Quadratic Equations Mastery",subject:"Math",age:"all",desc:"Factoring, completing the square, and the quadratic formula.",cards:36,views:7500,rating:4.5,creator:"algebra_max",verified:false,leo:false,icon:"ti-math-function",trending:10,newest:4},
+  {title:"Periodic Table — First 40 Elements",subject:"Science",age:"all",desc:"Symbols, atomic numbers, and key properties of the first 40 elements.",cards:40,views:15600,rating:4.8,creator:"chem_lab",verified:true,leo:false,icon:"ti-flask",trending:11,newest:7},
+  {title:"SAT Vocabulary — High Frequency",subject:"English",age:"all",desc:"The 150 words most commonly tested on the SAT.",cards:150,views:28900,rating:5.0,creator:"Leo",verified:false,leo:true,icon:"ti-alphabet",trending:12,newest:10},
+];
+let currentView='grid',activeSubject='All',activeAge='all';
+function setFilter(type,val,el){
+  el.closest('.filter-group').querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  if(type==='subject') activeSubject=val; else activeAge=val;
+  render();
+}
+function setView(v){
+  currentView=v;
+  document.getElementById('gridView').style.display=v==='grid'?'grid':'none';
+  document.getElementById('listView').style.display=v==='list'?'flex':'none';
+  document.getElementById('gridBtn').classList.toggle('active',v==='grid');
+  document.getElementById('listBtn').classList.toggle('active',v==='list');
+}
+function fmtViews(v){return v>=1000?(v/1000).toFixed(1)+'k':v;}
+function starsHTML(r){let s='';for(let i=1;i<=5;i++)s+=`<span style="color:${i<=Math.round(r)?'#c4862a':'#d4b896'}">&#9733;</span>`;return s;}
+function render(){
+  const query=document.getElementById('searchInput').value.toLowerCase();
+  const sort=document.getElementById('sortSelect').value;
+  let sets=ALL_SETS.filter(s=>{
+    const mS=activeSubject==='All'||s.subject===activeSubject;
+    const mA=activeAge==='all'||s.age===activeAge;
+    const mQ=!query||s.title.toLowerCase().includes(query)||s.subject.toLowerCase().includes(query)||s.creator.toLowerCase().includes(query)||s.desc.toLowerCase().includes(query);
+    return mS&&mA&&mQ;
+  });
+  sets=[...sets].sort((a,b)=>{
+    if(sort==='top') return b.rating-a.rating;
+    if(sort==='newest') return a.newest-b.newest;
+    if(sort==='studied') return b.views-a.views;
+    return a.trending-b.trending;
+  });
+  document.getElementById('resultCount').textContent=sets.length;
+  document.getElementById('noResults').style.display=sets.length===0?'block':'none';
+  document.getElementById('gridView').innerHTML=sets.map(s=>`
+    <div class="set-card" onclick="window.location.href=\'setdetail.html\'" style="cursor:pointer">
+      <div class="set-card-top"><div class="set-subject">${s.subject}</div><span class="age-badge ${s.age}">${s.age==='all'?'All ages':s.age==='teen'?'13+':'18+'}</span></div>
+      <h4>${s.title}</h4><p>${s.desc}</p>
+      <div class="set-stats"><span class="set-stat"><i class="ti ti-cards"></i> ${s.cards} cards</span><span class="set-stat"><i class="ti ti-eye"></i> ${fmtViews(s.views)}</span><span class="set-stat"><i class="ti ti-star-filled" style="color:#c4862a"></i> ${s.rating.toFixed(1)}</span></div>
+      <div class="set-footer"><div class="set-av" style="background:var(--cream3);color:var(--brown2)">${s.creator[0].toUpperCase()}</div><span class="set-creator">${s.creator}</span>${s.leo?'<div class="leo-badge">&#x2728;</div>':s.verified?'<div class="v-badge">&#x2713;</div>':''}</div>
+    </div>`).join('');
+  document.getElementById('listView').innerHTML=sets.map(s=>`
+    <div class="list-card">
+      <div class="list-icon"><i class="ti ${s.icon}"></i></div>
+      <div class="list-main"><div class="list-top"><span class="list-subject">${s.subject}</span><span class="age-badge ${s.age}">${s.age==='all'?'All ages':s.age==='teen'?'13+':'18+'}</span></div><h4>${s.title}</h4><p>${s.desc}</p></div>
+      <div class="list-right"><div>${starsHTML(s.rating)}</div><div class="list-stats"><span class="set-stat"><i class="ti ti-cards"></i> ${s.cards}</span><span class="set-stat"><i class="ti ti-eye"></i> ${fmtViews(s.views)}</span></div><div style="font-size:12px;color:var(--brown3)">${s.creator} ${s.leo?'&#x2728;':s.verified?'&#x2713;':''}</div></div>
+    </div>`).join('');
+}
+render();
+</script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="bn-item" onclick="window.location.href='dashboard.html'" id="bn-home">
+    <i class="ti ti-layout-dashboard"></i><span>Home</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='explore.html'" id="bn-explore">
+    <i class="ti ti-compass"></i><span>Explore</span>
+  </button>
+  <button class="bn-create" onclick="window.location.href='create.html'">
+    <div class="bn-create-icon"><i class="ti ti-plus" style="font-size:22px;color:var(--cream)"></i></div>
+    <span>Create</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='leaderboard.html'" id="bn-ranks">
+    <i class="ti ti-trophy"></i><span>Ranks</span>
+  </button>
+  <button class="bn-item" onclick="window.location.href='profile.html'" id="bn-profile">
+    <i class="ti ti-user"></i><span>Profile</span>
+  </button>
+</nav>
+<script>
+// Highlight active tab
+(function(){
+  const page = window.location.pathname.split('/').pop();
+  const map = {'dashboard.html':'bn-home','explore.html':'bn-explore','leaderboard.html':'bn-ranks','profile.html':'bn-profile','create.html':null};
+  const activeId = map[page];
+  if(activeId) { const el=document.getElementById(activeId); if(el) el.classList.add('active'); }
+})();
+</script>
+
+
+<script>
+// Smooth page transitions on navigation
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('a[href]').forEach(function(link){
+    const href = link.getAttribute('href');
+    if(!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('mailto')) return;
+    link.addEventListener('click', function(e){
+      e.preventDefault();
+      const target = link.href;
+      document.body.style.opacity = '0';
+      document.body.style.transform = 'translateY(-6px)';
+      document.body.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+      setTimeout(function(){ window.location.href = target; }, 200);
+    });
+  });
+  // Fade in on load
+  document.body.style.opacity = '0';
+  document.body.style.transform = 'translateY(6px)';
+  document.body.style.transition = 'none';
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      document.body.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      document.body.style.opacity = '1';
+      document.body.style.transform = 'translateY(0)';
+    });
+  });
+});
+</script>
+
+
+<!-- SEARCH OVERLAY -->
+<div id="searchOverlay" style="display:none;position:fixed;inset:0;background:rgba(44,26,14,0.5);z-index:9998;backdrop-filter:blur(4px)" onclick="closeSearch()"></div>
+<div id="searchPanel" style="display:none;position:fixed;top:0;left:0;right:0;background:#fff;z-index:9999;padding:16px 24px;box-shadow:0 8px 32px rgba(44,26,14,0.15)">
+  <div style="max-width:700px;margin:0 auto">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <i class="ti ti-search" style="font-size:20px;color:var(--brown4)"></i>
+      <input id="searchInput" type="text" placeholder="Search sets, topics, creators..." style="flex:1;border:none;outline:none;font-family:'Source Sans 3',sans-serif;font-size:16px;color:var(--brown);background:transparent" oninput="doSearch(this.value)" onkeydown="if(event.key==='Escape')closeSearch()">
+      <button onclick="closeSearch()" style="border:none;background:transparent;cursor:pointer;color:var(--brown4);font-size:14px;font-family:'Source Sans 3',sans-serif;font-weight:500">Cancel</button>
+    </div>
+    <div id="searchResults" style="padding-bottom:8px"></div>
+  </div>
+</div>
+<script>
+const SEARCH_DATA = [
+  {type:'set',name:'Cell Division: Mitosis & Meiosis',meta:'48 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'Human Body Systems Overview',meta:'66 cards · Biology',url:'setdetail.html'},
+  {type:'set',name:'World Capitals — 195 Countries',meta:'195 cards · Geography',url:'setdetail.html'},
+  {type:'set',name:'SAT Vocabulary High Frequency',meta:'150 cards · English',url:'setdetail.html'},
+  {type:'set',name:'Spanish 101 — Core Vocabulary',meta:'200 cards · Languages',url:'setdetail.html'},
+  {type:'set',name:'WW2 Key Events Timeline',meta:'60 cards · History',url:'setdetail.html'},
+  {type:'set',name:'Calculus Fundamentals',meta:'55 cards · Math',url:'setdetail.html'},
+  {type:'set',name:'Photosynthesis — Complete Guide',meta:'28 cards · Science',url:'setdetail.html'},
+  {type:'page',name:'Explore sets',meta:'Browse the marketplace',url:'explore.html'},
+  {type:'page',name:'Leaderboard',meta:'Weekly rankings',url:'leaderboard.html'},
+  {type:'page',name:'Create a set',meta:'Build your own flashcard set',url:'create.html'},
+  {type:'page',name:'Study with Leo',meta:'Start a study session',url:'study.html'},
+  {type:'page',name:'My profile',meta:'View your profile',url:'profile.html'},
+  {type:'page',name:'Settings',meta:'Account and preferences',url:'settings.html'},
+  {type:'creator',name:'Leo',meta:'AI study coach · 2,840 sets',url:'leo.html'},
+  {type:'creator',name:'sarah_reads',meta:'Verified creator · 12 sets',url:'profile.html'},
+  {type:'creator',name:'nova_prep',meta:'Top creator · 22 sets',url:'profile.html'},
+];
+function openSearch(){
+  document.getElementById('searchOverlay').style.display='block';
+  document.getElementById('searchPanel').style.display='block';
+  setTimeout(()=>document.getElementById('searchInput').focus(),50);
+  doSearch('');
+}
+function closeSearch(){
+  document.getElementById('searchOverlay').style.display='none';
+  document.getElementById('searchPanel').style.display='none';
+  document.getElementById('searchInput').value='';
+}
+function doSearch(q){
+  const results = document.getElementById('searchResults');
+  const query = q.toLowerCase().trim();
+  const matches = query ? SEARCH_DATA.filter(d=>d.name.toLowerCase().includes(query)||d.meta.toLowerCase().includes(query)) : SEARCH_DATA.slice(0,6);
+  if(!matches.length){results.innerHTML='<div style="padding:12px 0;font-size:13px;color:var(--brown4);text-align:center">No results for "'+q+'"</div>';return;}
+  const icons={set:'ti-cards',page:'ti-file',creator:'ti-user'};
+  results.innerHTML = matches.slice(0,8).map(m=>`
+    <div onclick="window.location.href='${m.url}'" style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:9px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='var(--cream2)'" onmouseout="this.style.background='transparent'">
+      <div style="width:36px;height:36px;border-radius:9px;background:var(--cream2);display:flex;align-items:center;justify-content:center;color:var(--brown3);font-size:16px;flex-shrink:0;border:1.5px solid var(--border2)"><i class="ti ${icons[m.type]}"></i></div>
+      <div><div style="font-size:13px;font-weight:500;color:var(--brown)">${m.name}</div><div style="font-size:11px;color:var(--brown4);font-weight:300">${m.meta}</div></div>
+    </div>`).join('');
+}
+document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openSearch();}});
+</script>
+
+<script src="api.js"></script>
+<script src="loading.js"></script>
+<script src="darkmode.js"></script>
+<script src="shortcuts.js"></script>
+<script src="polish.js"></script>
+<script src="transitions.js"></script>
+<script src="search.js"></script>
+
+<script>
+// Age gate for 18+ filter
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-age="adult"], .filter-tag[data-age="adult"]').forEach(el => {
+    el.addEventListener('click', e => {
+      if(window.checkAgeGate) {
+        e.stopPropagation();
+        sessionStorage.setItem('ageVerifyRedirect', 'explore.html?age=adult');
+        checkAgeGate('explore.html?age=adult');
+      }
+    });
+  });
+  // If returned from age verification show adult content
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('age') === 'adult') {
+    const verified = localStorage.getItem('lumio_age_verified');
+    const session = sessionStorage.getItem('lumio_age_verified');
+    if(verified || session) {
+      const adultBtn = document.querySelector('.filter-tag[data-age="adult"]');
+      if(adultBtn) adultBtn.click();
+    }
+  }
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.querySelector('input[type="search"], .search-input, input[placeholder*="Search"]');
+  if(!searchInput) return;
+  searchInput.addEventListener('input', function(){
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll('.set-card, .set-item').forEach(card => {
+      const text = card.textContent.toLowerCase();
+      card.style.display = (!q || text.includes(q)) ? '' : 'none';
+    });
+  });
+  // Subject filter chips
+  document.querySelectorAll('.filter-tag, .filter-chip').forEach(chip => {
+    chip.addEventListener('click', function(){
+      if(this.dataset.age === 'adult') return;
+      document.querySelectorAll('.filter-tag, .filter-chip').forEach(c => c.classList.remove('active'));
+      this.classList.add('active');
+      const subject = this.textContent.trim().toLowerCase();
+      document.querySelectorAll('.set-card').forEach(card => {
+        if(subject === 'all' || subject === 'all subjects'){
+          card.closest('[class*="col"], .set-col, div') && (card.style.display = '');
+          card.style.display = '';
+        } else {
+          const cardSubject = (card.querySelector('.sc-subject, .set-subject, .subject') || {}).textContent || '';
+          card.style.display = cardSubject.toLowerCase().includes(subject) ? '' : 'none';
+        }
+      });
+    });
+  });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if(!window.estimateTime) return;
+  document.querySelectorAll('.set-card').forEach(card => {
+    const meta = card.querySelector('.sc-meta');
+    if(!meta) return;
+    const match = meta.textContent.match(/(\d+)\s*cards/);
+    if(!match) return;
+    const time = estimateTime(parseInt(match[1]));
+    const span = document.createElement('span');
+    span.style.cssText = 'font-size:10px;color:var(--brown5);margin-left:6px;font-weight:300';
+    span.textContent = '· ' + time;
+    meta.appendChild(span);
+  });
+});
+</script>
+</body>
+</html>

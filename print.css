@@ -1,0 +1,44 @@
+/* ── LUMIO PRINT MODE ────────────────────────────────────────────────────────
+   Add ?print=true to any set detail URL to get a printable card sheet
+   Or press Ctrl+P / Cmd+P on the set detail page
+*/
+@media print {
+  .sidebar, .topbar, .bottom-nav, .btn-study, .btn-out,
+  .actions, .leo-m, .leo-kids, .rating-strip, .chead a,
+  .show-more, .big-study, .review-write, .ask-leo,
+  .about-card, .creator-card, .similar-set, .c-card,
+  #searchOverlay, #shortcutsModal, .lumio-toast { display: none !important; }
+
+  body { background: #fff !important; margin: 0; padding: 0; }
+  .main { margin-left: 0 !important; }
+  .content { padding: 16px !important; }
+
+  .set-title { font-size: 20px !important; margin-bottom: 4px !important; }
+  .set-desc { font-size: 12px !important; }
+
+  .pc {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    border: 1.5px solid #ccc !important;
+    page-break-inside: avoid;
+    margin-bottom: 8px !important;
+    padding: 10px !important;
+  }
+
+  .pc.hidden .pc-b { filter: none !important; }
+
+  #pCards { display: grid !important; grid-template-columns: 1fr; }
+
+  .print-header {
+    display: block !important;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: #8b6340;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #ede0cc;
+  }
+
+  @page { margin: 16mm; size: A4; }
+}

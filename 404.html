@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumio — Page Not Found</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--cream:#faf7f2;--cream2:#f4ede0;--brown:#2c1a0e;--brown3:#8b6340;--brown4:#b8956a;--brown5:#d4b896;--border2:rgba(92,61,30,0.28);--shadow:rgba(44,26,14,0.09)}
+body{font-family:'Source Sans 3',sans-serif;background:var(--cream);color:var(--brown);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{text-align:center;max-width:460px;width:100%}
+.num{font-family:'Playfair Display',serif;font-size:120px;font-weight:800;color:var(--brown);letter-spacing:-6px;line-height:1;margin-bottom:8px;opacity:0.08}
+.icon{font-size:64px;margin-bottom:20px;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--brown);margin-bottom:10px}
+p{font-size:15px;color:var(--brown3);font-weight:300;line-height:1.7;margin-bottom:28px}
+.actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn{padding:12px 24px;border-radius:10px;font-family:'Source Sans 3',sans-serif;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:7px}
+.btn.primary{background:var(--brown);color:var(--cream);border:none}
+.btn.primary:hover{background:#5c3d1e}
+.btn.ghost{background:var(--cream2);color:#5c3d1e;border:2px solid var(--border2)}
+.btn.ghost:hover{background:#ede0cc}
+.logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--brown);margin-bottom:32px;display:flex;align-items:center;justify-content:center;gap:6px}
+.logo-dot{width:6px;height:6px;border-radius:50%;background:var(--brown4)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">Lumio <span class="logo-dot"></span></div>
+  <div class="icon">📚</div>
+  <div class="num">404</div>
+  <h1>Page not found</h1>
+  <p>Looks like this page got lost in the library. It might have been moved, deleted, or maybe the link was wrong.</p>
+  <div class="actions">
+    <a href="dashboard.html" class="btn primary"><i class="ti ti-layout-dashboard" style="font-size:15px"></i> Go to dashboard</a>
+    <a href="explore.html" class="btn ghost"><i class="ti ti-compass" style="font-size:15px"></i> Browse sets</a>
+  </div>
+</div>
+</body>
+</html>
