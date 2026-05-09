@@ -2,7 +2,7 @@
 // Include this in any page that needs real data
 // Set LUMIO_API_URL to your backend URL
 
-const LUMIO_API_URL = 'YOUR_BACKEND_URL'; // e.g. https://lumio-backend.onrender.com
+const LUMIO_API_URL = 'https://lumio-backend-1.onrender.com'; // e.g. https://lumio-backend.onrender.com
 
 class LumioAPI {
   constructor() {
