@@ -140,9 +140,9 @@ class LumioAPI {
 // Global instance
 window.lumio = new LumioAPI();
 
-// Redirect to login if not authenticated on protected pages
-const PROTECTED_PAGES = ['dashboard.html','profile.html','create.html','study.html','teacher.html','parent.html','settings.html'];
-const currentPage = window.location.pathname.split('/').pop();
-if (PROTECTED_PAGES.includes(currentPage) && !window.lumio.isLoggedIn()) {
-  window.location.href = 'login.html';
-}
+// Auth check disabled until real login is set up
+// const PROTECTED_PAGES = ['dashboard.html','profile.html','create.html','study.html','teacher.html','parent.html','settings.html'];
+// const currentPage = window.location.pathname.split('/').pop();
+// if (PROTECTED_PAGES.includes(currentPage) && !window.lumio.isLoggedIn()) {
+//   window.location.href = 'login.html';
+// }
