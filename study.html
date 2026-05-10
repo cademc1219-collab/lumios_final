@@ -333,39 +333,30 @@ function showLeoNotif(){document.getElementById('leoNotif').classList.add('show'
 function closeNotif(){document.getElementById('leoNotif').classList.remove('show');}
 function toggleLeoChat(){document.getElementById('leoChatPanel').classList.toggle('show');closeNotif();}
 
-// SETUP: Replace YOUR_API_KEY_HERE with your Anthropic API key
-// Get one at console.anthropic.com
-const ANTHROPIC_KEY = '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';
+// ── LEO AI (via Render backend) ──────────────────────────────────────────────
+const LUMIO_API = 'https://lumio-backend-1.onrender.com';
 
 async function groqCall(messages, maxTokens=1000){
-  if(ANTHROPIC_KEY === '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'){
-    throw new Error('Add your Anthropic API key to this file to enable Leo.');
+  const system = messages.find(m=>m.role==='system')?.content || 'You are Leo, a helpful AI study coach on Lumio.';
+  const userMsgs = messages.filter(m=>m.role!=='system');
+  try {
+    const res = await fetch(LUMIO_API+'/api/leo', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({system, messages:userMsgs, maxTokens})
+    });
+    const data = await res.json();
+    if(data.error) throw new Error(data.error);
+    return data.text || '';
+  } catch(err) {
+    throw new Error('Leo is unavailable right now.');
   }
-  const systemMsg = messages.find(m => m.role === 'system');
-  const userMsgs = messages.filter(m => m.role !== 'system');
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': ANTHROPIC_KEY,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: maxTokens,
-      system: systemMsg?.content || 'You are Leo, a helpful AI study coach on Lumio.',
-      messages: userMsgs
-    })
-  });
-  const data = await res.json();
-  if(data.error) throw new Error(data.error.message);
-  return data.content?.[0]?.text || '';
 }
 
 async function callLeoChat(system, history, maxTokens=400){
-  const messages = [];
-  if(system) messages.push({role:'system', content:system});
+  const messages = [{role:'system',content:system}, ...history.map(m=>({role:m.role==='assistant'?'assistant':'user',content:m.content}))];
+  return await groqCall(messages, maxTokens);
+});
   history.forEach(m => messages.push({role:m.role==='assistant'?'assistant':'user', content:m.content}));
   return await groqCall(messages, maxTokens);
 });

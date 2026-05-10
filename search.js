@@ -1,3 +1,4 @@
+(function(){
 // ── LUMIO SITE-WIDE SEARCH ───────────────────────────────────────────────────
 
 const SEARCH_DATA = [
@@ -217,3 +218,5 @@ function goToResult(url){
 }
 
 document.addEventListener('DOMContentLoaded', initSearch);
+
+})();
